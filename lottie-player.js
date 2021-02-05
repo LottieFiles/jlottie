@@ -127,10 +127,11 @@ function prepShapeSh(shapeObj, referrer) {
 	for (var i = 1; i < shapeObj.ks.k.v.length; i++) {
 		dataString = dataString + " C" + (shapeObj.ks.k.v[i - 1][0] + shapeObj.ks.k.o[i - 1][0]) + "," + (shapeObj.ks.k.v[i - 1][1] + shapeObj.ks.k.o[i - 1][1]) + " " + (shapeObj.ks.k.v[i][0] + shapeObj.ks.k.i[i][0]) + "," + (shapeObj.ks.k.v[i][1] + shapeObj.ks.k.i[i][1]) + " " + shapeObj.ks.k.v[i][0] + "," + shapeObj.ks.k.v[i][1];
 	}
+	dataString = dataString + " C" + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][0] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][0]) + "," + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][1] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][1]) + " " + (shapeObj.ks.k.v[0][0] + shapeObj.ks.k.i[0][0]) + "," + (shapeObj.ks.k.v[0][1] + shapeObj.ks.k.i[0][1]) + " " + shapeObj.ks.k.v[0][0] + "," + shapeObj.ks.k.v[0][1];
 	shapeObj._data = dataString;
 	var newShape = document.createElementNS(xmlns, 'path');
 	newShape.setAttribute("d", dataString);
-	newShape.setAttribute("stroke", "black");
+	//newShape.setAttribute("stroke", "black");
 	newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", "_shape" + shapeObj._shape);
 	if (shapeObj.ks.k.c) {
@@ -154,7 +155,6 @@ function prepShape(shapeObj, referrer) {
 	}
 	if (shapeObj.ty == 'tr') {
 		if (shapeObj.p.k.hasOwnProperty('s')) {
-			console.log("shapeObj");
 			shapeObj = getPosition(shapeObj, null, 'p');
 		}
 	}
@@ -244,19 +244,49 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 				}
 			}
 		}
+		//console.log("leastY " + layerObj._leastY);
 	}
 	setShapeColors(layerObj.shapes, currentColor);
 	return layerObj;
 }
 
 function getLayers(elementId, animationId, elementObj) {
+	var newLayer;
+	var newGroup;
+	var posX;
+	var posY;
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
-		//console.log("layer ind: " + animation[animationId].layers[i].ind);
 		layerCount++;
 		animation[animationId].layers[i]._layer = layerCount;
-		var newLayer = document.createElementNS(xmlns, 'g');
-		newLayer.setAttribute("id", "_layer" + layerCount);
-		elementObj.prepend(newLayer);
+		if (animation[animationId].layers[i].parent > 0) {
+		} else {
+			newLayer = document.createElementNS(xmlns, 'g');
+			newLayer.setAttribute("id", "_layer" + layerCount);
+			elementObj.prepend(newLayer);
+		}
+	}
+	for (var i = 0; i < animation[animationId].layers.length; i++) {
+		layerCount = animation[animationId].layers[i]._layer;
+		if (animation[animationId].layers[i].parent > 0) {
+			for (var j = 0; j < animation[animationId].layers.length; j++) {
+				if (animation[animationId].layers[j].ind == animation[animationId].layers[i].parent) {
+					animation[animationId].layers[i]._parent = animation[animationId].layers[j]._layer;
+					newLayer = document.createElementNS(xmlns, 'g');
+					newLayer.setAttribute("id", "_layer" + layerCount);
+					document.getElementById("_layer" + animation[animationId].layers[i]._parent).prepend(newLayer);						}
+			}
+		}
+	}
+	for (var i = 0; i < animation[animationId].layers.length; i++) {
+		//console.log("layer ind: " + animation[animationId].layers[i].ind);
+		layerCount = animation[animationId].layers[i]._layer;
+		newLayer = document.getElementById("_layer" + layerCount);
+		if (animation[animationId].layers[i].hasOwnProperty('shapes')) {
+			newGroup = document.createElementNS(xmlns, 'g');
+			newGroup.setAttribute("id", "_layerGroup" + layerCount);
+			newLayer.prepend(newGroup);
+			animation[animationId].layers[i] = getShapes(elementId, animationId, animation[animationId].layers[i], newGroup, "_layerGroup" + layerCount);
+		}
 		if (animation[animationId].layers[i].hasOwnProperty('ks')) {
 			//console.log("layerObj " + animation[animationId].layers[i].ind);
 			animation[animationId].layers[i].ks = getPosition(animation[animationId].layers[i].ks, null, 'p');
@@ -265,17 +295,13 @@ function getLayers(elementId, animationId, elementObj) {
 					if (animation[animationId].layers[i].ks.p.k.length > 1) {
 						if (animation[animationId].layers[i].ks.p.k[0].hasOwnProperty("s")) {
 						} else {
-							document.getElementById("_layer" + layerCount).setAttribute("transform", "matrix(1,0,0,1," + animation[animationId].layers[i].ks.p.k[0] + "," + animation[animationId].layers[i].ks.p.k[1] + ")");
+							posX = animation[animationId].layers[i].ks.p.k[0] - (newGroup.getBoundingClientRect().width / 2);
+							posY = animation[animationId].layers[i].ks.p.k[1] - (newGroup.getBoundingClientRect().height / 2);
+							document.getElementById("_layer" + layerCount).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
 						}
 					}
 				}
 			}
-		}
-		if (animation[animationId].layers[i].hasOwnProperty('shapes')) {
-			var newGroup = document.createElementNS(xmlns, 'g');
-			newGroup.setAttribute("id", "_layerGroup" + layerCount);
-			newLayer.prepend(newGroup);
-			animation[animationId].layers[i] = getShapes(elementId, animationId, animation[animationId].layers[i], newGroup, "_layerGroup" + layerCount);
 		}
 	}
 	console.log("DONE");
@@ -298,13 +324,12 @@ function buildGraph(elementId, animationId, elementObj) {
 	newLayer.style.width = animation[animationId].w;
 	newLayer.style.height = animation[animationId].h;
 	elementObj.prepend(newLayer);
-	scene = new Array(animationLength + 1).fill(0);
+	animation[animationId]._scene = new Array(animationLength + 1).fill(0);
 	getLayers(elementId, animationId, newLayer);
 	//console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
 }
 
 var animation = new Array();
-var scene;
 var frame = new Array();
 var animationCount = -1;
 var shapeCount = -1;
