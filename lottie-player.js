@@ -129,6 +129,13 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	//console.log("addgroup " + animationId + " - " + frame);
 	//console.log(typeof(animation[animationId]._scene[frame]._transform));
 	var transforms = {};
+	transforms.translateX = 0;
+	transforms.translateY = 0;
+	transforms.scaleFactorX = 0;
+	transforms.scaleFactorY = 0;
+	transforms.rotateAngle = 0;
+	transforms.opacityFactor = 0;
+
 	transforms.translate = '';
 	transforms.rotate = '';
 	transforms.scale = '';
@@ -206,31 +213,38 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	if (refKey == 'p') {
 		posY = position[1];
 		if (objectId.hasOwnProperty('_anchorX')) {
-			posX = posX - objectId._anchorX;
+			//posX = posX - objectId._anchorX;
+			transforms.translateX = transforms.translateX + objectId._anchorX;
+			transforms.translateX = transforms.translateX + posX - objectId._anchorX;
 		}
 		if (objectId.hasOwnProperty('_anchorY')) {
-			posY = posY - objectId._anchorY;
+			//posY = posY - objectId._anchorY;
+			transforms.translateY = transforms.translateY + objectId._anchorY;
+			transforms.translateY = transforms.translateY + posY - objectId._anchorY;
 		}
-		transforms.translate = 'translate(' + posX + ',' + posY + ') ';
+		transforms.translate = 'translate(' + transforms.translateX + ',' + transforms.translateY + ') ';
 	}
 	if (refKey == 'r') {
+		transforms.rotateAngle = transforms.rotateAngle + posX;
 		if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
-			transforms.rotate = 'rotate(' + posX + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().width / 2) + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().height / 2) + ') ';
+			transforms.rotate = 'rotate(' + transforms.rotateAngle + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().width / 2) + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().height / 2) + ') ';
 			//transforms.rotate = 'rotate(' + posX + ') ';
 		} else {
-			transforms.rotate = 'rotate(' + posX + ') ';
+			transforms.rotate = 'rotate(' + transforms.rotateAngle + ') ';
 		}
 	}
 	if (refKey == 's') {
+		transforms.scaleFactorX = transforms.scaleFactorX + posX;
 		if (position.length > 1) {
-			posY = position[1];
-			transforms.scale = 'scale(' + (posX / 100) + ',' + (posY / 100) + ') ';
+			transforms.scaleFactorY = transforms.scaleFactorY + position[1];
+			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
 		} else {
-			transforms.scale = 'scale(' + (posX / 100) + ') ';
+			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ') ';
 		}
 	}
 	if (refKey == 'o') {
-		transforms.opacity = posX / 100;
+		transforms.opacityFactor = transforms.opacityFactor + posX;
+		transforms.opacity = transforms.opacityFactor / 100;
 	}
 
 	transforms.combined = transforms.translate + transforms.scale + transforms.rotate;
@@ -489,7 +503,7 @@ function prepShape(shapeObj, referrer, animationId, objectId) {
 			shapeObj = prepShapeShKeyframe(shapeObj, referrer, animationId);
 		}
 		shapeObj = prepShapeSh(shapeObj, referrer, animationId);
-	}
+	} 
 
 	if (shapeObj.ty == 'rc') {
 		//console.log("prep shape");
@@ -621,7 +635,8 @@ function resolveParents(animationId, layerId) {
 			newLayer = document.createElementNS(xmlns, 'g');
 			newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[layerId]._layer);
 			document.getElementById(animationId + "_layer" + animation[animationId].layers[layerId]._parent).prepend(newLayer);
-			animation[animationId].layers[j]._children.push("_layerGroup" + animation[animationId].layers[layerId].parent);
+			animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[layerId].parent);
+			animation[animationId].layers[j]._childId.push(layerId);
 			animation[animationId].layers[i]._addedToDom = true;
 			return;
 		}
@@ -636,7 +651,8 @@ function getLayers(elementId, animationId, elementObj) {
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
 		animation[animationId].layerCount++;
 		animation[animationId].layers[i]._layer = animation[animationId].layers[i].ind;
-		animation[animationId].layers[i]._children = new Array();
+		animation[animationId].layers[i]._child = new Array();
+		animation[animationId].layers[i]._childId = new Array();
 		if (animation[animationId].layers[i].parent > 0) {
 		} else {
 			newLayer = document.createElementNS(xmlns, 'g');
@@ -661,7 +677,8 @@ function getLayers(elementId, animationId, elementObj) {
 					newLayer = document.createElementNS(xmlns, 'g');
 					newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i]._layer);
 					document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._parent).prepend(newLayer);
-					animation[animationId].layers[j]._children.push("_layerGroup" + animation[animationId].layers[i].parent);
+					animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[i].parent);
+					animation[animationId].layers[j]._childId.push(i);
 					animation[animationId].layers[i]._addedToDom = true;
 				}
 			}
