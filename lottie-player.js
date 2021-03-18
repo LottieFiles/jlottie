@@ -105,8 +105,9 @@ function lottiemate() {
 			//window.setTimeout(loadFrame, 1, i, animation[i]._currentFrame);
 			for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
 				currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+				currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
 				currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
-				currentObj.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+				currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
 				/*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
 					currentObj.style.display = 'block';
 				}
@@ -144,6 +145,8 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	transforms.show = false;
 	transforms.inPoint = -1;
 	transforms.outPoint = -1;
+	transforms.isLayer = true;
+
 	var posX = 0;
 	
 	if (isLayer) {
@@ -190,13 +193,17 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	}
 
 	if (isLayer) {
-		if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
-			transforms.refObj = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
-		} else {
-			transforms.refObj = animationId + "_layer" + animation[animationId]._currentLayer;
-		}
+		transforms.isLayer = true;
+		//if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
+			transforms.refObj = animationId + "_layerTranslate" + animation[animationId]._currentLayerGroup;
+			transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
+		//} else {
+		//	transforms.refObj = animationId + "_layer" + animation[animationId]._currentLayer;
+		//}
 	} else {
+		transforms.isLayer = false;
 		transforms.refObj = animationId + "_group" + animation[animationId]._currentShapeGroup;
+		transforms.refObjOther = "";
 	}
 
 	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
@@ -628,6 +635,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 
 function resolveParents(animationId, layerId) {
 	var newGroup;
+	var newTranslateGroup;
 
 	for (var j = 0; j < animation[animationId].layers.length; j++) {
 		if (animation[animationId].layers[j].ind == animation[animationId].layers[layerId].parent) {
@@ -638,10 +646,13 @@ function resolveParents(animationId, layerId) {
 			animation[animationId].layers[layerId]._parent = animation[animationId].layers[j]._layer;
 			newLayer = document.createElementNS(xmlns, 'g');
 			newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[layerId]._layer);
-			document.getElementById(animationId + "_layerGroup" + animation[animationId].layers[layerId]._parent).prepend(newLayer);
+			document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[layerId]._parent).prepend(newLayer);
+			newTranslateGroup = document.createElementNS(xmlns, 'g');
+			newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[layerId]._layer);
+			newLayer.prepend(newTranslateGroup);
 			newGroup = document.createElementNS(xmlns, 'g');
 			newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[layerId]._layer);
-			newLayer.prepend(newGroup);
+			newTranslateGroup.prepend(newGroup);
 
 			animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[layerId].parent);
 			animation[animationId].layers[j]._childId.push(layerId);
@@ -654,6 +665,7 @@ function resolveParents(animationId, layerId) {
 function getLayers(elementId, animationId, elementObj) {
 	var newLayer;
 	var newGroup;
+	var newTranslateGroup;
 	var posX;
 	var posY;
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
@@ -667,9 +679,12 @@ function getLayers(elementId, animationId, elementObj) {
 			newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
 			elementObj.prepend(newLayer);
 			animation[animationId].layers[i]._addedToDom = true;
+			newTranslateGroup = document.createElementNS(xmlns, 'g');
+			newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[i]._layer);
+			newLayer.prepend(newTranslateGroup);
 			newGroup = document.createElementNS(xmlns, 'g');
 			newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-			newLayer.prepend(newGroup);
+			newTranslateGroup.prepend(newGroup);
 			
 		}
 	}
@@ -685,10 +700,13 @@ function getLayers(elementId, animationId, elementObj) {
 					animation[animationId].layers[i]._parent = animation[animationId].layers[j]._layer;
 					newLayer = document.createElementNS(xmlns, 'g');
 					newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i]._layer);
-					document.getElementById(animationId + "_layerGroup" + animation[animationId].layers[i]._parent).prepend(newLayer);
+					document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[i]._parent).prepend(newLayer);
+					newTranslateGroup = document.createElementNS(xmlns, 'g');
+					newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[i]._layer);
+					newLayer.prepend(newTranslateGroup);
 					newGroup = document.createElementNS(xmlns, 'g');
 					newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-					newLayer.prepend(newGroup);
+					newTranslateGroup.prepend(newGroup);
 		
 					animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[i].parent);
 					animation[animationId].layers[j]._childId.push(i);
