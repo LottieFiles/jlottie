@@ -543,12 +543,33 @@ function prepShape(shapeObj, referrer, animationId, objectId) {
 	return shapeObj;
 }
 
+function createGradientDef(start, end, opacity, gradient, animationId) {
+	var newDefId = "def" + animation[animationId].defCount;
+	animation[animationId].defCount++;
+	var newDef = document.createElementNS(xmlns, 'linearGradient');
+	newDef.setAttribute("id", newDefId);
+	newDef.setAttribute("x1", start.k[0]);
+	newDef.setAttribute("x2", end.k[0]);
+	newDef.setAttribute("y1", start.k[1]);
+	newDef.setAttribute("y2", end.k[1]);
+	animation[animationId].defs.prepend(newDef);
+
+	for (var i = 0; i < gradient.p; i++) {
+		var newStop = document.createElementNS(xmlns, 'stop');
+		newStop.setAttribute("offset", (gradient.k.k[(i * 3) + 0] * 100) + "%");
+		newStop.setAttribute("style", "stop-color:rgb(" + (gradient.k.k[(i * 3) + 1] * 255) + "," + (gradient.k.k[(i * 3) + 1] * 255) + "," + (gradient.k.k[(i * 3) + 1] * 255) + ");stop-opacity:1");
+		newDef.append(newStop);
+	}
+	
+	return "url(#" + newDefId + ")";
+}
+
 function getColorString(redVal, greenVal, blueVal) {
 	var color = "rgb(" + (redVal * 255) + "," + (greenVal * 255) + "," + (blueVal * 255) + ")";
 	return color;
 }
 
-function setShapeColors(shapesGroup, colorToSet, animationId) {
+function setShapeColors(shapesGroup, colorToSet, animationId, isGradient) {
 	for (var i = 0; i < shapesGroup.length; i++) {
 		if (shapesGroup[i]._isShape) {
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill", colorToSet);
@@ -559,6 +580,7 @@ function setShapeColors(shapesGroup, colorToSet, animationId) {
 function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 	var currentColor;
 	for (var i = 0; i < layerObj.it.length; i++) {
+		layerObj._isGradient = false;
 		//console.log("shapes ix: " + layerObj.it[i].ix);
 		animation[animationId].shapeCount++;
 		if (layerObj.it[i].ty == "gr") {
@@ -588,15 +610,22 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 					currentColor = getColorString(layerObj.it[i].c.k[0], layerObj.it[i].c.k[1], layerObj.it[i].c.k[2]);
 				}
 			}
+			if (layerObj.it[i].ty == 'gf') {
+				layerObj._isGradient = true;
+				//if (layerObj.shapes[i].c.k.length > 1) {
+					currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, animationId);
+				//}
+			}
 		}
 	}
-	setShapeColors(layerObj.it, currentColor, animationId);
+	setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient);
 	return layerObj;
 }
 
 function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 	var currentColor;
 	for (var i = 0; i < layerObj.shapes.length; i++) {
+		layerObj._isGradient = false;
 		//console.log("shapes ix: " + layerObj.shapes[i].ix);
 		animation[animationId].shapeCount++;
 		if (layerObj.shapes[i].ty == "gr") {
@@ -626,10 +655,16 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 					currentColor = getColorString(layerObj.shapes[i].c.k[0], layerObj.shapes[i].c.k[1], layerObj.shapes[i].c.k[2]);
 				}
 			}
+			if (layerObj.shapes[i].ty == 'gf') {
+				layerObj._isGradient = true;
+				//if (layerObj.shapes[i].c.k.length > 1) {
+					currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, animationId);
+				//}
+			}
 		}
 		//console.log("leastY " + layerObj._leastY);
 	}
-	setShapeColors(layerObj.shapes, currentColor, animationId);
+	setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient);
 	return layerObj;
 }
 
@@ -833,6 +868,10 @@ function buildGraph(elementId, animationId, elementObj) {
 	newCompute.style.display = 'none';
 	newLayer.prepend(newCompute);
 	animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(()=>({'_transform':[]}));
+	animation[animationId].defs = document.createElementNS(xmlns, 'defs');
+	animation[animationId].defs.setAttributeNS(null, "id", "_defs" + animationId);
+	animation[animationId].defCount = 0;
+	newLayer.prepend(animation[animationId].defs);
 	getLayers(elementId, animationId, newLayer);
 	//fillScene(elementId, animationId);
 	animation[animationId]._buildDone = true;
