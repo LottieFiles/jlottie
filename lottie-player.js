@@ -556,8 +556,8 @@ function createGradientDef(start, end, opacity, gradient, animationId) {
 
 	for (var i = 0; i < gradient.p; i++) {
 		var newStop = document.createElementNS(xmlns, 'stop');
-		newStop.setAttribute("offset", (gradient.k.k[(i * 3) + 0] * 100) + "%");
-		newStop.setAttribute("style", "stop-color:rgb(" + parseInt(gradient.k.k[(i * 3) + 1] * 255) + "," + parseInt(gradient.k.k[(i * 3) + 2] * 255) + "," + parseInt(gradient.k.k[(i * 3) + 3] * 255) + ");stop-opacity:1");
+		newStop.setAttribute("offset", (gradient.k.k[(i * 4) + 0] * 100) + "%");
+		newStop.setAttribute("style", "stop-color:rgb(" + parseInt(gradient.k.k[(i * 4) + 1] * 255) + "," + parseInt(gradient.k.k[(i * 4) + 2] * 255) + "," + parseInt(gradient.k.k[(i * 4) + 3] * 255) + ");stop-opacity:1");
 		newDef.append(newStop);
 	}
 	
