@@ -3,7 +3,7 @@ const xmlns = "http://www.w3.org/2000/svg";
 ///////////// BEZIER
 
 function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId) {
-	if (animation[animationId]._currentLayer == 163) {
+	if (animation[animationId]._currentLayer == 134) {
 		console.log("bezierCurve " + animation[animationId]._currentLayer)
 	}
 	var newNodes = new Array();
@@ -40,7 +40,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 	var timeTick;
 	var oneMinusT;
 	var currentFrame = fromT;
-	if (animation[animationId]._currentLayer == 135) {
+	if (animation[animationId]._currentLayer == 134) {
 		console.log("coord--------------- " +  p1[0] + "," + p1[1] + " t:" + fromT);
 	}
 	for (var i = 1; i < frames; i++) {
@@ -50,18 +50,59 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 		currentFrame++;
 		newNodes[newNodes.length - 1]._frame = currentFrame;
 		newNodes[newNodes.length - 1].s = new Array();
-		newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[0]) + 
-							(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0])) +
-							(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
-							(Math.pow(timeTick, 3) * p2[0]));
-		if (refKey == 'p' || refKey == 's') {
-			newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[1]) + 
-								(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1])) +
-								(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
-								(Math.pow(timeTick, 3) * p2[1]));
-		}			
-		if (animation[animationId]._currentLayer == 135) {
-			console.log("coord " + newNodes[newNodes.length - 1].s[0] + "," + newNodes[newNodes.length - 1].s[1] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
+		if (refKey != "ks") {
+			newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[0]) + 
+								(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0])) +
+								(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
+								(Math.pow(timeTick, 3) * p2[0]));
+			if (refKey == 'p' || refKey == 's') {
+				newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[1]) + 
+									(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1])) +
+									(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
+									(Math.pow(timeTick, 3) * p2[1]));
+			}
+		} else {
+			for (var j = 0; j < p1.length; j++) {
+				newNodes[newNodes.length - 1].s.push({"i":[], "o":[], "v":[]});
+				for (var k = 0; k < p1[j].i.length; k++) {
+
+					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push([
+						(Math.pow(oneMinusT, 3) * p1[j].i[k][0]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].i[k][0])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
+						(Math.pow(timeTick, 3) * p2[0]),
+					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push(
+						(Math.pow(oneMinusT, 3) * p1[j].i[k][1]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].i[k][1])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
+						(Math.pow(timeTick, 3) * p2[1])]);
+
+					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].o.push([
+						(Math.pow(oneMinusT, 3) * p1[j].o[k][0]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].o[k][0])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
+						(Math.pow(timeTick, 3) * p2[0]),
+					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].o.push(
+						(Math.pow(oneMinusT, 3) * p1[j].o[k][1]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].o[k][1])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
+						(Math.pow(timeTick, 3) * p2[1])]);
+
+					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v.push([
+						(Math.pow(oneMinusT, 3) * p1[j].v[k][0]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].v[k][0])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
+						(Math.pow(timeTick, 3) * p2[0]),
+					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v.push(
+						(Math.pow(oneMinusT, 3) * p1[j].v[k][1]) + 
+						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].v[k][1])) +
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
+						(Math.pow(timeTick, 3) * p2[1])]);
+				}
+			}
+			if (animation[animationId]._currentLayer == 134) {
+				console.log("coord2 " + newNodes[newNodes.length - 1].s[0] + "," + newNodes[newNodes.length - 1].s[1] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
+			}
 		}
 			//console.log(p1[0] + " " + newNodes[newNodes.length - 1].s[0]);
 		if (addTransformation) {
@@ -69,7 +110,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 		}
 	}
 	//console.log("done !");
-	if (animation[animationId]._currentLayer == 135) {
+	if (animation[animationId]._currentLayer == 134) {
 		console.log("coord--------------- " +  p1[0] + "," + p1[1] + " t:" + toT);
 	}
 
@@ -289,7 +330,9 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 		if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('_comp')) {
 
 		} else {
-			addGroupPositionTransform(offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+			if (addTransformation > -1) {
+				addGroupPositionTransform(offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+			}
 			if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
 				p2 = offsetKeyframeObj[refKey].k[i].e;
 			} else {
@@ -445,6 +488,9 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 	//var newShape = document.createElement('path');
 	if (shapeObj.ks.k.hasOwnProperty('v')) {
 	} else {
+		if (shapeObj.ks.k[0].hasOwnProperty('s')) {
+			shapeObj = extrapolateOffsetKeyframe(shapeObj, "ks", false, animationId, -1, shapeObj);
+		}
 		return shapeObj;
 	}
 	var dataString = "M" + shapeObj.ks.k.v[0][0] + "," + shapeObj.ks.k.v[0][1];
