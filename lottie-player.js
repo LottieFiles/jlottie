@@ -65,47 +65,54 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 			for (var j = 0; j < p1.length; j++) {
 				newNodes[newNodes.length - 1].s.push({"i":[], "o":[], "v":[]});
 				for (var k = 0; k < p1[j].i.length; k++) {
+					if (animation[animationId]._currentLayer == 134) {
+						console.log("coord2 orig " + p1[j].i[k][0] + ", " + p2[j].i[k][0] + currentFrame);
+					}
 
 					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push([
 						(Math.pow(oneMinusT, 3) * p1[j].i[k][0]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].i[k][0])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
-						(Math.pow(timeTick, 3) * p2[0]),
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].i[k][0])) +
+						(Math.pow(timeTick, 3) * p2[j].i[k][0]),
 					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push(
 						(Math.pow(oneMinusT, 3) * p1[j].i[k][1]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].i[k][1])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
-						(Math.pow(timeTick, 3) * p2[1])]);
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].i[k][1])) +
+						(Math.pow(timeTick, 3) * p2[j].i[k][1])]);
 
 					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].o.push([
 						(Math.pow(oneMinusT, 3) * p1[j].o[k][0]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].o[k][0])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
-						(Math.pow(timeTick, 3) * p2[0]),
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].o[k][0])) +
+						(Math.pow(timeTick, 3) * p2[j].o[k][0]),
 					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].o.push(
 						(Math.pow(oneMinusT, 3) * p1[j].o[k][1]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].o[k][1])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
-						(Math.pow(timeTick, 3) * p2[1])]);
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].o[k][1])) +
+						(Math.pow(timeTick, 3) * p2[j].o[k][1])]);
 
 					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v.push([
 						(Math.pow(oneMinusT, 3) * p1[j].v[k][0]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].v[k][0])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
-						(Math.pow(timeTick, 3) * p2[0]),
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].v[k][0])) +
+						(Math.pow(timeTick, 3) * p2[j].v[k][0]),
 					//newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v.push(
 						(Math.pow(oneMinusT, 3) * p1[j].v[k][1]) + 
 						(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].v[k][1])) +
-						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
-						(Math.pow(timeTick, 3) * p2[1])]);
+						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].v[k][1])) +
+						(Math.pow(timeTick, 3) * p2[j].v[k][1])]);
+						
+					if (animation[animationId]._currentLayer == 134) {
+						console.log("coord2 " + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i[k][0] + "," + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v[k][0] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
+					}
 				}
 			}
 			if (animation[animationId]._currentLayer == 134) {
-				console.log("coord2 " + newNodes[newNodes.length - 1].s[0] + "," + newNodes[newNodes.length - 1].s[1] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
+				//console.log("coord2 " + newNodes[newNodes.length - 1].s[0] + "," + newNodes[newNodes.length - 1].s[1] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
 			}
 		}
 			//console.log(p1[0] + " " + newNodes[newNodes.length - 1].s[0]);
-		if (addTransformation) {
+		if (addTransformation && refKey != "ks") {
 			addGroupPositionTransform(currentFrame, newNodes[newNodes.length - 1].s, isLayer, animationId, refKey, addTransformation, objectId);
 		}
 	}
@@ -341,11 +348,11 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 				}
 			}
 
-			if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i')) {
+			if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && refKey != "ks") {
 				if (offsetKeyframeObj[refKey].k[i + 1].i.x < 1) offsetKeyframeObj[refKey].k[i + 1].i.x = 0.0;
 				if (offsetKeyframeObj[refKey].k[i + 1].i.y < 1) offsetKeyframeObj[refKey].k[i + 1].i.y = 0.0;
 			}
-			if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o')) {
+			if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && refKey != "ks") {
 				//if (offsetKeyframeObj[refKey].k[i].s == )
 				if (offsetKeyframeObj[refKey].k[i].o.x < 1) offsetKeyframeObj[refKey].k[i].o.x = 0.0;
 				if (offsetKeyframeObj[refKey].k[i].o.y < 1) offsetKeyframeObj[refKey].k[i].o.y = 0.0;
@@ -610,6 +617,31 @@ function createGradientDef(start, end, opacity, gradient, animationId) {
 	return "url(#" + newDefId + ")";
 }
 
+var lcEnum = {
+	1: 'butt',
+	2: 'round',
+	3: 'square',
+}
+
+var ljEnum = {
+	1: 'miter',
+	2: 'round',
+	3: 'bevel',
+}
+
+function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
+	var strokeString = {"color":"", "opacity":1, "width":1, "lineCap":"round", "lineJoin":"round", "miterLimit":0};
+	strokeString.color = "rgb(" + (color.k[0] * 255) + "," + (color.k[1] * 255) + "," + (color.k[2] * 255) + ")";
+	strokeString.opacity = opacity.k / 100;
+	strokeString.width = width.k;
+	strokeString.lineCap = lcEnum[lineCap];
+	strokeString.lineJoin = lcEnum[lineJoin];
+	if (lineJoin == 1) {
+		strokeString.miterLimit = lineJoin;
+	}
+	return strokeString;
+}
+
 function getColorString(redVal, greenVal, blueVal) {
 	var color = "rgb(" + (redVal * 255) + "," + (greenVal * 255) + "," + (blueVal * 255) + ")";
 	return color;
@@ -670,6 +702,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 
 function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 	var currentColor;
+	var currentStroke;
 	for (var i = 0; i < layerObj.shapes.length; i++) {
 		layerObj._isGradient = false;
 		//console.log("shapes ix: " + layerObj.shapes[i].ix);
@@ -699,6 +732,11 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 			if (layerObj.shapes[i].ty == 'fl') {
 				if (layerObj.shapes[i].c.k.length > 1) {
 					currentColor = getColorString(layerObj.shapes[i].c.k[0], layerObj.shapes[i].c.k[1], layerObj.shapes[i].c.k[2]);
+				}
+			}
+			if (layerObj.shapes[i].ty == 'st') {
+				if (layerObj.shapes[i].c.k.length > 1) {
+					currentStroke = getStrokeString(layerObj.shapes[i].c, layerObj.shapes[i].o, layerObj.shapes[i].w, layerObj.shapes[i].lc, layerObj.shapes[i].lj, layerObj.shapes[i].ml);
 				}
 			}
 			if (layerObj.shapes[i].ty == 'gf') {
