@@ -436,7 +436,7 @@ function prepShapeEl(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'ellipse');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	//newShape.setAttribute("fill", "transparent");
+	newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
 	newShape.classList.add("ellipse");
 	referrer.prepend(newShape);
@@ -454,7 +454,7 @@ function prepShapeSr(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'path');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	//newShape.setAttribute("fill", "transparent");
+	newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
 	newShape.classList.add("star");
 	referrer.prepend(newShape);
@@ -471,7 +471,7 @@ function prepShapeRc(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'rect');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	//newShape.setAttribute("fill", "transparent");
+	newShape.setAttribute("fill", "transparent");
 
 	newShape.setAttribute('width', shapeObj.s.k[0]);
 	newShape.setAttribute('height', shapeObj.s.k[1]);
@@ -505,16 +505,16 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 	for (var i = 1; i < shapeObj.ks.k.v.length; i++) {
 		dataString = dataString + " C" + (shapeObj.ks.k.v[i - 1][0] + shapeObj.ks.k.o[i - 1][0]) + "," + (shapeObj.ks.k.v[i - 1][1] + shapeObj.ks.k.o[i - 1][1]) + " " + (shapeObj.ks.k.v[i][0] + shapeObj.ks.k.i[i][0]) + "," + (shapeObj.ks.k.v[i][1] + shapeObj.ks.k.i[i][1]) + " " + shapeObj.ks.k.v[i][0] + "," + shapeObj.ks.k.v[i][1];
 	}
-	dataString = dataString + " C" + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][0] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][0]) + "," + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][1] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][1]) + " " + (shapeObj.ks.k.v[0][0] + shapeObj.ks.k.i[0][0]) + "," + (shapeObj.ks.k.v[0][1] + shapeObj.ks.k.i[0][1]) + " " + shapeObj.ks.k.v[0][0] + "," + shapeObj.ks.k.v[0][1];
+	if (shapeObj.ks.k.c) {
+		dataString = dataString + " C" + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][0] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][0]) + "," + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][1] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][1]) + " " + (shapeObj.ks.k.v[0][0] + shapeObj.ks.k.i[0][0]) + "," + (shapeObj.ks.k.v[0][1] + shapeObj.ks.k.i[0][1]) + " " + shapeObj.ks.k.v[0][0] + "," + shapeObj.ks.k.v[0][1];
+		dataString = dataString + " Z";
+		//newShape.setAttribute("closepath", "1");
+	}
 	shapeObj._data = dataString;
 	var newShape = document.createElementNS(xmlns, 'path');
 	//newShape.setAttribute("stroke", "black");
 	newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
-	if (shapeObj.ks.k.c == true) {
-		dataString = dataString + " Z";
-		//newShape.setAttribute("closepath", "1");
-	}
 	newShape.setAttribute("d", dataString);
 	newShape.classList.add("shape");
 	referrer.prepend(newShape);
@@ -658,6 +658,7 @@ function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke", strokeToSet.color);
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke-width", strokeToSet.width);
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke-linecap", strokeToSet.lineCap);
+			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke-linejoin", strokeToSet.lineJoin);
 		}
 	}
 }
