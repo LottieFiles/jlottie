@@ -156,6 +156,7 @@ function lottiemate() {
 				currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
 				currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
 				currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+
 				/*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
 					currentObj.style.display = 'block';
 				}
@@ -188,7 +189,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	transforms.translate = '';
 	transforms.rotate = '';
 	transforms.scale = '';
-	transforms.opacity = 0;
+	transforms.opacity = 1;
 	transforms.hide = false;
 	transforms.show = false;
 	transforms.inPoint = -1;
@@ -435,7 +436,7 @@ function prepShapeEl(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'ellipse');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	newShape.setAttribute("fill", "transparent");
+	//newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
 	newShape.classList.add("ellipse");
 	referrer.prepend(newShape);
@@ -453,7 +454,7 @@ function prepShapeSr(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'path');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	newShape.setAttribute("fill", "transparent");
+	//newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
 	newShape.classList.add("star");
 	referrer.prepend(newShape);
@@ -470,7 +471,7 @@ function prepShapeRc(shapeObj, referrer, animationId, addTransformation) {
 	var newShape = document.createElementNS(xmlns, 'rect');
 	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
-	newShape.setAttribute("fill", "transparent");
+	//newShape.setAttribute("fill", "transparent");
 
 	newShape.setAttribute('width', shapeObj.s.k[0]);
 	newShape.setAttribute('height', shapeObj.s.k[1]);
@@ -507,13 +508,14 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 	dataString = dataString + " C" + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][0] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][0]) + "," + (shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][1] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][1]) + " " + (shapeObj.ks.k.v[0][0] + shapeObj.ks.k.i[0][0]) + "," + (shapeObj.ks.k.v[0][1] + shapeObj.ks.k.i[0][1]) + " " + shapeObj.ks.k.v[0][0] + "," + shapeObj.ks.k.v[0][1];
 	shapeObj._data = dataString;
 	var newShape = document.createElementNS(xmlns, 'path');
-	newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
 	newShape.setAttribute("fill", "transparent");
 	newShape.setAttribute("id", animationId + "_shape" + shapeObj._shape);
-	if (shapeObj.ks.k.c) {
-		newShape.setAttribute("closepath", null);
+	if (shapeObj.ks.k.c == true) {
+		dataString = dataString + " Z";
+		//newShape.setAttribute("closepath", "1");
 	}
+	newShape.setAttribute("d", dataString);
 	newShape.classList.add("shape");
 	referrer.prepend(newShape);
 	shapeObj._isShape = true;
@@ -647,9 +649,22 @@ function getColorString(redVal, greenVal, blueVal) {
 	return color;
 }
 
-function setShapeColors(shapesGroup, colorToSet, animationId, isGradient) {
+function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
 	for (var i = 0; i < shapesGroup.length; i++) {
 		if (shapesGroup[i]._isShape) {
+			//document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill", colorToSet);
+			//document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill", "yellow");
+			//document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke", "black");
+			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke", strokeToSet.color);
+			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke-width", strokeToSet.width);
+			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("stroke-linecap", strokeToSet.lineCap);
+		}
+	}
+}
+
+function setShapeColors(shapesGroup, colorToSet, animationId, isGradient) {
+	for (var i = 0; i < shapesGroup.length; i++) {
+		if (shapesGroup[i]._isShape && typeof colorToSet !== 'undefined') {
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill", colorToSet);
 		}
 	}
@@ -657,6 +672,8 @@ function setShapeColors(shapesGroup, colorToSet, animationId, isGradient) {
 
 function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 	var currentColor;
+	var currentStroke;
+	var stroked = false;
 	for (var i = 0; i < layerObj.it.length; i++) {
 		layerObj._isGradient = false;
 		//console.log("shapes ix: " + layerObj.it[i].ix);
@@ -688,6 +705,12 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 					currentColor = getColorString(layerObj.it[i].c.k[0], layerObj.it[i].c.k[1], layerObj.it[i].c.k[2]);
 				}
 			}
+			if (layerObj.it[i].ty == 'st') {
+				if (layerObj.it[i].c.k.length > 1) {
+					currentStroke = getStrokeString(layerObj.it[i].c, layerObj.it[i].o, layerObj.it[i].w, layerObj.it[i].lc, layerObj.it[i].lj, layerObj.it[i].ml);
+					stroked = true;
+				}
+			}
 			if (layerObj.it[i].ty == 'gf') {
 				layerObj._isGradient = true;
 				//if (layerObj.shapes[i].c.k.length > 1) {
@@ -697,12 +720,16 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup) {
 		}
 	}
 	setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient);
+	if (stroked) {
+		setShapeStrokes(layerObj.it, currentStroke, animationId);
+	}
 	return layerObj;
 }
 
 function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 	var currentColor;
 	var currentStroke;
+	var stroked = false;
 	for (var i = 0; i < layerObj.shapes.length; i++) {
 		layerObj._isGradient = false;
 		//console.log("shapes ix: " + layerObj.shapes[i].ix);
@@ -737,6 +764,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 			if (layerObj.shapes[i].ty == 'st') {
 				if (layerObj.shapes[i].c.k.length > 1) {
 					currentStroke = getStrokeString(layerObj.shapes[i].c, layerObj.shapes[i].o, layerObj.shapes[i].w, layerObj.shapes[i].lc, layerObj.shapes[i].lj, layerObj.shapes[i].ml);
+					stroked = true;
 				}
 			}
 			if (layerObj.shapes[i].ty == 'gf') {
@@ -749,6 +777,9 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 		//console.log("leastY " + layerObj._leastY);
 	}
 	setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient);
+	if (stroked) {
+		setShapeStrokes(layerObj.shapes, currentStroke, animationId);
+	}
 	return layerObj;
 }
 
