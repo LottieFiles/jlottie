@@ -867,6 +867,7 @@ function resolveParents(animationId, layerId) {
 function getLayers(elementId, animationId, elementObj) {
 	var newLayer;
 	var newGroup;
+	var newMask;
 	var newTranslateGroup;
 	var posX;
 	var posY;
@@ -878,10 +879,13 @@ function getLayers(elementId, animationId, elementObj) {
 		if (animation[animationId].layers[i].parent > 0) {
 		} else {
 			if (animation[animationId].layers[i].td > 0) {
-				newLayer = document.createElementNS(xmlns, 'mask');
+				newMask = document.createElementNS(xmlns, 'mask');
+				newMask.setAttribute("id", animationId + "_layerMask" + animation[animationId].layers[i].ind);
+				newMask.setAttribute("mask-type", "alpha");
+				animation[animationId].defs.prepend(newMask);
+				newLayer = document.createElementNS(xmlns, 'g');
 				newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
-				newLayer.setAttribute("mask-type", "alpha");
-				animation[animationId].defs.prepend(newLayer);
+				newMask.prepend(newLayer);
 			} else {
 				newLayer = document.createElementNS(xmlns, 'g');
 				newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
