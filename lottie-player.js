@@ -55,11 +55,13 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 								(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0])) +
 								(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0])) +
 								(Math.pow(timeTick, 3) * p2[0]));
-			if (refKey == 'p' || refKey == 's') {
-				newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[1]) + 
-									(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1])) +
-									(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
-									(Math.pow(timeTick, 3) * p2[1]));
+			if (refKey != 'x' && refKey != 'y') {
+				if (refKey == 'p' || refKey == 's') {
+					newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[1]) + 
+										(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1])) +
+										(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1])) +
+										(Math.pow(timeTick, 3) * p2[1]));
+				}
 			}
 		} else {
 			for (var j = 0; j < p1.length; j++) {
@@ -418,8 +420,83 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 	return offsetKeyframeObj;
 }
 
+function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId) {
+	currentObj[refKey].k = new Array();
+	if (currentObj[refKey].x.k.length > 1) {
+		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "x", isLayer, animationId, false, objectId);
+	} else {
+
+	}
+	if (currentObj[refKey].y.k.length > 1) {
+		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "y", isLayer, animationId, false, objectId);
+	} else {
+
+	}
+
+	if (! currentObj[refKey].x.k.length > 1) {
+		for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+			currentObj[refKey].k.push({"i":[0, currentObj[refKey].y.k[i].i[1], 0], "o":[0, currentObj[refKey].y.k[i].o[1], 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+		}
+		return currentObj;
+	}
+
+	if (! currentObj[refKey].y.k.length > 1) {
+		for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+			currentObj[refKey].k.push({"i":[currentObj[refKey].x.k[i].i[0], 0, 0], "o":[currentObj[refKey].x.k[i].o[0], 0, 0], "s":[currentObj[refKey].x.k[i].s[0], currentObj[refKey].y.k, 0], "t":currentObj[refKey].x.k[i].t});
+		}
+		return currentObj;
+	}
+
+	if (currentObj[refKey].x.k.length > currentObj[refKey].y.k.length) {
+		for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+			currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k[i].s[0], 0, 0], "t":currentObj[refKey].x.k[i].t});
+		}
+		for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+			if (currentObj[refKey].k[0].t > currentObj[refKey].y.k[i].t) {
+				currentObj[refKey].k.splice(i, 0, {"i":[0, 0, 0], "o":[0, 0, 0], "s":[0, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+			} else if (currentObj[refKey].k[0].t < currentObj[refKey].y.k[i].t) {
+				currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[0, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+			} else if (currentObj[refKey].k[0].t == currentObj[refKey].y.k[i].t) {
+				currentObj[refKey].k.s[1] = currentObj[refKey].y.k[i].s[0];
+			}
+		}
+
+		for (var i = 0; i < currentObj[refKey].k.length; i++) {
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+		}
+
+		return currentObj;
+	}
+
+	if (currentObj[refKey].x.k.length < currentObj[refKey].y.k.length) {
+		for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+			currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[0, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+		}
+		for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+			if (currentObj[refKey].k[0].t > currentObj[refKey].x.k[i].t) {
+				currentObj[refKey].k.splice(i, 0, {"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k[i].s[0], 0, 0], "t":currentObj[refKey].x.k[i].t});
+			} else if (currentObj[refKey].k[0].t < currentObj[refKey].x.k[i].t) {
+				currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k[i].s[0], 0, 0], "t":currentObj[refKey].x.k[i].t});
+			} else if (currentObj[refKey].k[0].t == currentObj[refKey].x.k[i].t) {
+				currentObj[refKey].k.s[0] = currentObj[refKey].x.k[i].s[0];
+			}
+		}
+
+		for (var i = 0; i < currentObj[refKey].k.length; i++) {
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+		}
+
+		return currentObj;
+	}
+
+	return currentObj;
+}
+
 function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId) {
 	if (currentObj.hasOwnProperty(refKey)) {
+		if (currentObj[refKey].hasOwnProperty('x') && currentObj[refKey].hasOwnProperty('y')) {
+			currentObj = extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId);
+		}
 		if (currentObj[refKey].hasOwnProperty('k')) {
 			if (currentObj[refKey].k.length > 1) {
 				if (currentObj[refKey].k[0].hasOwnProperty('s')) {
