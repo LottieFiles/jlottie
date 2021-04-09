@@ -3,9 +3,9 @@ const xmlns = "http://www.w3.org/2000/svg";
 ///////////// BEZIER
 
 function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId) {
-	if (animation[animationId]._currentLayer == 134) {
+	/*if (animation[animationId]._currentLayer == 134) {
 		console.log("bezierCurve " + animation[animationId]._currentLayer)
-	}
+	}*/
 	var newNodes = new Array();
 
 	if (c1.hasOwnProperty('x')) {
@@ -40,9 +40,9 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 	var timeTick;
 	var oneMinusT;
 	var currentFrame = fromT;
-	if (animation[animationId]._currentLayer == 134) {
+	/*if (animation[animationId]._currentLayer == 134) {
 		console.log("coord--------------- " +  p1[0] + "," + p1[1] + " t:" + fromT);
-	}
+	}*/
 	for (var i = 1; i < frames; i++) {
 		timeTick = i / frames;
 		oneMinusT = (1 - timeTick);
@@ -67,9 +67,9 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 			for (var j = 0; j < p1.length; j++) {
 				newNodes[newNodes.length - 1].s.push({"i":[], "o":[], "v":[]});
 				for (var k = 0; k < p1[j].i.length; k++) {
-					if (animation[animationId]._currentLayer == 134) {
+					/*if (animation[animationId]._currentLayer == 134) {
 						console.log("coord2 orig " + p1[j].i[k][0] + ", " + p2[j].i[k][0] + currentFrame);
-					}
+					}*/
 
 					newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push([
 						(Math.pow(oneMinusT, 3) * p1[j].i[k][0]) + 
@@ -104,9 +104,9 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].v[k][1])) +
 						(Math.pow(timeTick, 3) * p2[j].v[k][1])]);
 						
-					if (animation[animationId]._currentLayer == 134) {
+					/*if (animation[animationId]._currentLayer == 134) {
 						console.log("coord2 " + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i[k][0] + "," + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v[k][0] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
-					}
+					}*/
 				}
 			}
 			if (animation[animationId]._currentLayer == 134) {
@@ -119,9 +119,9 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 		}
 	}
 	//console.log("done !");
-	if (animation[animationId]._currentLayer == 134) {
+	/*if (animation[animationId]._currentLayer == 134) {
 		console.log("coord--------------- " +  p1[0] + "," + p1[1] + " t:" + toT);
-	}
+	}*/
 
 	return newNodes;
 }
@@ -433,17 +433,34 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 
 	}
 
-	if (! currentObj[refKey].x.k.length > 1) {
+	if (! Array.isArray(currentObj[refKey].x.k)) {
+		console.log("found");
 		for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
-			currentObj[refKey].k.push({"i":[0, currentObj[refKey].y.k[i].i[1], 0], "o":[0, currentObj[refKey].y.k[i].o[1], 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+			//currentObj[refKey].k.push({"i":[0, currentObj[refKey].y.k[i]['i'].y[0], 0], "o":[0, currentObj[refKey].y.k[i].o.y[0], 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+			console.log(i);
+			if (currentObj[refKey].y.k[i].hasOwnProperty("s")) {
+				currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
+			}
 		}
+		
+		for (var i = 0; i < currentObj[refKey].k.length; i++) {
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+		}
+
 		return currentObj;
 	}
 
-	if (! currentObj[refKey].y.k.length > 1) {
+	if (! currentObj[refKey].y.k.isArray) {
 		for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
-			currentObj[refKey].k.push({"i":[currentObj[refKey].x.k[i].i[0], 0, 0], "o":[currentObj[refKey].x.k[i].o[0], 0, 0], "s":[currentObj[refKey].x.k[i].s[0], currentObj[refKey].y.k, 0], "t":currentObj[refKey].x.k[i].t});
+			if (currentObj[refKey].x.k[i].hasOwnProperty("s")) {
+				currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k[i].s[0], currentObj[refKey].y.k, 0], "t":currentObj[refKey].x.k[i].t});
+			}
 		}
+
+		for (var i = 0; i < currentObj[refKey].k.length; i++) {
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+		}
+
 		return currentObj;
 	}
 
@@ -948,6 +965,7 @@ function getLayers(elementId, animationId, elementObj) {
 	var newTranslateGroup;
 	var posX;
 	var posY;
+	var lastMaskId = 0;
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
 		animation[animationId].layerCount++;
 		animation[animationId].layers[i]._layer = animation[animationId].layers[i].ind;
@@ -957,7 +975,9 @@ function getLayers(elementId, animationId, elementObj) {
 		} else {
 			if (animation[animationId].layers[i].td > 0) {
 				newMask = document.createElementNS(xmlns, 'mask');
-				newMask.setAttribute("id", animationId + "_layerMask" + animation[animationId].layers[i].ind);
+				lastMaskId = animationId + "_layerMask" + animation[animationId].layers[i].ind
+				//newMask.setAttribute("id", animationId + "_layerMask" + animation[animationId].layers[i].ind);
+				newMask.setAttribute("id", lastMaskId);
 				newMask.setAttribute("mask-type", "alpha");
 				animation[animationId].defs.prepend(newMask);
 				newLayer = document.createElementNS(xmlns, 'g');
@@ -967,6 +987,9 @@ function getLayers(elementId, animationId, elementObj) {
 				newLayer = document.createElementNS(xmlns, 'g');
 				newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
 				elementObj.prepend(newLayer);
+				if (animation[animationId].layers[i].tt > 0) {
+					animation[animationId].layers[i]._mask = lastMaskId;
+				}
 			}
 			animation[animationId].layers[i]._addedToDom = true;
 			newTranslateGroup = document.createElementNS(xmlns, 'g');
@@ -1018,6 +1041,9 @@ function getLayers(elementId, animationId, elementObj) {
 		animation[animationId].layerCount = animation[animationId].layers[i]._layer;
 		newLayer = document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer);
 		newGroup = document.getElementById(animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
+		if (animation[animationId].layers[i].tt > 0) {
+			newLayer.setAttribute("mask", animation[animationId].layers[i]._mask);
+		}
 		animation[animationId]._currentLayer = animation[animationId].layers[i]._layer;
 		animation[animationId]._currentLayer._inPoint = animation[animationId].layers[i]._inPoint;
 		animation[animationId]._currentLayer._outPoint = animation[animationId].layers[i]._outPoint;
