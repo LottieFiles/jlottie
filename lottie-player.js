@@ -929,12 +929,20 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 	return layerObj;
 }
 
-function resolveParents(animationId, layerId) {
+function resolveParents(animationId, layerId, lastMaskId) {
 	var newGroup;
 	var newTranslateGroup;
 
 	for (var j = 0; j < animation[animationId].layers.length; j++) {
 		if (animation[animationId].layers[j].ind == animation[animationId].layers[layerId].parent) {
+			if (animation[animationId].layers[j].tt > 0) {
+				for (var k = (j - 1); k >= 0; k--) {
+					if (animation[animationId].layers[k].td > 0) {
+						animation[animationId].layers[j]._mask = animationId + "_layerMask" + animation[animationId].layers[k].ind;
+						break;
+					}
+				}
+			}
 			if (! animation[animationId].layers[j]._addedToDom) {
 				resolveParents(animationId, j);
 			}
@@ -942,6 +950,7 @@ function resolveParents(animationId, layerId) {
 			animation[animationId].layers[layerId]._parent = animation[animationId].layers[j]._layer;
 			newLayer = document.createElementNS(xmlns, 'g');
 			newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[layerId]._layer);
+			newLayer.setAttribute("mask", lastMaskId);
 			document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[layerId]._parent).prepend(newLayer);
 			newTranslateGroup = document.createElementNS(xmlns, 'g');
 			newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[layerId]._layer);
@@ -965,7 +974,7 @@ function getLayers(elementId, animationId, elementObj) {
 	var newTranslateGroup;
 	var posX;
 	var posY;
-	var lastMaskId = 0;
+	var lastMaskId = "";
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
 		animation[animationId].layerCount++;
 		animation[animationId].layers[i]._layer = animation[animationId].layers[i].ind;
@@ -974,8 +983,9 @@ function getLayers(elementId, animationId, elementObj) {
 		if (animation[animationId].layers[i].parent > 0) {
 		} else {
 			if (animation[animationId].layers[i].td > 0) {
+				animation[animationId].layers[i]._isMask = true;
 				newMask = document.createElementNS(xmlns, 'mask');
-				lastMaskId = animationId + "_layerMask" + animation[animationId].layers[i].ind
+				lastMaskId = animationId + "_layerMask" + animation[animationId].layers[i].ind;
 				//newMask.setAttribute("id", animationId + "_layerMask" + animation[animationId].layers[i].ind);
 				newMask.setAttribute("id", lastMaskId);
 				newMask.setAttribute("mask-type", "alpha");
@@ -1005,13 +1015,24 @@ function getLayers(elementId, animationId, elementObj) {
 		if (animation[animationId].layers[i].parent > 0) {
 			for (var j = 0; j < animation[animationId].layers.length; j++) {
 				if (animation[animationId].layers[j].ind == animation[animationId].layers[i].parent) {
+					if (animation[animationId].layers[i].tt > 0) {
+						for (var k = (i - 1); k >= 0; k--) {
+							if (animation[animationId].layers[k].td > 0) {
+								animation[animationId].layers[i]._mask = animationId + "_layerMask" + animation[animationId].layers[k].ind;
+								break;
+							}
+						}
+					}
 					animation[animationId].layerCount++;
 					if (! animation[animationId].layers[j]._addedToDom) {
-						resolveParents(animationId, j);
+						resolveParents(animationId, j, lastMaskId);
 					}
 					animation[animationId].layers[i]._parent = animation[animationId].layers[j]._layer;
 					newLayer = document.createElementNS(xmlns, 'g');
 					newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i]._layer);
+					/*if (animation[animationId].layers[i].tt > 0) {
+						newLayer.setAttribute("mask", "url(#" + animation[animationId].layers[i]._mask + ")");
+					}*/
 					document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[i]._parent).prepend(newLayer);
 					newTranslateGroup = document.createElementNS(xmlns, 'g');
 					newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[i]._layer);
@@ -1042,7 +1063,7 @@ function getLayers(elementId, animationId, elementObj) {
 		newLayer = document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer);
 		newGroup = document.getElementById(animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
 		if (animation[animationId].layers[i].tt > 0) {
-			newLayer.setAttribute("mask", animation[animationId].layers[i]._mask);
+			newLayer.setAttribute("mask", "url(#" + animation[animationId].layers[i]._mask + ")");
 		}
 		animation[animationId]._currentLayer = animation[animationId].layers[i]._layer;
 		animation[animationId]._currentLayer._inPoint = animation[animationId].layers[i]._inPoint;
