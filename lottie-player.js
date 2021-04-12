@@ -808,10 +808,13 @@ function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
 	}
 }
 
-function setShapeColors(shapesGroup, colorToSet, animationId, isGradient) {
+function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMasked) {
 	for (var i = 0; i < shapesGroup.length; i++) {
 		if (shapesGroup[i]._isShape && typeof colorToSet !== 'undefined') {
 			document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill", colorToSet);
+			if (isMasked) {
+				document.getElementById(animationId + "_shape" + shapesGroup[i]._shape).setAttribute("fill-opacity", 1);
+			}
 		}
 	}
 }
@@ -865,7 +868,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
 			}
 		}
 	}
-	setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient);
+	setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, layerObj._isMasked);
 	if (stroked) {
 		setShapeStrokes(layerObj.it, currentStroke, animationId);
 	}
@@ -922,7 +925,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup) {
 		}
 		//console.log("leastY " + layerObj._leastY);
 	}
-	setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient);
+	setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, layerObj._isMasked);
 	if (stroked) {
 		setShapeStrokes(layerObj.shapes, currentStroke, animationId);
 	}
@@ -938,7 +941,8 @@ function resolveParents(animationId, layerId, lastMaskId) {
 			if (animation[animationId].layers[j].tt > 0) {
 				for (var k = (j - 1); k >= 0; k--) {
 					if (animation[animationId].layers[k].td > 0) {
-						animation[animationId].layers[j]._mask = animationId + "_layerMask" + animation[animationId].layers[k].ind;
+						animation[animationId].layers[j]._mask = animationId + "_layerMask" + animation[animationId].layers[k].ind;000000000000000000000000000000000000000000000000000000000000000000000
+						animation[animationId].layers[j]._isMasked = true;
 						break;
 					}
 				}
@@ -999,6 +1003,7 @@ function getLayers(elementId, animationId, elementObj) {
 				elementObj.prepend(newLayer);
 				if (animation[animationId].layers[i].tt > 0) {
 					animation[animationId].layers[i]._mask = lastMaskId;
+					animation[animationId].layers[i]._isMasked = true;
 				}
 			}
 			animation[animationId].layers[i]._addedToDom = true;
