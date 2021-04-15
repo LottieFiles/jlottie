@@ -46,7 +46,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 	for (var i = 1; i < frames; i++) {
 		timeTick = i / frames;
 		oneMinusT = (1 - timeTick);
-		newNodes.push({'_comp': 1});
+		newNodes.push({'_comp': 1, "t":0});
 		currentFrame++;
 		newNodes[newNodes.length - 1]._frame = parseInt(currentFrame);
 		newNodes[newNodes.length - 1].t = parseInt(currentFrame);
@@ -106,15 +106,12 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 						(3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].v[k][1])) +
 						(Math.pow(timeTick, 3) * p2[j].v[k][1])]);
 					
-					if (animation[animationId]._currentLayer == 133) {
+					/*if (animation[animationId]._currentLayer == 133) {
 						console.log("coord2 " + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i[k][0] + "," + newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v[k][0] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + newNodes[newNodes.length - 1].t);
-					}
+					}*/
 				}
-				//console.log(newNodes[newNodes.length - 1].t);
+					//console.log(newNodes[newNodes.length - 1].t);
 			//}
-			if (animation[animationId]._currentLayer == 149) {
-				//console.log("coord2 " + newNodes[newNodes.length - 1].s[0] + "," + newNodes[newNodes.length - 1].s[1] + " " + c1.x + "," + c1.y + " " + c2.x + "," + c2.y + " t:" + currentFrame);
-			}
 		}
 			//console.log(p1[0] + " " + newNodes[newNodes.length - 1].s[0]);
 		if (addTransformation && refKey != "ks") {
@@ -374,7 +371,7 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 				if (offsetKeyframeObj[refKey].k[i].o.x < 1) offsetKeyframeObj[refKey].k[i].o.x = 0.0;
 				if (offsetKeyframeObj[refKey].k[i].o.y < 1) offsetKeyframeObj[refKey].k[i].o.y = 0.0;
 			}
-			if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotI) {
+			/*if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotI) {
 				offsetKeyframeObj[refKey].k.splice((i + 1), 0, 
 												bezierCurve(offsetKeyframeObj[refKey].k[i].s,
 															offsetKeyframeObj[refKey].k[i].o,
@@ -421,15 +418,72 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 																)
 												);
 				}
+			}*/
+			var returnedKeyframeObj;
+			if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotI) {
+				returnedKeyframeObj =
+												bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+															offsetKeyframeObj[refKey].k[i].o,
+															offsetKeyframeObj[refKey].k[i + 1].i,
+															p2,
+															offsetKeyframeObj[refKey].k[i].t,
+															offsetKeyframeObj[refKey].k[i + 1].t,
+															isLayer,
+															animationId,
+															refKey,
+															addTransformation,
+															objectId
+															);
+			} else {
+				if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
+					returnedKeyframeObj =
+													bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+																offsetKeyframeObj[refKey].k[i].o,
+																emptyPos,
+																p2,
+																offsetKeyframeObj[refKey].k[i].t,
+																offsetKeyframeObj[refKey].k[i + 1].t,
+																isLayer,
+																animationId,
+																refKey,
+																addTransformation,
+																objectId 
+																);
+				} else {
+					returnedKeyframeObj =
+													bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+																emptyPos,
+																emptyPos,
+																p2,
+																offsetKeyframeObj[refKey].k[i].t,
+																offsetKeyframeObj[refKey].k[i + 1].t,
+																isLayer,
+																animationId,
+																refKey,
+																addTransformation,
+																objectId
+																);
+				}
 			}
-			//console.log("computed");	
+			//console.log("========= " + returnedKeyframeObj[0].t);
+			for (var s = returnedKeyframeObj.length - 1; s >= 0; s--) {
+				offsetKeyframeObj[refKey].k.splice((i + 1), 0, returnedKeyframeObj[s]);
+
+			}
+			if (animation[animationId]._currentLayer == 133) {
+				console.log("returning: " + returnedKeyframeObj.length + "," + offsetKeyframeObj[refKey].k.length);
+			}
+		
+			if (animation[animationId]._currentLayer == 133) {
+				//console.log(" _____ " + offsetKeyframeObj[refKey].k[i + 1].t);	
+			}
 			objLength = offsetKeyframeObj[refKey].k.length;
 			i = (i + (objLength - oldLength));
 			oldLength = objLength;
 		}
 		i = i + 1;
 	}
-	//console.log("DONE offset");
+		//console.log("DONE offset");
 	//addGroupPositionTransform(offsetKeyframeObj[refKey].k[objLength].t, offsetKeyframeObj[refKey].k[objLength].s, isLayer, animationId, refKey, addTransformation);
 	return offsetKeyframeObj;
 }
@@ -605,7 +659,9 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 	if (shapeObj.ks.k.hasOwnProperty('v')) {
 	} else {
 		if (shapeObj.ks.k[0].hasOwnProperty('s')) {
+			console.log("BEFORE " + shapeObj.ks.k.length);
 			shapeObj = extrapolateOffsetKeyframe(shapeObj, "ks", false, animationId, -1, shapeObj);
+			console.log("AFTER " + shapeObj.ks.k.length);
 			var dataString = "";
 			for (var kCount = 0; kCount < shapeObj.ks.k.length; kCount++) {
 				var transforms = getEmptyTransform();
