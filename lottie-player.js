@@ -154,6 +154,9 @@ function lottiemate() {
 				currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
 				currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
 				currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+					currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+				}
 
 				/*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
 					currentObj.style.display = 'block';
@@ -669,6 +672,8 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 				transforms.isTween = true;
 				console.log("frame: " + shapeObj.ks.k[kCount].t + " count: " + kCount);
 				transforms.refObj = animationId + "_shape" + shapeObj._shape;
+				transforms.refObjOther = animationId + "_shape" + shapeObj._shape;
+				//transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
 				transforms = findExistingTransform(transforms, animationId, shapeObj.ks.k[kCount].t);
 				var dataString = "M" + shapeObj.ks.k[kCount].s[0].v[0][0] + "," + shapeObj.ks.k[kCount].s[0].v[0][1];
 				for (var i = 1; i < shapeObj.ks.k[kCount].s[0].v.length; i++) {
