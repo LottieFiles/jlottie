@@ -22,10 +22,12 @@ jobs:
 
     # Runs a set of commands using the runners shell
     #- name: Copy the js files
+    #  run: |
+      
         
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
-        FOLDER: ./examples
+        FOLDER: ./examples ./src
