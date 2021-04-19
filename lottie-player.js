@@ -143,6 +143,9 @@ function lottiemate() {
 	var currentObj;
 	for (var i = 0; i <= animationCount; i++) {
 		if (currentDate - animation[i]._lastTime > animation[i]._frameTime) {
+			if (animation[i]._removed) {
+				continue;
+			}
 			animation[i]._lastTime = currentDate;
 			animation[i]._currentFrame++;
 			if (animation[i]._currentFrame > animation[i]._totalFrames) {
@@ -1343,6 +1346,7 @@ function getLayers(elementId, animationId, elementObj) {
 function buildGraph(elementId, animationId, elementObj) {
 	animation[animationId].shapeCount = 0;
 	animation[animationId].layerCount = 0;
+	animation[animationId]._removed = false;
 	animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
 	animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
 	animation[animationId]._currentFrame = 0;
@@ -1421,48 +1425,65 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
 	http.send();
 }
 
-function processLotties() {
-	var lottieElements = document.getElementsByTagName("lottie-player");
-	var i;
-	for (i = 0; i < lottieElements.length; i++) {
-	
-		var attributes = lottieElements[i].attributes;
-		var j;
+function processLottie(lottieElement) {
+	var autoplay = '';
+	var controls = '';
+	var loop = '';
+	var mode = '';
+	var src = '';
+	var style = '';
+	var elementId = '';
 
-		var autoplay = '';
-		var controls = '';
-		var loop = '';
-		var mode = '';
-		var src = '';
-		var style = '';
-		var elementId = '';
-		for (j = 0; j < attributes.length; j++) {
-			switch (attributes[j].nodeName) {
-				case 'autoplay':
-					break;
-				case 'controls':
-					break;
-				case 'loop':
-					break;
-				case 'mode':
-					break;
-				case 'src':
-					src = attributes[j].nodeValue;
-					break;
-				case 'style':
-					break;
-				case 'id':
-					elementId = attributes[j].nodeValue;
-					break;
+	if (lottieElement.length < 1) {
+		var lottieElements = document.getElementsByTagName("lottie-player");
+		var i;
+		for (i = 0; i < lottieElements.length; i++) {
+		
+			var attributes = lottieElements[i].attributes;
+			var j;
+
+			autoplay = '';
+			controls = '';
+			loop = '';
+			mode = '';
+			src = '';
+			style = '';
+			elementId = '';
+			for (j = 0; j < attributes.length; j++) {
+				switch (attributes[j].nodeName) {
+					case 'autoplay':
+						break;
+					case 'controls':
+						break;
+					case 'loop':
+						break;
+					case 'mode':
+						break;
+					case 'src':
+						src = attributes[j].nodeValue;
+						break;
+					case 'style':
+						break;
+					case 'id':
+						elementId = attributes[j].nodeValue;
+						break;
+				}
 			}
+			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
 		}
-		getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
+	} else {
+		var testElement = document.getElementById(lottieElement);
+		src = testElement.getAttribute("src");
+		elementId = testElement.getAttribute("id");
+		getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, testElement);
+
 	}
+
 	window.requestAnimationFrame(lottiemate);
 }
 
 window.onload = function() {
 	console.log("START");
-	processLotties();
+	processLottie("");
 	console.log("DONE");
 }

@@ -5,6 +5,7 @@
 
 	<body>
 
+		<!--
 		<lottie-player 
 			id="soto" 
 			autoplay 
@@ -15,9 +16,32 @@
 			style="display: inline-block; float: left; border: 1px #000000 solid;" 
 			>
 		</lottie-player>
+		-->
+		
+		<script>
+			var idCount = 0;
+			function loadLottie() {
+				idCount++;
+				var testlot = document.getElementById("testlot");
+				var newDiv = document.createElement("div");
+				testlot.prepend(newDiv);
+				var newLottie = document.createElement("lottie-player");
+				newLottie.setAttribute("id", "testanim" + idCount);
+				newLottie.setAttribute("style", "display: inline-block; float: left; border: 1px #000000 solid;");
+				newLottie.setAttribute("src", document.getElementById("lottieSrc").value);
+				newDiv.prepend(newLottie);
+				processLottie("testanim" + idCount);
+			}
+		</script>
+			
+		<div>
+		<input type="text" id="lottieSrc"></input><button onClick="loadLottie()">Load lottie</button>
+		</div>
+		<br />
 
-
-
+		<div id= "testlot">
+			
+		</div>
 		<!--
 
 		<lottie-player 
