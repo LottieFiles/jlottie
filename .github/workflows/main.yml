@@ -6,8 +6,7 @@ on:
   push:
     branches: [ master ]
 #      paths:
-#      - 'examples/wasm/player.js'
-#      - 'examples/wasm/player.wasm'
+#      - 'src/lottie-player.js'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -24,8 +23,7 @@ jobs:
     # Runs a set of commands using the runners shell
     #- name: Copy the js files
     #  run: |
-    #    cp ./player.js ./examples/wasm/
-    #    cp ./player.wasm ./examples/wasm/
+    #    cp ./src/lottie-player.js ./examples
         
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@releases/v3
