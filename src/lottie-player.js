@@ -1286,7 +1286,7 @@ function getLayers(elementId, animationId, elementObj) {
 			if (animation[animationId].layers[i]._inPoint > 0) {
 				console.log("layer: " + i);
 				//newLayer.style.display = 'none';
-			}	
+			}
 		}
 		if (animation[animationId].layers[i].hasOwnProperty('ks')) {
 			//console.log("layerObj " + animation[animationId].layers[i].ind);
