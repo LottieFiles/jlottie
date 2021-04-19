@@ -152,18 +152,19 @@ function lottiemate() {
 			for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
 				currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
 				currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
-				currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
-				currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
 				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
 					currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+				} else {
+					currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
+					currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
 				}
 
-				/*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
 					currentObj.style.display = 'block';
 				}
 				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
 					currentObj.style.display = 'none';
-				}*/
+				}
 			}	
 		}
 	}
@@ -209,6 +210,89 @@ function findExistingTransform(transforms, animationId, frame) {
 	return transforms;
 }
 
+function stageHide(animationId, refObj, refObjOther, frame) {
+	var found = 0;
+	var transforms;
+	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
+			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].hide = true;
+			found = 1;
+			break;
+		}
+	}
+	if (found == 0) {
+		transforms = getEmptyTransform();
+		transforms.refObj = refObj;
+		transforms.refObjOther = refObjOther;
+		transforms.hide = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	}
+	//return transforms;
+}
+
+function stageShow(animationId, refObj, refObjOther, frame) {
+	var found = 0;
+	var transforms;
+	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
+			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].show = true;
+			found = 1;
+			break;
+		}
+	}
+	if (found == 0) {
+		transforms = getEmptyTransform();
+		transforms.refObj = refObj;
+		transforms.refObjOther = refObjOther;
+		transforms.show = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	}
+	frame = 1;
+	found = 0;
+	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
+			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].hide = true;
+			found = 1;
+			break;
+		}
+	}
+	if (found == 0) {
+		transforms = getEmptyTransform();
+		transforms.refObj = refObj;
+		transforms.refObjOther = refObjOther;
+		transforms.hide = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	}
+	//return transforms;
+}
+
+/*function stageEntryExit(transforms, animationId, frame, isEntry, isLayer) {
+
+	var transforms = getEmptyTransform();
+
+	if (isLayer) {
+		transforms.isLayer = true;
+		//if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
+			transforms.refObj = animationId + "_layerTranslate" + animation[animationId]._currentLayerGroup;
+			transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
+		//} else {
+		//	transforms.refObj = animationId + "_layer" + animation[animationId]._currentLayer;
+		//}
+	} else {
+		transforms.isLayer = false;
+		transforms.refObj = animationId + "_group" + animation[animationId]._currentShapeGroup;
+		transforms.refObjOther = "";
+	}
+
+	transforms = findExistingTransform(transforms, animationId, frame);
+
+	if (isEntry) {
+		if ()
+	} else {
+	}
+
+}*/
+
 function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId) {
 	if (frame < 0 || addTransformation < 1) {
 		return;
@@ -222,17 +306,19 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	if (isLayer) {
 		if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
 			if (animation[animationId]._currentLayerGroup._inPoint >= 0) {
-				transforms.inPoint = animation[animationId]._currentLayerGroup._inPoint;
+				console.log("inpoint");
+				transforms.inPoint = parseInt(animation[animationId]._currentLayerGroup._inPoint);
 			}
 			if (animation[animationId]._currentLayerGroup._outPoint > 0) {
-				transforms.outPoint = animation[animationId]._currentLayerGroup._outPoint;
+				transforms.outPoint = parseInt(animation[animationId]._currentLayerGroup._outPoint);
 			}
 		} else {
 			if (animation[animationId]._currentLayer._inPoint >= 0) {
-				transforms.inPoint = animation[animationId]._currentLayer._inPoint;
+				console.log("inpoint");
+				transforms.inPoint = parseInt(animation[animationId]._currentLayer._inPoint);
 			}
 			if (animation[animationId]._currentLayer._outPoint > 0) {
-				transforms.outPoint = animation[animationId]._currentLayer._outPoint;
+				transforms.outPoint = parseInt(animation[animationId]._currentLayer._outPoint);
 			}
 		}
 	} else {
@@ -254,13 +340,17 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		}
 	}
 
-	if (frame >= transforms.inPoint && frame <= transforms.outPoint) {
+	/*
+	if (frame == transforms.inPoint && transforms.inPoint > 1) {
+		stageClear(transforms, animationId);
+		console.log("show");
 		transforms.show = true;
-		transforms.hide = false;
-	} else {
-		transforms.show = false;
+	}
+	if (frame == transforms.outPoint && transforms.outPoint < animation[animationId].op) {
+		console.log("hide");
 		transforms.hide = true;
 	}
+	*/
 
 	if (isLayer) {
 		transforms.isLayer = true;
@@ -670,7 +760,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 				var transforms = getEmptyTransform();
 				transforms.isLayer = false;
 				transforms.isTween = true;
-				console.log("frame: " + shapeObj.ks.k[kCount].t + " count: " + kCount);
+				//console.log("frame: " + shapeObj.ks.k[kCount].t + " count: " + kCount);
 				transforms.refObj = animationId + "_shape" + shapeObj._shape;
 				transforms.refObjOther = animationId + "_shape" + shapeObj._shape;
 				//transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
@@ -1154,9 +1244,15 @@ function getLayers(elementId, animationId, elementObj) {
 		//console.log("layer ind: " + animation[animationId].layers[i].ind);
 		if (animation[animationId].layers[i].ip >= 0) {
 			animation[animationId].layers[i]._inPoint = animation[animationId].layers[i].ip;
+			if (animation[animationId].layers[i]._inPoint > 1) {
+				//stageShow(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._inPoint));
+			}
 		}
 		if (animation[animationId].layers[i].op > 0) {
 			animation[animationId].layers[i]._outPoint = animation[animationId].layers[i].op;
+			if (animation[animationId].layers[i]._outPoint < animation[animationId]._totalFrames) {
+				//stageHide(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._outPoint));
+			}
 		} else {
 			animation[animationId].layers[i]._outPoint = animation[animationId]._totalFrames;
 		}
