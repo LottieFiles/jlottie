@@ -22,8 +22,8 @@ jobs:
 
     # Runs a set of commands using the runners shell
     #- name: Copy the js files
-    #  run: |
-    #    cp ./src/lottie-player.js ./examples
+    run: |
+        cp ./src/lottie-player.js ./examples
         
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@releases/v3
