@@ -1146,7 +1146,7 @@ function resolveParents(animationId, layerId, lastMaskId) {
 
 			animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[layerId].parent);
 			animation[animationId].layers[j]._childId.push(layerId);
-			animation[animationId].layers[i]._addedToDom = true;
+			animation[animationId].layers[j]._addedToDom = true;
 			return;
 		}
 	}
@@ -1244,7 +1244,7 @@ function getLayers(elementId, animationId, elementObj) {
 		
 					animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[i].parent);
 					animation[animationId].layers[j]._childId.push(i);
-					animation[animationId].layers[i]._addedToDom = true;
+					animation[animationId].layers[j]._addedToDom = true;
 				}
 			}
 		}
