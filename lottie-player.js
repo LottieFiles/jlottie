@@ -162,12 +162,14 @@ function lottiemate() {
 					currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
 				}
 
+				/*
 				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
 					currentObj.style.display = 'block';
 				}
 				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
 					currentObj.style.display = 'none';
 				}
+				*/
 			}	
 		}
 	}
@@ -1009,7 +1011,11 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
 				layerObj.it[i]._trIndex = i;
 				if (layerObj.it[i].p.hasOwnProperty('k')) {
 					if (layerObj.it[i].p.k.length > 1) {
-						document.getElementById(refGroup).setAttribute("transform", "matrix(1,0,0,1," + layerObj.it[i].p.k[0] + "," + layerObj.it[i].p.k[1] + ")");
+						if (layerObj.it[i].hasOwnProperty('a')) {
+							document.getElementById(refGroup).setAttribute("transform", "matrix(1,0,0,1," + (layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]) + "," + (layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]) + ")");
+						} else {
+							document.getElementById(refGroup).setAttribute("transform", "matrix(1,0,0,1," + layerObj.it[i].p.k[0] + "," + layerObj.it[i].p.k[1] + ")");					
+						}
 					}
 				}
 				/*if (layerObj.it[i]._startI) {
@@ -1308,9 +1314,20 @@ function getLayers(elementId, animationId, elementObj) {
 					if (animation[animationId].layers[i].ks.p.k.length > 1) {
 						if (animation[animationId].layers[i].ks.p.k[0].hasOwnProperty("s")) {
 						} else {
-							posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId]._boundingX;
-							posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId]._boundingY;
+							if (animation[animationId].layers[i]._anchorX != 0) {
+								posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId].layers[i]._anchorX;
+							} else {
+								posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId]._boundingX;
+							}
+							if (animation[animationId].layers[i]._anchorY != 0) {
+								posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId].layers[i]._anchorY;
+							} else {
+								posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId]._boundingY;
+							}
+							
 							document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
+							animation[animationId].layers[i]._posX = posX;
+							animation[animationId].layers[i]._posY = posY;
 						}
 					}
 				}
