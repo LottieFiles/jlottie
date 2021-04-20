@@ -761,7 +761,13 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 			shapeObj = extrapolateOffsetKeyframe(shapeObj, "ks", false, animationId, -1, shapeObj);
 			console.log("AFTER " + shapeObj.ks.k.length);
 			var dataString = "";
-			for (var kCount = 0; kCount < shapeObj.ks.k.length; kCount++) {
+			var totalK;
+			if (shapeObj.ks.k[shapeObj.ks.k.length - 1].hasOwnProperty("s")) {
+				totalK = shapeObj.ks.k.length;
+			} else {
+				totalK = shapeObj.ks.k.length - 1;
+			}
+			for (var kCount = 0; kCount < totalK; kCount++) {
 				var transforms = getEmptyTransform();
 				transforms.isLayer = false;
 				transforms.isTween = true;
@@ -774,7 +780,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 				for (var i = 1; i < shapeObj.ks.k[kCount].s[0].v.length; i++) {
 					dataString = dataString + " C" + (shapeObj.ks.k[kCount].s[0].v[i - 1][0] + shapeObj.ks.k[kCount].s[0].o[i - 1][0]) + "," + (shapeObj.ks.k[kCount].s[0].v[i - 1][1] + shapeObj.ks.k[kCount].s[0].o[i - 1][1]) + " " + (shapeObj.ks.k[kCount].s[0].v[i][0] + shapeObj.ks.k[kCount].s[0].i[i][0]) + "," + (shapeObj.ks.k[kCount].s[0].v[i][1] + shapeObj.ks.k[kCount].s[0].i[i][1]) + " " + shapeObj.ks.k[kCount].s[0].v[i][0] + "," + shapeObj.ks.k[kCount].s[0].v[i][1];
 				}
-				if (shapeObj.ks.k[kCount].c) {
+				if (shapeObj.ks.k[0].s[0].c) {
 					dataString = dataString + " C" + (shapeObj.ks.k[kCount].s[0].v[shapeObj.ks.k[kCount].s[0].v.length - 1][0] + shapeObj.ks.k[kCount].s[0].o[shapeObj.ks.k[kCount].s[0].v.length - 1][0]) + "," + (shapeObj.ks.k[kCount].s[0].v[shapeObj.ks.k[kCount].s[0].v.length - 1][1] + shapeObj.ks.k[kCount].s[0].o[shapeObj.ks.k[kCount].s[0].v.length - 1][1]) + " " + (shapeObj.ks.k[kCount].s[0].v[0][0] + shapeObj.ks.k[kCount].s[0].i[0][0]) + "," + (shapeObj.ks.k[kCount].s[0].v[0][1] + shapeObj.ks.k[kCount].s[0].i[0][1]) + " " + shapeObj.ks.k[kCount].s[0].v[0][0] + "," + shapeObj.ks.k[kCount].s[0].v[0][1];
 					dataString = dataString + " Z";
 					//newShape.setAttribute("closepath", "1");
@@ -1317,12 +1323,12 @@ function getLayers(elementId, animationId, elementObj) {
 							if (animation[animationId].layers[i]._anchorX != 0) {
 								posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId].layers[i]._anchorX;
 							} else {
-								posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId]._boundingX;
+								posX = animation[animationId].layers[i].ks.p.k[0]; //animation[animationId]._boundingX;
 							}
 							if (animation[animationId].layers[i]._anchorY != 0) {
 								posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId].layers[i]._anchorY;
 							} else {
-								posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId]._boundingY;
+								posY = animation[animationId].layers[i].ks.p.k[1]; //animation[animationId]._boundingY;
 							}
 							
 							document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
