@@ -153,23 +153,23 @@ function lottiemate() {
 			}
 			//window.setTimeout(loadFrame, 1, i, animation[i]._currentFrame);
 			for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-				currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-				currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
-				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-					currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-				} else {
-					currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
-					currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
-				}
-
-				/*
-				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
-					currentObj.style.display = 'block';
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
+					currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+					currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
+					if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+						currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+					} else {
+						currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
+						currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+					}
 				}
 				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
-					currentObj.style.display = 'none';
+					document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'none';
 				}
-				*/
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+					document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'block';
+				}
+				
 			}	
 		}
 	}
@@ -191,6 +191,8 @@ function getEmptyTransform() {
 	transforms.dataString = '';
 	transforms.isTween = false;
 	transforms.tweenShape = "";
+	transforms.refObj = '';
+	transforms.combined = '';
 
 	transforms.translate = '';
 	transforms.rotate = '';
@@ -201,10 +203,26 @@ function getEmptyTransform() {
 	transforms.inPoint = -1;
 	transforms.outPoint = -1;
 	transforms.isLayer = true;
+	transforms.stageObj = '';
+	transforms.isSet = false;
+	return transforms;
+}
+
+function getEmptyStageTransform() {
+	var transforms = {};
+	transforms.stageObj = '';
+	transforms.refObj = '';
+	transforms.hide = false;
+	transforms.show = false;
+	//transforms.stageSequence = true;
 	return transforms;
 }
 
 function findExistingTransform(transforms, animationId, frame) {
+	if (animation[animationId]._scene[parseInt(frame)] === undefined) {
+		console.log(frame);
+		return transforms;
+	}
 	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
 		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == transforms.refObj) {
 			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
@@ -215,88 +233,62 @@ function findExistingTransform(transforms, animationId, frame) {
 	return transforms;
 }
 
-function stageHide(animationId, refObj, refObjOther, frame) {
-	var found = 0;
-	var transforms;
-	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
-		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
-			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].hide = true;
-			found = 1;
-			break;
-		}
-	}
-	if (found == 0) {
-		transforms = getEmptyTransform();
-		transforms.refObj = refObj;
-		transforms.refObjOther = refObjOther;
-		transforms.hide = true;
-		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
-	}
-	//return transforms;
-}
 
-function stageShow(animationId, refObj, refObjOther, frame) {
+function stageSequence(animationId, stageObj, inPoint, outPoint) {
+	var transforms = getEmptyStageTransform();
 	var found = 0;
-	var transforms;
-	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
-		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
-			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].show = true;
-			found = 1;
-			break;
+	if (inPoint > -1) {
+		frame = inPoint;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
 		}
-	}
-	if (found == 0) {
-		transforms = getEmptyTransform();
-		transforms.refObj = refObj;
-		transforms.refObjOther = refObjOther;
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
 		transforms.show = true;
 		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 	}
-	frame = 1;
+
+	transforms = getEmptyStageTransform();
 	found = 0;
-	for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
-		if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == refObj) {
-			transforms = animation[animationId]._scene[parseInt(frame)]._transform[i].hide = true;
-			found = 1;
-			break;
+	if (outPoint > -1) {
+		frame = outPoint;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
 		}
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
+		transforms.hide = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	} else {
+		frame = 0;
 	}
-	if (found == 0) {
-		transforms = getEmptyTransform();
-		transforms.refObj = refObj;
-		transforms.refObjOther = refObjOther;
+
+	transforms = getEmptyStageTransform();
+	found = 0;
+	if (outPoint > -1 && inPoint > 0) {
+		frame = 0;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
+		}
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
 		transforms.hide = true;
 		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 	}
-	//return transforms;
+
 }
-
-/*function stageEntryExit(transforms, animationId, frame, isEntry, isLayer) {
-
-	var transforms = getEmptyTransform();
-
-	if (isLayer) {
-		transforms.isLayer = true;
-		//if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
-			transforms.refObj = animationId + "_layerTranslate" + animation[animationId]._currentLayerGroup;
-			transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
-		//} else {
-		//	transforms.refObj = animationId + "_layer" + animation[animationId]._currentLayer;
-		//}
-	} else {
-		transforms.isLayer = false;
-		transforms.refObj = animationId + "_group" + animation[animationId]._currentShapeGroup;
-		transforms.refObjOther = "";
-	}
-
-	transforms = findExistingTransform(transforms, animationId, frame);
-
-	if (isEntry) {
-		if ()
-	} else {
-	}
-
-}*/
 
 function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId) {
 	if (frame < 0 || addTransformation < 1) {
@@ -417,9 +409,33 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	}
 
 	transforms.combined = transforms.translate + transforms.scale + transforms.rotate;
+	transforms.isSet = true;
 	animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 
 	lastRefObj = transforms.refObj;
+
+	
+	/*
+	if (frame > 0) {
+		//console.log("RESET");
+		transforms.isSet = false;
+		transforms = findExistingTransform(transforms, animationId, 0);
+		if (! transforms.isSet) {
+			var tempRefObj = transforms.refObj;
+			var tempRefObjOther = transforms.refObjOther;
+			transforms = getEmptyTransform();
+			transforms.refObj = tempRefObj;
+			transforms.refObjOther = tempRefObjOther;
+			animation[animationId]._scene[0]._transform.push(transforms);
+		}
+	}
+	*/
+
+	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
+	} else {
+		animation[animationId]._instated[transforms.refObj] = 1;
+		animation[animationId]._scene[0]._transform.push(transforms);
+	}
 }
 
 ///////////// PREP JSON
@@ -600,10 +616,10 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 	}
 
 	if (! Array.isArray(currentObj[refKey].x.k)) {
-		console.log("found");
+		//console.log("found");
 		for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
 			//currentObj[refKey].k.push({"i":[0, currentObj[refKey].y.k[i]['i'].y[0], 0], "o":[0, currentObj[refKey].y.k[i].o.y[0], 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
-			console.log(i);
+			//console.log(i);
 			if (currentObj[refKey].y.k[i].hasOwnProperty("s")) {
 				currentObj[refKey].k.push({"i":[0, 0, 0], "o":[0, 0, 0], "s":[currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0], "t":currentObj[refKey].y.k[i].t});
 			}
@@ -1248,7 +1264,7 @@ function getLayers(elementId, animationId, elementObj) {
 					newGroup.setAttribute("opacity", 1);
 					newTranslateGroup.prepend(newGroup);
 		
-					animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[i].parent);
+					animation[animationId].layers[j]._child.push(animationId + "_layerGroup" + animation[animationId].layers[i].parent);
 					animation[animationId].layers[j]._childId.push(i);
 					animation[animationId].layers[j]._addedToDom = true;
 				}
@@ -1257,20 +1273,29 @@ function getLayers(elementId, animationId, elementObj) {
 	}
 	for (var i = 0; i < animation[animationId].layers.length; i++) {
 		//console.log("layer ind: " + animation[animationId].layers[i].ind);
-		if (animation[animationId].layers[i].ip >= 0) {
+		animation[animationId].layers[i]._inPoint = -1;
+		animation[animationId].layers[i]._outPoint = -1;
+		if (animation[animationId].layers[i].hasOwnProperty("ip") && animation[animationId].layers[i].ip >= 0) {
 			animation[animationId].layers[i]._inPoint = animation[animationId].layers[i].ip;
-			if (animation[animationId].layers[i]._inPoint > 1) {
+			if (animation[animationId].layers[i]._inPoint >= 0) {
+				if (animation[animationId].layers[i]._layer == 60) {
+					console.log("inPoint: " + animation[animationId].layers[i]._inPoint);
+				}
 				//stageShow(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._inPoint));
 			}
 		}
-		if (animation[animationId].layers[i].op > 0) {
+		if (animation[animationId].layers[i].hasOwnProperty("op") && animation[animationId].layers[i].op > 0) {
 			animation[animationId].layers[i]._outPoint = animation[animationId].layers[i].op;
 			if (animation[animationId].layers[i]._outPoint < animation[animationId]._totalFrames) {
+				if (animation[animationId].layers[i]._layer == 60) {
+					console.log("outPoint: " + animation[animationId].layers[i]._outPoint);
+				}
 				//stageHide(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._outPoint));
 			}
 		} else {
 			animation[animationId].layers[i]._outPoint = animation[animationId]._totalFrames;
 		}
+		stageSequence(animationId, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, animation[animationId].layers[i]._inPoint, animation[animationId].layers[i]._outPoint);
 
 		animation[animationId].layerCount = animation[animationId].layers[i]._layer;
 		newLayer = document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer);
@@ -1372,7 +1397,7 @@ function buildGraph(elementId, animationId, elementObj) {
 	animation[animationId]._removed = false;
 	animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
 	animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
-	animation[animationId]._currentFrame = 0;
+	animation[animationId]._currentFrame = -1;
 	animation[animationId]._lastTime = Date.now();
 	elementObj.style.width = animation[animationId].w;
 	elementObj.style.height = animation[animationId].h;
@@ -1412,6 +1437,7 @@ function buildGraph(elementId, animationId, elementObj) {
 	newCompute.style.display = 'none';
 	newLayer.prepend(newCompute);
 	animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(()=>({'_transform':[]}));
+	animation[animationId]._instated = {};
 	getLayers(elementId, animationId, newLayer);
 
 	var clipPath = document.createElementNS(xmlns, 'clipPath');
