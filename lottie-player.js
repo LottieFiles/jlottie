@@ -187,6 +187,11 @@ function getEmptyTransform() {
 	transforms.scaleFactorY = 0;
 	transforms.rotateAngle = 0;
 	transforms.opacityFactor = 0;
+	transforms.anchorX = 0;
+	transforms.anchorY = 0;
+	transforms.paddingX = 0;
+	transforms.paddingY = 0;
+	transforms.isTranslate = false;
 
 	transforms.dataString = '';
 	transforms.isTween = false;
@@ -363,15 +368,22 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		transforms.refObjOther = animationId + "_group" + animation[animationId]._currentShapeGroup;
 	}
 
+	transforms.anchorX = objectId._anchorX;
+	transforms.anchorY = objectId._anchorY;
 
 
 	transforms = findExistingTransform(transforms, animationId, frame);
 
+
 	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
 	} else {
 		animation[animationId]._objSize[transforms.refObj] = new Array();
+		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width - objectId._anchorX;
+		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
 		animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width;
 		animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height;
+		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).width;
+		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).height;
 	}
 
 	//var found = 0;
@@ -397,23 +409,31 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		if (position.length > 1) {
 			transforms.scaleFactorY = transforms.scaleFactorY + position[1];
 			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
-			paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
-			paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100));
+			transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
+			transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100));
+			transforms.anchorX = transforms.anchorX * (transforms.scaleFactorX / 100);
+			transforms.anchorY = transforms.anchorY * (transforms.scaleFactorY / 100);
 			//transforms.translateX = transforms.translateX + (paddingX / 2);
 			//transforms.translateY = transforms.translateY + (paddingY / 2);
 		} else {
 			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ') ';
-			paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
-			paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100));
+			transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
+			transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100));
+			transforms.anchorX = transforms.anchorX * (transforms.scaleFactorX / 100);
+			transforms.anchorY = transforms.anchorY * (transforms.scaleFactorX / 100);
 			//transforms.translateX = transforms.translateX + (paddingX / 2);
 			//transforms.translateY = transforms.translateY + (paddingY / 2);
 		}
+		/*
 		transforms.translateX = transforms.translateX + paddingX;
 		transforms.translateY = transforms.translateY + paddingY;
 		transforms.translate = 'translate(' + (transforms.translateX) + ',' + (transforms.translateY) + ') ';
+		*/
 		if (animation[animationId]._currentLayerGroup == 116 || animation[animationId]._currentLayerGroup == 117) {
-			console.log("padding: " + paddingX + ", " + paddingY);
+			console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY);
 		}
+		//transforms.translate = 'translate(' + (transforms.translateX - transforms.anchorX) + ',' + (transforms.translateY - transforms.anchorY) + ') ';
+		
 	//transforms.translate = 'translate(' + (transforms.translateX - objectId._anchorX) + ',' + (transforms.translateY - objectId._anchorY) + ') ';
 		
 		//document.getElementById(transforms.refObj).style.paddingLeft = paddingX / 2;
@@ -434,7 +454,12 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 			//transforms.translateY = transforms.translateY + objectId._anchorY;
 			transforms.translateY = transforms.translateY + posY;
 		}
-		transforms.translate = 'translate(' + (transforms.translateX - objectId._anchorX) + ',' + (transforms.translateY - objectId._anchorY) + ') ';
+		transforms.translate = 'translate(' + ((transforms.translateX - transforms.anchorX) + transforms.paddingX) + ',' + ((transforms.translateY - transforms.anchorY) + transforms.paddingY) + ') ';
+		transforms.isTranslate = true;
+	}
+
+	if (! transforms.isTranslate) {
+		transforms.translate = 'translate(' + transforms.paddingX + ',' + transforms.paddingY + ') ';
 	}
 
 	if (refKey == 'o') {
@@ -471,7 +496,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		animation[animationId]._scene[0]._transform.push(transforms);
 	}
 
-}
+} 
 
 ///////////// PREP JSON
 
