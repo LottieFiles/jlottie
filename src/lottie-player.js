@@ -191,6 +191,8 @@ function getEmptyTransform() {
 	transforms.anchorY = 0;
 	transforms.paddingX = 0;
 	transforms.paddingY = 0;
+	transforms.paddingAnchorX = 0;
+	transforms.paddingAnchorY = 0;
 	transforms.isTranslate = false;
 
 	transforms.dataString = '';
@@ -199,7 +201,7 @@ function getEmptyTransform() {
 	transforms.refObj = '';
 	transforms.combined = '';
 
-	transforms.translate = '';
+	transforms.translate = ''; 
 	transforms.rotate = '';
 	transforms.scale = '';
 	transforms.opacity = 1;
@@ -370,7 +372,8 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 
 	transforms.anchorX = objectId._anchorX;
 	transforms.anchorY = objectId._anchorY;
-
+	//transforms.paddingAnchorX = transforms.anchorX;
+	//transforms.paddingAnchorY = transforms.anchorY;
 
 	transforms = findExistingTransform(transforms, animationId, frame);
 
@@ -382,8 +385,13 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
 		animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width;
 		animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height;
+		//animation[animationId]._objSize[transforms.refObj][2] = object 
+		//animation[animationId]._objSize[transforms.refObj][3] =
 		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).width;
 		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).height;
+		if (animation[animationId]._currentLayerGroup == 116 || animation[animationId]._currentLayerGroup == 117) {
+			console.log("ORIGINAL: " + animation[animationId]._objSize[transforms.refObj][0] + ", " + animation[animationId]._objSize[transforms.refObj][1] + " // " + transforms.anchorX + ", " + transforms.anchorY);
+		}
 	}
 
 	//var found = 0;
@@ -409,18 +417,20 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		if (position.length > 1) {
 			transforms.scaleFactorY = transforms.scaleFactorY + position[1];
 			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
-			transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
-			transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100));
-			transforms.anchorX = transforms.anchorX * (transforms.scaleFactorX / 100);
-			transforms.anchorY = transforms.anchorY * (transforms.scaleFactorY / 100);
+			transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
+			transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
+			transforms.paddingAnchorX = transforms.anchorX - (transforms.anchorX * (transforms.scaleFactorX / 100));
+			transforms.paddingAnchorY = transforms.anchorY - (transforms.anchorY * (transforms.scaleFactorY / 100));
 			//transforms.translateX = transforms.translateX + (paddingX / 2);
 			//transforms.translateY = transforms.translateY + (paddingY / 2);
 		} else {
 			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ') ';
-			transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
-			transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100));
-			transforms.anchorX = transforms.anchorX * (transforms.scaleFactorX / 100);
-			transforms.anchorY = transforms.anchorY * (transforms.scaleFactorX / 100);
+			//transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
+			//transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100));
+			transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
+			transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100)));
+			transforms.paddingAnchorX = transforms.anchorX - (transforms.anchorX * (transforms.scaleFactorX / 100));
+			transforms.paddingAnchorY = transforms.anchorY - (transforms.anchorY * (transforms.scaleFactorX / 100));
 			//transforms.translateX = transforms.translateX + (paddingX / 2);
 			//transforms.translateY = transforms.translateY + (paddingY / 2);
 		}
@@ -430,7 +440,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		transforms.translate = 'translate(' + (transforms.translateX) + ',' + (transforms.translateY) + ') ';
 		*/
 		if (animation[animationId]._currentLayerGroup == 116 || animation[animationId]._currentLayerGroup == 117) {
-			console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY);
+			console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY + " -- " + transforms.paddingAnchorX + ", " + transforms.paddingAnchorY);
 		}
 		//transforms.translate = 'translate(' + (transforms.translateX - transforms.anchorX) + ',' + (transforms.translateY - transforms.anchorY) + ') ';
 		
@@ -454,12 +464,16 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 			//transforms.translateY = transforms.translateY + objectId._anchorY;
 			transforms.translateY = transforms.translateY + posY;
 		}
-		transforms.translate = 'translate(' + ((transforms.translateX - transforms.anchorX) + transforms.paddingX) + ',' + ((transforms.translateY - transforms.anchorY) + transforms.paddingY) + ') ';
+		//transforms.translate = 'translate(' + ((transforms.translateX - (transforms.anchorX - transforms.paddingAnchorX)) + transforms.paddingX) + ',' + ((transforms.translateY - (transforms.anchorY - transforms.paddingAnchorX)) + transforms.paddingY) + ') ';
+		//transforms.translate = 'translate(' + ((transforms.translateX - (transforms.anchorX - transforms.paddingAnchorX)) + transforms.paddingX) + ',' + ((transforms.translateY - (transforms.anchorY - transforms.paddingAnchorX)) + transforms.paddingY) + ') ';
+		transforms.translate = 'translate(' + (transforms.translateX - transforms.anchorX) + ',' + (transforms.translateY - transforms.anchorY) + ') ';
 		transforms.isTranslate = true;
 	}
 
 	if (! transforms.isTranslate) {
-		transforms.translate = 'translate(' + transforms.paddingX + ',' + transforms.paddingY + ') ';
+		//transforms.translate = 'translate(' + (transforms.paddingX - transforms.paddingAnchorX) + ',' + (transforms.paddingY - transforms.paddingAnchorY) + ') ';
+		//transforms.translate = 'translate(' + (transforms.paddingAnchorX - transforms.paddingX) + ',' + (transforms.paddingAnchorY - transforms.paddingY) + ') ';
+		transforms.translate = 'translate(' + (transforms.paddingX) + ',' + (transforms.paddingY) + ') ';
 	}
 
 	if (refKey == 'o') {
@@ -1365,6 +1379,9 @@ function getLayers(elementId, animationId, elementObj) {
 		}
 		if (animation[animationId].layers[i].hasOwnProperty("op") && animation[animationId].layers[i].op > 0) {
 			animation[animationId].layers[i]._outPoint = animation[animationId].layers[i].op;
+			if (animation[animationId].layers[i]._outPoint > animation[animationId]._totalFrames) {
+				animation[animationId].layers[i]._outPoint = animation[animationId]._totalFrames;
+			}
 			if (animation[animationId].layers[i]._outPoint < animation[animationId]._totalFrames) {
 				if (animation[animationId].layers[i]._layer == 60) {
 					console.log("outPoint: " + animation[animationId].layers[i]._outPoint);
