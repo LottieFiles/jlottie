@@ -429,8 +429,8 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
 		//transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
 		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
-		transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
-		transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
+		transforms.paddingX = ((transforms.anchorX - tempBoundingW) * currentScaleX) + (tempBoundingW * currentScaleX);
+		transforms.paddingY = ((transforms.anchorY - tempBoundingH) * currentScaleY) + (tempBoundingH * currentScaleY);
 		transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
 		transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
 		//transforms.translateX = transforms.translateX + (paddingX / 2);
