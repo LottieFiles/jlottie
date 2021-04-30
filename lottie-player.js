@@ -414,26 +414,29 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		//tempBoundingH = document.getElementById(transforms.refObj).getBoundingClientRect().height;
 		tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
 		tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
+		var currentScaleX;
+		var currentScaleY;
 		if (position.length > 1) {
 			transforms.scaleFactorY = transforms.scaleFactorY + position[1];
-			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
-			transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
-			transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
-			transforms.paddingAnchorX = transforms.anchorX - (transforms.anchorX * (transforms.scaleFactorX / 100));
-			transforms.paddingAnchorY = transforms.anchorY - (transforms.anchorY * (transforms.scaleFactorY / 100));
-			//transforms.translateX = transforms.translateX + (paddingX / 2);
-			//transforms.translateY = transforms.translateY + (paddingY / 2);
+			currentScaleX = 1 - (transforms.scaleFactorX / 100);
+			currentScaleY = 1 - (transforms.scaleFactorY / 100);
 		} else {
-			transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ') ';
-			//transforms.paddingX = tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100));
-			//transforms.paddingY = tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100));
-			transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
-			transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorX / 100)));
-			transforms.paddingAnchorX = transforms.anchorX - (transforms.anchorX * (transforms.scaleFactorX / 100));
-			transforms.paddingAnchorY = transforms.anchorY - (transforms.anchorY * (transforms.scaleFactorX / 100));
-			//transforms.translateX = transforms.translateX + (paddingX / 2);
-			//transforms.translateY = transforms.translateY + (paddingY / 2);
+			currentScaleX = 1 - (transforms.scaleFactorX / 100);
+			currentScaleY = 1 - (transforms.scaleFactorX / 100);
 		}
+		transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
+		//transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
+		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
+		//transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
+		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
+		transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
+		transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
+		transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
+		transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
+		//transforms.translateX = transforms.translateX + (paddingX / 2);
+		//transforms.translateY = transforms.translateY + (paddingY / 2);
+
+
 		/*
 		transforms.translateX = transforms.translateX + paddingX;
 		transforms.translateY = transforms.translateY + paddingY;
