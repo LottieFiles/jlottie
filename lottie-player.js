@@ -2,7 +2,7 @@ const xmlns = "http://www.w3.org/2000/svg";
 
 ///////////// BEZIER
 
-function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId) {
+function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth) {
 	/*if (animation[animationId]._currentLayer == 134) {
 		console.log("bezierCurve " + animation[animationId]._currentLayer)
 	}*/
@@ -115,7 +115,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 		}
 			//console.log(p1[0] + " " + newNodes[newNodes.length - 1].s[0]);
 		if (addTransformation && refKey != "ks") {
-			addGroupPositionTransform(currentFrame, newNodes[newNodes.length - 1].s, isLayer, animationId, refKey, addTransformation, objectId);
+			addGroupPositionTransform(currentFrame, newNodes[newNodes.length - 1].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
 		}
 	}
 
@@ -142,7 +142,7 @@ function lottiemate() {
 	var currentDate = Date.now();
 	var currentObj;
 	for (var i = 0; i <= animationCount; i++) {
-		if (currentDate - animation[i]._lastTime > animation[i]._frameTime) {
+		if (currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
 			if (animation[i]._removed) {
 				continue;
 			}
@@ -242,6 +242,9 @@ function findExistingTransform(transforms, animationId, frame) {
 
 
 function stageSequence(animationId, stageObj, inPoint, outPoint) {
+	if (outPoint > animation[animationId]._totalFrames) {
+		outPoint = animation[animationId]._totalFrames;
+	}
 	var transforms = getEmptyStageTransform();
 	var found = 0;
 	if (inPoint > -1) {
@@ -297,8 +300,11 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
 
 }
 
-function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId) {
+function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId, depth) {
 	if (frame < 0 || addTransformation < 1) {
+		return;
+	}
+	if (frame > animation[animationId]._totalFrames) {
 		return;
 	}
 	//console.log("addgroup " + animationId + " - " + frame);
@@ -359,10 +365,22 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	if (isLayer) {
 		transforms.isLayer = true;
 		//if (animation[animationId].hasOwnProperty("_currentLayerGroup")) {
-			transforms.refObj = animationId + "_layerTranslate" + animation[animationId]._currentLayerGroup;
-			transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
+			/*
+			if (objectId.td > 0) {
+				transforms.refObj = animationId + "_" + depth + "_layerGroup" + animation[animationId]._currentLayerGroup;
+			} else {
+				transforms.refObj = animationId + "_" + depth + "_layerTranslate" + animation[animationId]._currentLayerGroup;
+			}
+			transforms.refObjOther = animationId + "_" + depth + "_layerGroup" + animation[animationId]._currentLayerGroup;
+			*/
+			if (objectId.td > 0) {
+				transforms.refObj = animationId + "_" + depth + "_layerGroup" + objectId._layer;
+			} else {
+				transforms.refObj = animationId + "_" + depth + "_layerTranslate" + objectId._layer;
+			}
+			transforms.refObjOther = animationId + "_" + depth + "_layerGroup" + objectId._layer;
 		//} else {
-		//	transforms.refObj = animationId + "_layer" + animation[animationId]._currentLayer;
+		//	transforms.refObj = animationId + "_" + depth + "_layer" + animation[animationId]._currentLayer;
 		//}
 	} else {
 		transforms.isLayer = false;
@@ -389,9 +407,9 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		//animation[animationId]._objSize[transforms.refObj][3] =
 		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).width;
 		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).height;
-		if (animation[animationId]._currentLayerGroup == 116 || animation[animationId]._currentLayerGroup == 117) {
-			console.log("ORIGINAL: " + animation[animationId]._objSize[transforms.refObj][0] + ", " + animation[animationId]._objSize[transforms.refObj][1] + " // " + transforms.anchorX + ", " + transforms.anchorY);
-		}
+	}
+	if (objectId._layer == 3) {
+		console.log("ORIGINAL: " + animation[animationId]._objSize[transforms.refObj][0] + ", " + animation[animationId]._objSize[transforms.refObj][1] + " // " + transforms.anchorX + ", " + transforms.anchorY);
 	}
 
 	//var found = 0;
@@ -442,9 +460,6 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 		transforms.translateY = transforms.translateY + paddingY;
 		transforms.translate = 'translate(' + (transforms.translateX) + ',' + (transforms.translateY) + ') ';
 		*/
-		if (animation[animationId]._currentLayerGroup == 116 || animation[animationId]._currentLayerGroup == 117) {
-			console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY + " -- " + transforms.paddingAnchorX + ", " + transforms.paddingAnchorY);
-		}
 		//transforms.translate = 'translate(' + (transforms.translateX - transforms.anchorX) + ',' + (transforms.translateY - transforms.anchorY) + ') ';
 		
 	//transforms.translate = 'translate(' + (transforms.translateX - objectId._anchorX) + ',' + (transforms.translateY - objectId._anchorY) + ') ';
@@ -490,6 +505,11 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 
 	lastRefObj = transforms.refObj;
 
+
+	if (objectId._layer == 1) {
+		console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY + " -- " + transforms.paddingAnchorX + ", " + transforms.paddingAnchorY);
+	}
+
 	
 	/*
 	if (frame > 0) {
@@ -522,7 +542,7 @@ function extrapolateValueKeyframe(valueKeyframeObj) {
 	return valueKeyframeObj;
 }
 
-function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animationId, addTransformation, objectId) {
+function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
 	//console.log("offset " + animationId);
 	var i = 0;
 	var objLength = offsetKeyframeObj[refKey].k.length;
@@ -543,7 +563,7 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 
 		} else {
 			if (addTransformation > -1) {
-				addGroupPositionTransform(offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+				addGroupPositionTransform(offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
 			}
 			if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
 				p2 = offsetKeyframeObj[refKey].k[i].e;
@@ -623,7 +643,8 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 															animationId,
 															refKey,
 															addTransformation,
-															objectId
+															objectId,
+															depth
 															);
 			} else {
 				if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
@@ -638,7 +659,8 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 																animationId,
 																refKey,
 																addTransformation,
-																objectId 
+																objectId,
+																depth
 																);
 				} else {
 					returnedKeyframeObj =
@@ -652,7 +674,8 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 																animationId,
 																refKey,
 																addTransformation,
-																objectId
+																objectId,
+																depth
 																);
 				}
 			}
@@ -679,15 +702,15 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 	return offsetKeyframeObj;
 }
 
-function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId) {
+function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
 	currentObj[refKey].k = new Array();
 	if (currentObj[refKey].x.k.length > 1) {
-		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "x", isLayer, animationId, false, objectId);
+		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "x", isLayer, animationId, false, objectId, depth);
 	} else {
 
 	}
 	if (currentObj[refKey].y.k.length > 1) {
-		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "y", isLayer, animationId, false, objectId);
+		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "y", isLayer, animationId, false, objectId, depth);
 	} else {
 
 	}
@@ -703,7 +726,7 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 		}
 		
 		for (var i = 0; i < currentObj[refKey].k.length; i++) {
-			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
 		}
 
 		return currentObj;
@@ -717,7 +740,7 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 		}
 
 		for (var i = 0; i < currentObj[refKey].k.length; i++) {
-			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
 		}
 
 		return currentObj;
@@ -759,7 +782,7 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 		}
 
 		for (var i = 0; i < currentObj[refKey].k.length; i++) {
-			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId);
+			addGroupPositionTransform(currentObj[refKey].k[i].t, currentObj[refKey].k[i].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
 		}
 
 		return currentObj;
@@ -768,15 +791,15 @@ function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animati
 	return currentObj;
 }
 
-function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId) {
+function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
 	if (currentObj.hasOwnProperty(refKey)) {
 		if (currentObj[refKey].hasOwnProperty('x') && currentObj[refKey].hasOwnProperty('y')) {
-			currentObj = extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId);
+			currentObj = extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth);
 		}
 		if (currentObj[refKey].hasOwnProperty('k')) {
 			if (currentObj[refKey].k.length > 1) {
 				if (currentObj[refKey].k[0].hasOwnProperty('s')) {
-					currentObj = extrapolateOffsetKeyframe(currentObj, refKey, isLayer, animationId, addTransformation, objectId);
+					currentObj = extrapolateOffsetKeyframe(currentObj, refKey, isLayer, animationId, addTransformation, objectId, depth);
 				}
 			}
 		}
@@ -784,7 +807,7 @@ function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTra
 	return currentObj;
 }
 
-function prepShapeEl(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeEl(shapeObj, referrer, animationId, addTransformation, depth) {
 
 	var newShape = document.createElementNS(xmlns, 'ellipse');
 	newShape.setAttribute("d", dataString);
@@ -797,12 +820,12 @@ function prepShapeEl(shapeObj, referrer, animationId, addTransformation) {
 	return shapeObj;
 }
 
-function prepShapeElKeyframe(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeElKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
 
 	return shapeObj;
 }
 
-function prepShapeSr(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeSr(shapeObj, referrer, animationId, addTransformation, depth) {
 
 	var newShape = document.createElementNS(xmlns, 'path');
 	newShape.setAttribute("d", dataString);
@@ -815,14 +838,15 @@ function prepShapeSr(shapeObj, referrer, animationId, addTransformation) {
 	return shapeObj;
 }
 
-function prepShapeSrKeyframe(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeSrKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
 
 	return shapeObj;
 }
 
-function prepShapeRc(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeRc(shapeObj, referrer, animationId, addTransformation, depth) {
+
 	var newShape = document.createElementNS(xmlns, 'rect');
-	newShape.setAttribute("d", dataString);
+	//newShape.setAttribute("d", dataString);
 	//newShape.setAttribute("stroke", "black");
 	newShape.setAttribute("fill", "transparent");
 
@@ -839,19 +863,19 @@ function prepShapeRc(shapeObj, referrer, animationId, addTransformation) {
 	return shapeObj;
 }
 
-function prepShapeRcKeyframe(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeRcKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
 
 	return shapeObj;
 }
 
-function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
+function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) {
 	//console.log("prep shape");
 	//var newShape = document.createElement('path');
 	if (shapeObj.ks.k.hasOwnProperty('v')) {
 	} else {
 		if (shapeObj.ks.k[0].hasOwnProperty('s')) {
 			console.log("BEFORE " + shapeObj.ks.k.length);
-			shapeObj = extrapolateOffsetKeyframe(shapeObj, "ks", false, animationId, -1, shapeObj);
+			shapeObj = extrapolateOffsetKeyframe(shapeObj, "ks", false, animationId, -1, shapeObj, depth);
 			console.log("AFTER " + shapeObj.ks.k.length);
 			var dataString = "";
 			var totalK;
@@ -867,7 +891,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 				//console.log("frame: " + shapeObj.ks.k[kCount].t + " count: " + kCount);
 				transforms.refObj = animationId + "_shape" + shapeObj._shape;
 				transforms.refObjOther = animationId + "_shape" + shapeObj._shape;
-				//transforms.refObjOther = animationId + "_layerGroup" + animation[animationId]._currentLayerGroup;
+				//transforms.refObjOther = animationId + "_" + depth + "_layerGroup" + animation[animationId]._currentLayerGroup;
 				transforms = findExistingTransform(transforms, animationId, shapeObj.ks.k[kCount].t);
 				var dataString = "M" + shapeObj.ks.k[kCount].s[0].v[0][0] + "," + shapeObj.ks.k[kCount].s[0].v[0][1];
 				for (var i = 1; i < shapeObj.ks.k[kCount].s[0].v.length; i++) {
@@ -890,7 +914,10 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 					referrer.prepend(newShape);
 					shapeObj._isShape = true;
 				}
-
+				
+				if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames) {
+					break;
+				}
 				animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
 			}
 
@@ -918,12 +945,12 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation) {
 	return shapeObj;
 }
 
-function prepShapeShKeyframe(shapeObj, referrer, animationId) {
+function prepShapeShKeyframe(shapeObj, referrer, animationId, depth) {
 
 	return shapeObj;
 }
 
-function prepShape(shapeObj, referrer, animationId, isMasked) {
+function prepShape(shapeObj, referrer, animationId, isMasked, depth) {
 	// first prep the shapes' helpers and transformations
 	/*if (shapeObj.hasOwnProperty('ty')) {
 	} else {
@@ -932,13 +959,13 @@ function prepShape(shapeObj, referrer, animationId, isMasked) {
 
 	if (shapeObj.ty == 'fl') {
 		if (shapeObj.c.k.hasOwnProperty('s')) {
-			shapeObj = getPosition(shapeObj, null, 'c', false, animationId, 3, shapeObj);
+			shapeObj = getPosition(shapeObj, null, 'c', false, animationId, 3, shapeObj, depth);
 		}
 	}
 	if (shapeObj.ty == 'tr') {
 		if (shapeObj.hasOwnProperty('a')) {
 			if (shapeObj.a.k.hasOwnProperty('s')) {
-				shapeObj = getPosition(shapeObj, null, 'a', false, animationId, 2, shapeObj);
+				shapeObj = getPosition(shapeObj, null, 'a', false, animationId, 2, shapeObj, depth);
 				if (shapeObj.a.k[0].t > 0) {
 					shapeObj._startI = true;
 				}
@@ -950,7 +977,7 @@ function prepShape(shapeObj, referrer, animationId, isMasked) {
 		}
 		if (shapeObj.hasOwnProperty('p')) {
 			if (shapeObj.p.k.hasOwnProperty('s')) {
-				shapeObj = getPosition(shapeObj, null, 'p', false, animationId, 2, shapeObj);
+				shapeObj = getPosition(shapeObj, null, 'p', false, animationId, 2, shapeObj, depth);
 				if (shapeObj.p.k[0].t > 0) {
 					shapeObj._startI = true;
 				}
@@ -968,18 +995,18 @@ function prepShape(shapeObj, referrer, animationId, isMasked) {
 	// next prep the shapes' properties
 	if (shapeObj.ty == 'sh') {
 		//console.log("prep shape");
-		if (shapeObj.ks.k.length > 1) {
-			shapeObj = prepShapeShKeyframe(shapeObj, referrer, animationId);
+		if (shapeObj.hasOwnProperty("ks") && shapeObj.ks.k.length > 1) {
+			shapeObj = prepShapeShKeyframe(shapeObj, referrer, animationId, depth);
 		}
-		shapeObj = prepShapeSh(shapeObj, referrer, animationId);
+		shapeObj = prepShapeSh(shapeObj, referrer, animationId, depth);
 	}
 
 	if (shapeObj.ty == 'rc') {
 		//console.log("prep shape");
-		if (shapeObj.ks.k.length > 1) {
-			shapeObj = prepShapeRcKeyframe(shapeObj, referrer, animationId);
+		if (shapeObj.hasOwnProperty("ks") && shapeObj.ks.k.length > 1) {
+			shapeObj = prepShapeRcKeyframe(shapeObj, referrer, animationId, depth);
 		}
-		shapeObj = prepShapeRc(shapeObj, referrer, animationId);
+		shapeObj = prepShapeRc(shapeObj, referrer, animationId, depth);
 	}
 
 	/*
@@ -1103,7 +1130,7 @@ function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMask
 	}
 }
 
-function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked) {
+function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
 	var currentColor;
 	var currentStroke;
 	var stroked = false;
@@ -1121,7 +1148,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
 			newGroup.setAttribute("id", animationId + "_group" + animation[animationId].shapeCount);
 			animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
 			referrer.prepend(newGroup);
-			layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, animationId + "_group" + animation[animationId].shapeCount, isMasked);
+			layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, animationId + "_group" + animation[animationId].shapeCount, isMasked, depth);
 		} else {
 			layerObj.it[i]._shape = animation[animationId].shapeCount;
 			layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
@@ -1166,7 +1193,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
 	return layerObj;
 }
 
-function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked) {
+function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
 	var currentColor;
 	var currentStroke;
 	var stroked = false;
@@ -1185,7 +1212,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
 			newGroup.setAttribute("opacity", 1);
 			animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
 			referrer.prepend(newGroup);
-			layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, animationId + "_group" + animation[animationId].shapeCount, isMasked);
+			layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, animationId + "_group" + animation[animationId].shapeCount, isMasked, depth);
 		} else {
 			layerObj.shapes[i]._shape = animation[animationId].shapeCount;
 			layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
@@ -1193,11 +1220,11 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
 				layerObj.shapes[i]._trIndex = i;
 				if (layerObj.shapes[i].p.hasOwnProperty('k')) {
 					if (layerObj.shapes[i].p.k > 1) {
-						document.getElementById(animationId + "_layerGroup" + layerObj._layer).setAttribute("transform", "matrix(1,0,0,1," + layerObj.shapes[i].p.k[0] + "," + layerObj.shapes[i].p.k[1] + ")");
+						document.getElementById(animationId + "_" + depth + "_layerGroup" + layerObj._layer).setAttribute("transform", "matrix(1,0,0,1," + layerObj.shapes[i].p.k[0] + "," + layerObj.shapes[i].p.k[1] + ")");
 					}
 				}
 				/*if (layerObj.shapes[i]._startI) {
-					document.getElementById(animationId + "_layerGroup" + layerObj._layer).style.display = "none";
+					document.getElementById(animationId + "_" + depth + "_layerGroup" + layerObj._layer).style.display = "none";
 				}*/
 			}
 			if (layerObj.shapes[i].ty == 'fl') {
@@ -1227,50 +1254,66 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
 	return layerObj;
 }
 
-function resolveParents(animationId, layerId, lastMaskId) {
+function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
 	var newGroup;
 	var newTranslateGroup;
 
 	//for (var j = 0; j < animation[animationId].layers.length; j++) {
-	for (var j = 0; j < animation[animationId].layers.length; j++) {
-		if (animation[animationId].layers[j].ind == animation[animationId].layers[layerId].parent) {
-			if (animation[animationId].layers[j].tt > 0) {
+	for (var j = 0; j < passedObj[passedKey].length; j++) {
+		if (passedObj[passedKey][j].ind == passedObj[passedKey][layerId].parent) {
+			if (passedObj[passedKey][j].tt > 0) {
 				for (var k = (j - 1); k >= 0; k--) {
-					if (animation[animationId].layers[k].td > 0) {
-						animation[animationId].layers[j]._mask = "_" + animationId + "_layerMask" + animation[animationId].layers[k].ind;
-						animation[animationId].layers[j]._isMasked = true;
+					if (passedObj[passedKey][k].td > 0) {
+						passedObj[passedKey][j]._mask = "_" + animationId + "_" + depth + "_layerMask" + passedObj[passedKey][k].ind;
+						passedObj[passedKey][j]._isMasked = true;
 						break;
 					}
 				}
 			}
-			if (! animation[animationId].layers[j]._addedToDom) {
-				resolveParents(animationId, j);
+			if (! passedObj[passedKey][j]._addedToDom) {
+				resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
 			}
 			animation[animationId].layerCount++;
-			animation[animationId].layers[layerId]._parent = animation[animationId].layers[j]._layer;
+			passedObj[passedKey][layerId]._parent = passedObj[passedKey][j]._layer;
 			newLayer = document.createElementNS(xmlns, 'g');
-			newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[layerId]._layer);
+			newLayer.setAttribute("id", animationId + "_" + depth + "_layer" + passedObj[passedKey][layerId]._layer);
 			newLayer.setAttribute("mask", lastMaskId);
 			newLayer.setAttribute("opacity", 1);
-			document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[layerId]._parent).prepend(newLayer);
-			newTranslateGroup = document.createElementNS(xmlns, 'g');
-			newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[layerId]._layer);
-			newTranslateGroup.setAttribute("opacity", 1);
-			newLayer.prepend(newTranslateGroup);
-			newGroup = document.createElementNS(xmlns, 'g');
-			newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[layerId]._layer);
-			newGroup.setAttribute("opacity", 1);
-			newTranslateGroup.prepend(newGroup);
+			/*if (passedObj[passedKey][j].td > 0) {
+				document.getElementById(animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][layerId]._parent).prepend(newLayer);
+				newGroup = document.createElementNS(xmlns, 'g');
+				newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][layerId]._layer);
+				newGroup.setAttribute("opacity", 1);
+				newLayer.prepend(newGroup);
+			} else {*/
+				document.getElementById(animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][layerId]._parent).prepend(newLayer);
+				newTranslateGroup = document.createElementNS(xmlns, 'g');
+				newTranslateGroup.setAttribute("id", animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][layerId]._layer);
+				newTranslateGroup.setAttribute("opacity", 1);
+				newLayer.prepend(newTranslateGroup);
+				if (passedObj[passedKey][layerId].w > 0) {
+					newLayer.style.width = passedObj[passedKey][layerId].w;
+				}
+				if (passedObj[passedKey][layerId].h > 0) {
+					newLayer.style.height = passedObj[passedKey][layerId].h;
+				}
+				newGroup = document.createElementNS(xmlns, 'g');
+				newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][layerId]._layer);
+				newGroup.setAttribute("opacity", 1);
+				newTranslateGroup.prepend(newGroup);
+			//}
 
-			animation[animationId].layers[j]._child.push("_layerGroup" + animation[animationId].layers[layerId].parent);
-			animation[animationId].layers[j]._childId.push(layerId);
-			animation[animationId].layers[j]._addedToDom = true;
+			passedObj[passedKey][j]._child.push("_layerGroup" + passedObj[passedKey][layerId].parent);
+			passedObj[passedKey][j]._childId.push(layerId);
+			passedObj[passedKey][j]._addedToDom = true;
 			return;
 		}
 	}
 }
 
-function getLayers(elementId, animationId, elementObj) {
+function getLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
+	animation[animationId].depth++;
+	depth = animation[animationId].depth;
 	var newLayer;
 	var newGroup;
 	var newMask;
@@ -1278,209 +1321,254 @@ function getLayers(elementId, animationId, elementObj) {
 	var posX;
 	var posY;
 	var lastMaskId = "";
-	for (var i = 0; i < animation[animationId].layers.length; i++) {
-	//for (var i = 0; i < animation[animationId].layers.length; i++) {
-		animation[animationId].layerCount++;
-		animation[animationId].layers[i]._layer = animation[animationId].layers[i].ind;
-		animation[animationId].layers[i]._child = new Array();
-		animation[animationId].layers[i]._childId = new Array();
-		if (animation[animationId].layers[i].parent > 0) {
+	for (var i = 0; i < passedObj[passedKey].length; i++) {
+	//for (var i = 0; i < passedObj.layers.length; i++) {
+		passedObj.layerCount++;
+		passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
+		passedObj[passedKey][i]._child = new Array();
+		passedObj[passedKey][i]._childId = new Array();
+		if (passedObj[passedKey][i].parent > 0) {
 		} else {
-			if (animation[animationId].layers[i].td > 0) {
-				animation[animationId].layers[i]._isMask = true;
+			if (passedObj[passedKey][i].td > 0) {
+				passedObj[passedKey][i]._isMask = true;
 				newMask = document.createElementNS(xmlns, 'mask');
-				lastMaskId = "_" + animationId + "_layerMask" + animation[animationId].layers[i].ind;
+				lastMaskId = "_" + animationId + "_" + depth + "_layerMask" + passedObj[passedKey][i].ind;
 				newMask.setAttribute("id", lastMaskId);
 				newMask.setAttribute("mask-type", "alpha");
 				//newMask.setAttribute("maskUnits", "userSpaceOnUse");
 				//newMask.setAttribute("maskContentUnits", "objectBoundingBox");
 				newMask.setAttribute("opacity", 1);
-				animation[animationId].defs.prepend(newMask);
+				passedObj.defs.prepend(newMask);
+				
 				newLayer = document.createElementNS(xmlns, 'g');
-				newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
+				newLayer.setAttribute("id", animationId + "_" + depth + "_layer" + passedObj[passedKey][i].ind);
 				newLayer.setAttribute("style", "display: block;");
 				newLayer.setAttribute("opacity", 1);
 				newMask.prepend(newLayer);
+				
 			} else {
 				newLayer = document.createElementNS(xmlns, 'g');
-				newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i].ind);
+				newLayer.setAttribute("id", animationId + "_" + depth + "_layer" + passedObj[passedKey][i].ind);
 				newLayer.setAttribute("opacity", 1);
 				elementObj.prepend(newLayer);
-				if (animation[animationId].layers[i].tt > 0) {
-					animation[animationId].layers[i]._mask = lastMaskId;
-					animation[animationId].layers[i]._isMasked = true;
+				if (passedObj[passedKey][i].tt > 0) {
+					passedObj[passedKey][i]._mask = lastMaskId;
+					passedObj[passedKey][i]._isMasked = true;
 				}
 			}
-			animation[animationId].layers[i]._addedToDom = true;
+			passedObj[passedKey][i]._addedToDom = true;
 
-			//if (animation[animationId].layers[i].td < 1) {
-				newTranslateGroup = document.createElementNS(xmlns, 'g');
-				newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[i]._layer);
-				newTranslateGroup.setAttribute("opacity", 1);
-				newLayer.prepend(newTranslateGroup);
-				newGroup = document.createElementNS(xmlns, 'g');
-				newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-				newGroup.setAttribute("opacity", 1);
-				newTranslateGroup.prepend(newGroup);
+			//if (passedObj[passedKey][i].td < 1) {
+				/*if (passedObj[passedKey][i].td > 0) {
+					newGroup = document.createElementNS(xmlns, 'g');
+					newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+					newGroup.setAttribute("opacity", 1);
+					newMask.prepend(newGroup);
+				} else {*/
+					newTranslateGroup = document.createElementNS(xmlns, 'g');
+					newTranslateGroup.setAttribute("id", animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][i]._layer);
+					newTranslateGroup.setAttribute("opacity", 1);
+					newLayer.prepend(newTranslateGroup);
+					if (passedObj[passedKey][i].w > 0) {
+						newLayer.style.width = passedObj[passedKey][i].w;
+					}
+					if (passedObj[passedKey][i].h > 0) {
+						newLayer.style.height = passedObj[passedKey][i].h;
+					}
+					newGroup = document.createElementNS(xmlns, 'g');
+					newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+					newGroup.setAttribute("opacity", 1);
+					newTranslateGroup.prepend(newGroup);
+				//}
 			//}
 		}
 	}
-	//for (var i = 0; i < animation[animationId].layers.length; i++) {
-	for (var i = 0; i < animation[animationId].layers.length; i++) {
-		animation[animationId].layerCount = animation[animationId].layers[i]._layer;
-		if (animation[animationId].layers[i].parent > 0) {
-			for (var j = 0; j < animation[animationId].layers.length; j++) {
-				if (animation[animationId].layers[j].ind == animation[animationId].layers[i].parent) {
-					if (animation[animationId].layers[i].tt > 0) {
+	//for (var i = 0; i < passedObj.layers.length; i++) {
+	for (var i = 0; i < passedObj.layers.length; i++) {
+		passedObj.layerCount = passedObj[passedKey][i]._layer;
+		if (passedObj[passedKey][i].parent > 0) {
+			for (var j = 0; j < passedObj.layers.length; j++) {
+				if (passedObj[passedKey][j].ind == passedObj[passedKey][i].parent) {
+					if (passedObj[passedKey][i].tt > 0) {
 						for (var k = (i - 1); k >= 0; k--) {
-							if (animation[animationId].layers[k].td > 0) {
-								animation[animationId].layers[i]._mask = "_" + animationId + "_layerMask" + animation[animationId].layers[k].ind;
+							if (passedObj[passedKey][k].td > 0) {
+								passedObj[passedKey][i]._mask = "_" + animationId + "_" + depth + "_layerMask" + passedObj[passedKey][k].ind;
 								break;
 							}
 						}
 					}
-					animation[animationId].layerCount++;
-					if (! animation[animationId].layers[j]._addedToDom) {
-						resolveParents(animationId, j, lastMaskId);
+					passedObj.layerCount++;
+					if (! passedObj[passedKey][j]._addedToDom) {
+						resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
 					}
-					animation[animationId].layers[i]._parent = animation[animationId].layers[j]._layer;
+					passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
 					newLayer = document.createElementNS(xmlns, 'g');
-					newLayer.setAttribute("id", animationId + "_layer" + animation[animationId].layers[i]._layer);
+					newLayer.setAttribute("id", animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
 					newLayer.setAttribute("opacity", 1);
-					/*if (animation[animationId].layers[i].tt > 0) {
-						newLayer.setAttribute("mask", "url(#" + animation[animationId].layers[i]._mask + ")");
+					/*if (passedObj[passedKey][i].tt > 0) {
+						newLayer.setAttribute("mask", "url(#" + passedObj[passedKey][i]._mask + ")");
 					}*/
-					document.getElementById(animationId + "_layerTranslate" + animation[animationId].layers[i]._parent).prepend(newLayer);
-					newTranslateGroup = document.createElementNS(xmlns, 'g');
-					newTranslateGroup.setAttribute("id", animationId + "_layerTranslate" + animation[animationId].layers[i]._layer);
-					newTranslateGroup.setAttribute("opacity", 1);
-					newLayer.prepend(newTranslateGroup);
-					newGroup = document.createElementNS(xmlns, 'g');
-					newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-					newGroup.setAttribute("opacity", 1);
-					newTranslateGroup.prepend(newGroup);
+					/*if (passedObj[passedKey][i].td > 0) {
+						document.getElementById(animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._parent).prepend(newLayer);
+						newGroup = document.createElementNS(xmlns, 'g');
+						newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+						newGroup.setAttribute("opacity", 1);
+						newLayer.prepend(newGroup);
+					} else {*/
+						document.getElementById(animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][i]._parent).prepend(newLayer);
+						newTranslateGroup = document.createElementNS(xmlns, 'g');
+						newTranslateGroup.setAttribute("id", animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][i]._layer);
+						newTranslateGroup.setAttribute("opacity", 1);
+						newLayer.prepend(newTranslateGroup);
+						if (passedObj[passedKey][i].w > 0) {
+							newLayer.style.width = passedObj[passedKey][i].w;
+						}
+						if (passedObj[passedKey][i].h > 0) {
+							newLayer.style.height = passedObj[passedKey][i].h;
+						}
+						newGroup = document.createElementNS(xmlns, 'g');
+						newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+						newGroup.setAttribute("opacity", 1);
+						newTranslateGroup.prepend(newGroup);
+					//}
 		
-					animation[animationId].layers[j]._child.push(animationId + "_layerGroup" + animation[animationId].layers[i].parent);
-					animation[animationId].layers[j]._childId.push(i);
-					animation[animationId].layers[j]._addedToDom = true;
+					passedObj[passedKey][j]._child.push(animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i].parent);
+					passedObj[passedKey][j]._childId.push(i);
+					passedObj[passedKey][j]._addedToDom = true;
 				}
 			}
 		}
 	}
-	for (var i = 0; i < animation[animationId].layers.length; i++) {
-		//console.log("layer ind: " + animation[animationId].layers[i].ind);
-		animation[animationId].layers[i]._inPoint = -1;
-		animation[animationId].layers[i]._outPoint = -1;
-		if (animation[animationId].layers[i].hasOwnProperty("ip") && animation[animationId].layers[i].ip >= 0) {
-			animation[animationId].layers[i]._inPoint = animation[animationId].layers[i].ip;
-			if (animation[animationId].layers[i]._inPoint >= 0) {
-				if (animation[animationId].layers[i]._layer == 60) {
-					console.log("inPoint: " + animation[animationId].layers[i]._inPoint);
+	for (var i = 0; i < passedObj.layers.length; i++) {
+		//console.log("layer ind: " + passedObj[passedKey][i].ind);
+		passedObj[passedKey][i]._inPoint = -1;
+		passedObj[passedKey][i]._outPoint = -1;
+		if (passedObj[passedKey][i].hasOwnProperty("ip") && passedObj[passedKey][i].ip >= 0) {
+			passedObj[passedKey][i]._inPoint = passedObj[passedKey][i].ip;
+			if (passedObj[passedKey][i]._inPoint >= 0) {
+				if (passedObj[passedKey][i]._layer == 60) {
+					console.log("inPoint: " + passedObj[passedKey][i]._inPoint);
 				}
-				//stageShow(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._inPoint));
+				//stageShow(animationId, animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][i]._layer, animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer, parseInt(passedObj[passedKey][i]._inPoint));
 			}
 		}
-		if (animation[animationId].layers[i].hasOwnProperty("op") && animation[animationId].layers[i].op > 0) {
-			animation[animationId].layers[i]._outPoint = animation[animationId].layers[i].op;
-			if (animation[animationId].layers[i]._outPoint > animation[animationId]._totalFrames) {
-				animation[animationId].layers[i]._outPoint = animation[animationId]._totalFrames;
+		if (passedObj[passedKey][i].hasOwnProperty("op") && passedObj[passedKey][i].op > 0) {
+			passedObj[passedKey][i]._outPoint = passedObj[passedKey][i].op;
+			if (passedObj[passedKey][i]._outPoint > passedObj._totalFrames) {
+				passedObj[passedKey][i]._outPoint = passedObj._totalFrames;
 			}
-			if (animation[animationId].layers[i]._outPoint < animation[animationId]._totalFrames) {
-				if (animation[animationId].layers[i]._layer == 60) {
-					console.log("outPoint: " + animation[animationId].layers[i]._outPoint);
+			if (passedObj[passedKey][i]._outPoint < passedObj._totalFrames) {
+				if (passedObj[passedKey][i]._layer == 60) {
+					console.log("outPoint: " + passedObj[passedKey][i]._outPoint);
 				}
-				//stageHide(animationId, animationId + "_layerTranslate" + animation[animationId].layers[i]._layer, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, parseInt(animation[animationId].layers[i]._outPoint));
+				//stageHide(animationId, animationId + "_" + depth + "_layerTranslate" + passedObj[passedKey][i]._layer, animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer, parseInt(passedObj[passedKey][i]._outPoint));
 			}
 		} else {
-			animation[animationId].layers[i]._outPoint = animation[animationId]._totalFrames;
+			passedObj[passedKey][i]._outPoint = passedObj._totalFrames;
 		}
-		stageSequence(animationId, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, animation[animationId].layers[i]._inPoint, animation[animationId].layers[i]._outPoint);
+		stageSequence(animationId, animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer, passedObj[passedKey][i]._inPoint, passedObj[passedKey][i]._outPoint);
 
-		animation[animationId].layerCount = animation[animationId].layers[i]._layer;
-		newLayer = document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer);
-		newGroup = document.getElementById(animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-		if (animation[animationId].layers[i].tt > 0) {
-			document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer).setAttribute("mask", "url(#" + animation[animationId].layers[i]._mask + ")");
-			document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer).setAttribute("style", "display: block;");
+		passedObj.layerCount = passedObj[passedKey][i]._layer;
+		newLayer = document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
+		newGroup = document.getElementById(animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+		if (passedObj[passedKey][i].tt > 0) {
+			document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer).setAttribute("mask", "url(#" + passedObj[passedKey][i]._mask + ")");
+			document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer).setAttribute("style", "display: block;");
 		}
-		animation[animationId]._currentLayer = animation[animationId].layers[i]._layer;
-		animation[animationId]._currentLayer._inPoint = animation[animationId].layers[i]._inPoint;
-		animation[animationId]._currentLayer._outPoint = animation[animationId].layers[i]._outPoint;
-		if (animation[animationId].layers[i].hasOwnProperty('shapes')) {
+		passedObj._currentLayer = passedObj[passedKey][i]._layer;
+		passedObj._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
+		passedObj._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
+		if (passedObj[passedKey][i].hasOwnProperty('refId')) {
+			var tempRef = -1;
+			for (var m = 0; m < passedObj.assets.length; m++) {
+				if (passedObj.assets[m].id == passedObj[passedKey][i].refId) {
+					tempRef = m;
+					break;
+				}
+			}
+			if (tempRef >= 0) {
+				console.log("comp: " + passedObj[passedKey][i].refId);
+				passedObj.assets[tempRef] = getLayers(elementId, animationId, newGroup, passedObj.assets[tempRef], "layers", depth);
+			}
+		}
+		if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
 			//newGroup = document.createElementNS(xmlns, 'g');
-			//newGroup.setAttribute("id", animationId + "_layerGroup" + animation[animationId].layers[i]._layer);
-			//if (animation[animationId].layers[i]._inPoint > 0) {
-			//	console.log("layergroup: " + i + " " + animation[animationId].layers[i]._inPoint);
+			//newGroup.setAttribute("id", animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer);
+			//if (passedObj[passedKey][i]._inPoint > 0) {
+			//	console.log("layergroup: " + i + " " + passedObj[passedKey][i]._inPoint);
 			//}
-			animation[animationId]._currentLayerGroup = animation[animationId].layers[i]._layer;
-			animation[animationId]._currentLayerGroup._inPoint = animation[animationId].layers[i]._inPoint;
-			animation[animationId]._currentLayerGroup._outPoint = animation[animationId].layers[i]._outPoint;
+			passedObj._currentLayerGroup = passedObj[passedKey][i]._layer;
+			passedObj._currentLayerGroup._inPoint = passedObj[passedKey][i]._inPoint;
+			passedObj._currentLayerGroup._outPoint = passedObj[passedKey][i]._outPoint;
 			//newLayer.prepend(newGroup);
-			animation[animationId].layers[i] = getShapes(elementId, animationId, animation[animationId].layers[i], newGroup, animationId + "_layerGroup" + animation[animationId].layers[i]._layer, animation[animationId].layers[i].td);
-			if (animation[animationId].layers[i].hasOwnProperty('shapes')) {
-				animation[animationId]._boundingX = (newGroup.getBoundingClientRect().width / 2);
-				animation[animationId]._boundingY = (newGroup.getBoundingClientRect().height / 2);
+			passedObj[passedKey][i] = getShapes(elementId, animationId, passedObj[passedKey][i], newGroup, animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer, false, passedObj[passedKey][i].td, depth);
+			if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
+				passedObj._boundingX = (newGroup.getBoundingClientRect().width / 2);
+				passedObj._boundingY = (newGroup.getBoundingClientRect().height / 2);
 			}
 		} else {
-			if (animation[animationId].layers[i]._inPoint > 0) {
+			if (passedObj[passedKey][i]._inPoint > 0) {
 				console.log("layer: " + i);
 				//newLayer.style.display = 'none';
 			}
 		}
-		if (animation[animationId].layers[i].hasOwnProperty('ks')) {
-			//console.log("layerObj " + animation[animationId].layers[i].ind);
-			if (animation[animationId].layers[i].ks.hasOwnProperty('a')) {
-				if (animation[animationId].layers[i].ks.a.hasOwnProperty('k')) {
-					if (animation[animationId].layers[i].ks.a.k.length > 1) {
-						animation[animationId].layers[i]._anchorX = animation[animationId].layers[i].ks.a.k[0];
-						animation[animationId].layers[i]._anchorY = animation[animationId].layers[i].ks.a.k[1];
+		if (passedObj[passedKey][i].hasOwnProperty('ks')) {
+			//console.log("layerObj " + passedObj[passedKey][i].ind);
+			if (passedObj[passedKey][i].ks.hasOwnProperty('a')) {
+				if (passedObj[passedKey][i].ks.a.hasOwnProperty('k')) {
+					if (passedObj[passedKey][i].ks.a.k.length > 1) {
+						passedObj[passedKey][i]._anchorX = passedObj[passedKey][i].ks.a.k[0];
+						passedObj[passedKey][i]._anchorY = passedObj[passedKey][i].ks.a.k[1];
 					}
 				}
 			}
 			
-			if (animation[animationId].layers[i].ks.hasOwnProperty('p')) {
-				animation[animationId].layers[i].ks = getPosition(animation[animationId].layers[i].ks, null, 'p', true, animationId, 1, animation[animationId].layers[i]);
-				if (animation[animationId].layers[i].ks.p.hasOwnProperty('k')) {
-					if (animation[animationId].layers[i].ks.p.k.length > 1) {
-						if (animation[animationId].layers[i].ks.p.k[0].hasOwnProperty("s")) {
+			if (passedObj[passedKey][i].ks.hasOwnProperty('p')) {
+				passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 'p', true, animationId, 1, passedObj[passedKey][i], depth);
+				if (passedObj[passedKey][i].ks.p.hasOwnProperty('k')) {
+					if (passedObj[passedKey][i].ks.p.k.length > 1) {
+						if (passedObj[passedKey][i].ks.p.k[0].hasOwnProperty("s")) {
 						} else {
-							if (animation[animationId].layers[i]._anchorX != 0) {
-								posX = animation[animationId].layers[i].ks.p.k[0] - animation[animationId].layers[i]._anchorX;
+							if (passedObj[passedKey][i]._anchorX != 0) {
+								posX = passedObj[passedKey][i].ks.p.k[0] - passedObj[passedKey][i]._anchorX;
 							} else {
-								posX = animation[animationId].layers[i].ks.p.k[0]; //animation[animationId]._boundingX;
+								posX = passedObj[passedKey][i].ks.p.k[0]; //passedObj._boundingX;
 							}
-							if (animation[animationId].layers[i]._anchorY != 0) {
-								posY = animation[animationId].layers[i].ks.p.k[1] - animation[animationId].layers[i]._anchorY;
+							if (passedObj[passedKey][i]._anchorY != 0) {
+								posY = passedObj[passedKey][i].ks.p.k[1] - passedObj[passedKey][i]._anchorY;
 							} else {
-								posY = animation[animationId].layers[i].ks.p.k[1]; //animation[animationId]._boundingY;
+								posY = passedObj[passedKey][i].ks.p.k[1]; //passedObj._boundingY;
 							}
-							
-							document.getElementById(animationId + "_layer" + animation[animationId].layers[i]._layer).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
-							animation[animationId].layers[i]._posX = posX;
-							animation[animationId].layers[i]._posY = posY;
+							if (passedObj[passedKey][i].td > 0) {
+								document.getElementById(animationId + "_" + depth + "_layerGroup" + passedObj[passedKey][i]._layer).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
+							} else {
+								document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer).setAttribute("transform", "matrix(1,0,0,1," + posX + "," + posY + ")");
+							}
+							passedObj[passedKey][i]._posX = posX;
+							passedObj[passedKey][i]._posY = posY;
 						}
 					}
 				}
 			}
 
-			if (animation[animationId].layers[i].ks.hasOwnProperty('r')) {
-				if (animation[animationId].layers[i].ks.r.k.length > 1) {
-					if (animation[animationId].layers[i].ks.r.k[0].hasOwnProperty("s")) {
-						animation[animationId].layers[i].ks = getPosition(animation[animationId].layers[i].ks, null, 'r', true, animationId, 1, animation[animationId].layers[i]);
+			if (passedObj[passedKey][i].ks.hasOwnProperty('r')) {
+				if (passedObj[passedKey][i].ks.r.k.length > 1) {
+					if (passedObj[passedKey][i].ks.r.k[0].hasOwnProperty("s")) {
+						passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 'r', true, animationId, 1, passedObj[passedKey][i], depth);
 					}
 				}
 			}
-			if (animation[animationId].layers[i].ks.hasOwnProperty('s')) {
-				if (animation[animationId].layers[i].ks.s.k.length > 1) {
-					if (animation[animationId].layers[i].ks.s.k[0].hasOwnProperty("s")) {
-						animation[animationId].layers[i].ks = getPosition(animation[animationId].layers[i].ks, null, 's', true, animationId, 1, animation[animationId].layers[i]);
+			if (passedObj[passedKey][i].ks.hasOwnProperty('s')) {
+				if (passedObj[passedKey][i].ks.s.k.length > 1) {
+					if (passedObj[passedKey][i].ks.s.k[0].hasOwnProperty("s")) {
+						passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 's', true, animationId, 1, passedObj[passedKey][i], depth);
 					}
 				}
 			}
-			if (animation[animationId].layers[i].ks.hasOwnProperty('o')) {
-				if (animation[animationId].layers[i].ks.o.k.length > 1) {
-					if (animation[animationId].layers[i].ks.o.k[0].hasOwnProperty("s")) {
-						animation[animationId].layers[i].ks = getPosition(animation[animationId].layers[i].ks, null, 'o', true, animationId, 1, animation[animationId].layers[i]);
+			if (passedObj[passedKey][i].ks.hasOwnProperty('o')) {
+				if (passedObj[passedKey][i].ks.o.k.length > 1) {
+					if (passedObj[passedKey][i].ks.o.k[0].hasOwnProperty("s")) {
+						passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 'o', true, animationId, 1, passedObj[passedKey][i], depth);
 					}
 				}
 			}
@@ -1488,9 +1576,11 @@ function getLayers(elementId, animationId, elementObj) {
 		}
 	}
 	console.log("DONE");
+	return passedObj;
 }
 
 function buildGraph(elementId, animationId, elementObj) {
+	animation[animationId].depth = 0;
 	animation[animationId].shapeCount = 0;
 	animation[animationId].layerCount = 0;
 	animation[animationId]._removed = false;
@@ -1538,7 +1628,7 @@ function buildGraph(elementId, animationId, elementObj) {
 	animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(()=>({'_transform':[]}));
 	animation[animationId]._instated = {};
 	animation[animationId]._objSize = {};
-	getLayers(elementId, animationId, newLayer);
+	animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], "layers", 0);
 
 	var clipPath = document.createElementNS(xmlns, 'clipPath');
 	clipPath.setAttributeNS(null, "id", "_clip" + animationId);
