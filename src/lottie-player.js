@@ -1416,6 +1416,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 			//}
 		}
 	}
+	/*** Resolution of layer parenting begins ***/
 	//for (var i = 0; i < passedObj.layers.length; i++) {
 	for (var i = 0; i < passedObj.layers.length; i++) {
 		passedObj.layerCount = passedObj[passedKey][i]._layer;
@@ -1472,7 +1473,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 			}
 		}
 	}
-
+	/*** Done resolving layer parenting ***/
 
 	
 	for (var i = 0; i < passedObj.layers.length; i++) {
