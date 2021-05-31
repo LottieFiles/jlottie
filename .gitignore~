@@ -13,8 +13,6 @@ cmake_install.cmake
 
 CMakeSettings.json
 
-.*
-
 dll/
 
 winclude/
