@@ -6,7 +6,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 	/*if (animation[animationId]._currentLayer == 134) {
 		console.log("bezierCurve " + animation[animationId]._currentLayer)
 	}*/
-	var newNodes = new Array();
+	var newNodes = [];
 
 	if (c1.hasOwnProperty('x')) {
 	} else {
@@ -50,7 +50,7 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 		currentFrame++;
 		newNodes[newNodes.length - 1]._frame = parseInt(currentFrame);
 		newNodes[newNodes.length - 1].t = parseInt(currentFrame);
-		newNodes[newNodes.length - 1].s = new Array();
+		newNodes[newNodes.length - 1].s = [];
 		if (refKey != "ks") {
 			newNodes[newNodes.length - 1].s.push((Math.pow(oneMinusT, 3) * p1[0]) + 
 								(3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0])) +
@@ -398,7 +398,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 
 	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
 	} else {
-		animation[animationId]._objSize[transforms.refObj] = new Array();
+		animation[animationId]._objSize[transforms.refObj] = [];
 		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width - objectId._anchorX;
 		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
 		animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width;
@@ -703,7 +703,7 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 }
 
 function extrapolatePathPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
-	currentObj[refKey].k = new Array();
+	currentObj[refKey].k = [];
 	if (currentObj[refKey].x.k.length > 1) {
 		currentObj[refKey] = extrapolateOffsetKeyframe(currentObj[refKey], "x", isLayer, animationId, false, objectId, depth);
 	} else {
@@ -1043,9 +1043,9 @@ function createGradientDef(start, end, opacity, gradient, animationId) {
 	newDef.setAttribute("y2", end.k[1]);
 	animation[animationId].defs.prepend(newDef);
 
-	var offsets = new Array();
-	var styles = new Array();
-	var opacities = new Array();
+	var offsets = [];
+	var styles = [];
+	var opacities = [];
 	for (var i = 0; i < gradient.p; i++) {
 		//var newStop = document.createElementNS(xmlns, 'stop');
 		offsets.push((gradient.k.k[(i * 4) + 0] * 100) + "%");
@@ -1325,8 +1325,8 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 	//for (var i = 0; i < passedObj.layers.length; i++) {
 		passedObj.layerCount++;
 		passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
-		passedObj[passedKey][i]._child = new Array();
-		passedObj[passedKey][i]._childId = new Array();
+		passedObj[passedKey][i]._child = [];
+		passedObj[passedKey][i]._childId = [];
 		if (passedObj[passedKey][i].parent > 0) {
 		} else {
 			if (passedObj[passedKey][i].td > 0) {
@@ -1645,8 +1645,8 @@ function buildGraph(elementId, animationId, elementObj) {
 	//console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
 }
 
-var animation = new Array();
-var frame = new Array();
+var animation = [];
+var frame = [];
 var animationCount = -1;
 var animationLength = 0;
 
