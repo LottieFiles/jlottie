@@ -411,7 +411,6 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 
 	transforms = findExistingTransform(transforms, animationId, frame);
 
-
 	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
 	} else {
 		animation[animationId]._objSize[transforms.refObj] = new Array();
@@ -1522,6 +1521,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 		passedObj[passedKey][i]._currentLayer = passedObj[passedKey][i]._layer;
 		passedObj[passedKey][i]._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
 		passedObj[passedKey][i]._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
+		passedObj[passedKey][i]._primaryLayer = true;
 
 		if (passedObj[passedKey][i].hasOwnProperty('refId')) {
 			var tempRef = -1;
