@@ -1,5 +1,10 @@
 const xmlns = "http://www.w3.org/2000/svg";
 
+var animation = [];
+var frame = [];
+var animationCount = -1;
+var animationLength = 0;
+
 ///////////// BEZIER
 
 function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth) {
@@ -124,17 +129,49 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 
 ///////////// ANIMATOR
 
+function goToAndStop(_frame, isFrame, name) {
+	if (name === undefined) {
+		console.log(animationCount);
+		for (var i = 0; i <= animationCount; i++) {
+			animation[i]._paused = true;
+			loadFrame(i, _frame);
+		}	
+	} else {
+		name = name.replace(/#/g, "");
+		for (var i = 0; i < animationCount; i++) {
+			if (animation[i]._elementId == name) {
+				animation[i]._paused = true;
+				loadFrame(i, _frame);
+				break;
+			}
+		}	
+	}
+}
+
 function loadFrame(i, _currentFrame) {
-	for (var j = 0; j < animation[i]._scene[_currentFrame]._transform.length; j++) {
-		currentObj = document.getElementById(animation[i]._scene[_currentFrame]._transform[j].refObj);
-		currentObj.setAttribute('transform',
-				animation[i]._scene[_currentFrame]._transform[j].translate + 
-				animation[i]._scene[_currentFrame]._transform[j].rotate + 
-				animation[i]._scene[_currentFrame]._transform[j].scale
-			);
-			
-		//currentObj.setAttribute('transform', animation[i]._scene[_currentFrame]._transform[j].combined);
-		currentObj.setAttribute('opacity', animation[i]._scene[_currentFrame]._transform[j].opacity);
+	for (var ref = 0; ref < animation[i]._refObj.length; ref++) {
+		var refObj = animation[i]._refObj[ref];
+		var nextObj = false;
+		//console.log(refObj);
+		for (var m = _currentFrame - 1; m >= 0; m--) {
+			for (var n = 0; n < animation[i]._scene[m]._transform.length; n++) {
+				if (animation[i]._scene[m]._transform[n].refObj == refObj) {
+					currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
+					currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
+					if (animation[i]._scene[m]._transform[n].isTween || animation[i]._scene[m]._transform[n].combined.length > 0) {
+						if (animation[i]._scene[m]._transform[n].isTween) {
+							currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
+						}
+						currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
+						currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
+						nextObj = true;
+						break;
+					}
+				}
+				if (nextObj) break;
+			}
+			if (nextObj) continue;
+		}
 	}
 }
 
@@ -143,7 +180,7 @@ function lottiemate() {
 	var currentObj;
 	for (var i = 0; i <= animationCount; i++) {
 		if (currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
-			if (animation[i]._removed) {
+			if (animation[i]._removed || animation[i]._paused) {
 				continue;
 			}
 			animation[i]._lastTime = currentDate;
@@ -298,6 +335,24 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
 		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 	}
 
+	var lastState = 0;
+	if (frame > 1) {
+		for (var j = 0; j <= animation[animationId]._totalFrames; j++) {
+			for (var i = 0; i < animation[animationId]._scene[j]._transform.length; i++) {
+				if (animation[animationId]._scene[j]._transform[i].stageObj == stageObj) {
+					if (animation[animationId]._scene[j]._transform[i].show) {
+						lastState = 1;
+					}
+					if (animation[animationId]._scene[j]._transform[i].hide) {
+						lastState = 0;
+					}
+					if (lastState == 1) {
+						animation[animationId]._scene[j]._transform[i].show = true;
+					}
+				}
+			}
+		}
+	}
 }
 
 function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId, depth) {
@@ -398,6 +453,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 
 	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
 	} else {
+		animation[animationId]._refObj.push(transforms.refObj);
 		animation[animationId]._objSize[transforms.refObj] = [];
 		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width - objectId._anchorX;
 		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
@@ -697,7 +753,7 @@ function extrapolateOffsetKeyframe(offsetKeyframeObj, refKey, isLayer, animation
 		}
 		i = i + 1;
 	}
-		//console.log("DONE offset");
+	//console.log("DONE offset");
 	//addGroupPositionTransform(offsetKeyframeObj[refKey].k[objLength].t, offsetKeyframeObj[refKey].k[objLength].s, isLayer, animationId, refKey, addTransformation);
 	return offsetKeyframeObj;
 }
@@ -1588,6 +1644,7 @@ function buildGraph(elementId, animationId, elementObj) {
 	animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
 	animation[animationId]._currentFrame = -1;
 	animation[animationId]._lastTime = Date.now();
+	animation[animationId]._paused = false;
 	elementObj.style.width = animation[animationId].w;
 	elementObj.style.height = animation[animationId].h;
 	elementObj.setAttribute("width", animation[animationId].w);
@@ -1627,6 +1684,7 @@ function buildGraph(elementId, animationId, elementObj) {
 	newLayer.prepend(newCompute);
 	animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(()=>({'_transform':[]}));
 	animation[animationId]._instated = {};
+	animation[animationId]._refObj = [];
 	animation[animationId]._objSize = {};
 	animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], "layers", 0);
 
@@ -1645,17 +1703,13 @@ function buildGraph(elementId, animationId, elementObj) {
 	//console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
 }
 
-var animation = [];
-var frame = [];
-var animationCount = -1;
-var animationLength = 0;
-
 function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, elementObj) {
 	var http = new XMLHttpRequest();
 	http.open("GET", src, true);
 	http.onreadystatechange = function() {
 		if (http.readyState == 4 && http.status == 200) {
-			var currentAnimation = ++animationCount;
+			animationCount = animationCount + 1;
+			var currentAnimation = animationCount;
 			animation[currentAnimation] = JSON.parse(http.responseText);
 			animation[currentAnimation]._elementId = elementId;
 			buildGraph(elementId, currentAnimation, elementObj);
@@ -1715,7 +1769,8 @@ function processLottie(lottieElement, JSONsrc) {
 		src = testElement.getAttribute("src");
 		elementId = testElement.getAttribute("id");
 		if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
-			var currentAnimation = ++animationCount;
+			animationCount = animationCount + 1;
+			var currentAnimation = animationCount;
 			animation[currentAnimation] = JSON.parse(http.responseText);
 			animation[currentAnimation]._elementId = elementId;
 			buildGraph(elementId, currentAnimation, testElement);	
