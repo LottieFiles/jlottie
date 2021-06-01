@@ -1664,7 +1664,7 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
 	http.send();
 }
 
-function processLottie(lottieElement) {
+function processLottie(lottieElement, JSONsrc) {
 	var autoplay = '';
 	var controls = '';
 	var loop = '';
@@ -1708,7 +1708,14 @@ function processLottie(lottieElement) {
 						break;
 				}
 			}
-			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
+			if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
+				var currentAnimation = ++animationCount;
+				animation[currentAnimation] = JSON.parse(http.responseText);
+				animation[currentAnimation]._elementId = elementId;
+				buildGraph(elementId, currentAnimation, lottieElements[i]);	
+			} else {
+				getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
+			}
 		}
 	} else {
 		var testElement = document.getElementById(lottieElement);
