@@ -5,7 +5,7 @@
     "https": "^1.0.0"
   },
   "scripts": {
-    "scrap": "node scrap.js",
+    "scrape": "node scrape.js",
     "serve": "http-server ./public -c-1 -a localhost -p 8000",
     "test": "npx folio"
   }
