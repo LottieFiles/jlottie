@@ -2591,6 +2591,13 @@ function getJson(
   http.send();
 }
 
+function loadAnimation(src, elementId) {
+  animation[currentAnimation] = JSON.parse(src);
+  animation[currentAnimation]._elementId = elementId;
+  var elementObj = document.getElementById(elementId);
+  buildGraph(elementId, elementId, elementObj);
+}
+
 function processLottie(lottieElement) {
   var autoplay = "";
   var controls = "";

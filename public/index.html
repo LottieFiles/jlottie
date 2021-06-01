@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <script src="lottie-player.js" type="application/javascript"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie_svg.min.js"
+      integrity="sha512-u1VfZfptvsnaARZGlc9LDazh3ZhH30yjcA75NxOEj5nwZ1O0LEOuck2QMwZpVpuQGVTOIhXTYHFYB+ggEBjhLw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div
+      id="lottiefiles_player_container"
+      class="lottiefiles_player_container"
+      style="
+        border: 1px #000000 solid;
+        height: 300px;
+        width: 300px;
+        margin-bottom: 10px;
+      "
+    ></div>
+    <div
+      id="hernan_player_container"
+      class="hernan_player_container"
+      style="border: 1px #000000 solid; height: 300px; width: 300px"
+    ></div>
+  </body>
+  <script>
+    // get source param
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const src = urlParams.get("src");
+
+    var container = document.getElementById("lottiefiles_player_container");
+    var newLottie = document.createElement("lottie-player");
+    newLottie.setAttribute("id", "testanim" + 0);
+    // newLottie.setAttribute(
+    //   "style",
+    //   "display: inline-block; float: left; border: 1px #000000 solid; height:300px; width:300px;"
+    // );
+    newLottie.setAttribute("loop", false);
+    newLottie.setAttribute("src", "/test_files/" + src);
+    container.appendChild(newLottie);
+
+    var container_2 = document.getElementById("hernan_player_container");
+    lottie.loadAnimation({
+      container: container_2, // the dom element that will contain the animation
+      renderer: "svg",
+      loop: false,
+      autoplay: false,
+      path: "/test_files/" + src,
+    });
+
+    // processLottie("testanim" + 0);
+  </script>
+</html>
