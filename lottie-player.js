@@ -1673,7 +1673,7 @@ function processLottie(lottieElement, JSONsrc) {
 	var style = '';
 	var elementId = '';
 
-	if (lottieElement.length < 1) {
+	if (lottieElement === undefined) {
 		var lottieElements = document.getElementsByTagName("lottie-player");
 		var i;
 		for (i = 0; i < lottieElements.length; i++) {
@@ -1708,20 +1708,20 @@ function processLottie(lottieElement, JSONsrc) {
 						break;
 				}
 			}
-			if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
-				var currentAnimation = ++animationCount;
-				animation[currentAnimation] = JSON.parse(http.responseText);
-				animation[currentAnimation]._elementId = elementId;
-				buildGraph(elementId, currentAnimation, lottieElements[i]);	
-			} else {
-				getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
-			}
+			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
 		}
 	} else {
 		var testElement = document.getElementById(lottieElement);
 		src = testElement.getAttribute("src");
 		elementId = testElement.getAttribute("id");
-		getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, testElement);
+		if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
+			var currentAnimation = ++animationCount;
+			animation[currentAnimation] = JSON.parse(http.responseText);
+			animation[currentAnimation]._elementId = elementId;
+			buildGraph(elementId, currentAnimation, testElement);	
+		} else {
+			getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, testElement);
+		}
 
 	}
 
@@ -1730,6 +1730,6 @@ function processLottie(lottieElement, JSONsrc) {
 
 window.onload = function() {
 	console.log("START");
-	processLottie("");
+	processLottie();
 	console.log("DONE");
 }
