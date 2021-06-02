@@ -4,6 +4,8 @@ var animation = [];
 var frame = [];
 var animationCount = -1;
 var animationLength = 0;
+var animationLoading = 0;
+var frozen = false;
 
 ///////////// BEZIER
 
@@ -162,9 +164,79 @@ function bezierCurve(
   return newNodes;
 }
 
-///////////// ANIMATOR
+///////////// CONTROL
 
-function goToAndStop(_frame, isFrame, name) {
+var jlottie = {};
+
+jlottie.destroy = function (name) {
+  if (animationCount < 0) {
+    return;
+  }
+  if (name === undefined) {
+    var elements = [];
+    for (var i = 0; i <= animationCount; i++) {
+      elements.push(animation[i]._elementId);
+    }
+    animation = [];
+    for (var i = 0; i <= elements; i++) {
+      document.getElementById(elements[i]).innerHTML = "";
+      animationCount = animationCount - 1;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, "");
+    for (var i = 0; i <= animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation.splice(i, 1);
+        document.getElementById(name).innerHTML = "";
+        animationCount = animationCount - 1;
+        break;
+      }
+    }
+  }
+};
+
+jlottie.play = function (name) {
+  if (animationCount < 0) {
+    return;
+  }
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = false;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, "");
+    for (var i = 0; i <= animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation[i]._paused = false;
+        break;
+      }
+    }
+  }
+};
+
+jlottie.stop = function (name) {
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = true;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, "");
+    for (var i = 0; i < animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation[i]._paused = true;
+        break;
+      }
+    }
+  }
+};
+
+jlottie.goToAndStop = function (_frame, isFrame, name) {
+  if (animationCount < 0) {
+    return;
+  }
   if (name === undefined) {
     console.log(animationCount);
     for (var i = 0; i <= animationCount; i++) {
@@ -172,18 +244,73 @@ function goToAndStop(_frame, isFrame, name) {
       loadFrame(i, _frame);
     }
   } else {
+    name.toString();
     name = name.replace(/#/g, "");
     for (var i = 0; i <= animationCount; i++) {
-      if (animation[i]._elementId == name) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
         animation[i]._paused = true;
+        console.log(name + " == " + _frame);
         loadFrame(i, _frame);
         break;
       }
     }
   }
-}
+};
+
+jlottie.loadAnimation = function (obj) {
+  if (
+    obj.container === undefined ||
+    obj.path === undefined ||
+    obj.animationData === undefined
+  ) {
+    return;
+  }
+
+  var autoplay = true;
+  var loop = true;
+
+  if (!(obj.autoplay === undefined)) {
+    if (obj.autoplay === true || obj.autoplay === false) {
+      autoplay = obj.autoplay;
+    }
+  }
+
+  if (!(obj.loop === undefined)) {
+    if (obj.loop === true || obj.loop === false) {
+      loop = obj.loop;
+    }
+  }
+
+  if (!(obj.animationData === undefined) && obj.animationData) {
+    animationCount = animationCount + 1;
+    var currentAnimation = animationCount;
+    animation[currentAnimation] = JSON.parse(http.responseText);
+    animation[currentAnimation]._elementId = elementId;
+    buildGraph(elementId, currentAnimation, obj.container, true, true);
+  } else {
+    if (!(obj.path === undefined) && obj.path) {
+      getJson(
+        src,
+        "",
+        "",
+        "",
+        "",
+        "",
+        obj.container,
+        0,
+        obj.container.id,
+        obj.container,
+        autoplay,
+        loop
+      );
+    }
+  }
+};
+
+///////////// ANIMATOR
 
 function loadFrame(i, _currentFrame) {
+  console.log("=-=" + _currentFrame);
   for (var ref = 0; ref < animation[i]._refObj.length; ref++) {
     var refObj = animation[i]._refObj[ref];
     var nextObj = false;
@@ -236,8 +363,17 @@ function lottiemate() {
       }
       animation[i]._lastTime = currentDate;
       animation[i]._currentFrame++;
-      if (animation[i]._currentFrame > animation[i]._totalFrames) {
+      if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._currentFrame = 0;
+        if (!animation[i]._loop) {
+          animation[i]._paused = true;
+          jlottie.goToAndStop(
+            animation[i]._totalFrames - 1,
+            "",
+            animation[i]._elementId
+          );
+          continue;
+        }
       }
       //window.setTimeout(loadFrame, 1, i, animation[i]._currentFrame);
       for (
@@ -2546,7 +2682,14 @@ function getLayers(
   return passedObj;
 }
 
-function buildGraph(elementId, animationId, elementObj) {
+function buildGraph(
+  elementId,
+  animationId,
+  elementObj,
+  autoplay,
+  loop,
+  customName
+) {
   animation[animationId].depth = 0;
   animation[animationId].shapeCount = 0;
   animation[animationId].layerCount = 0;
@@ -2557,6 +2700,9 @@ function buildGraph(elementId, animationId, elementObj) {
   animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
   animation[animationId]._currentFrame = -1;
   animation[animationId]._lastTime = Date.now();
+  animation[animationId]._autoplay = autoplay;
+  animation[animationId]._loop = loop;
+  animation[animationId]._customName = customName;
   animation[animationId]._paused = false;
   elementObj.style.width = animation[animationId].w;
   elementObj.style.height = animation[animationId].h;
@@ -2629,6 +2775,10 @@ function buildGraph(elementId, animationId, elementObj) {
   //fillScene(elementId, animationId);
   animation[animationId]._buildDone = true;
   //console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
+  animationLoading = animationLoading - 1;
+  if (!animation[animationId]._autoplay) {
+    jlottie.goToAndStop(1, "", animation[animationId]._elementId);
+  }
 }
 
 function getJson(
@@ -2641,7 +2791,9 @@ function getJson(
   domElement,
   elementNo,
   elementId,
-  elementObj
+  elementObj,
+  autoplay,
+  loop
 ) {
   var http = new XMLHttpRequest();
   http.open("GET", src, true);
@@ -2651,7 +2803,7 @@ function getJson(
       var currentAnimation = animationCount;
       animation[currentAnimation] = JSON.parse(http.responseText);
       animation[currentAnimation]._elementId = elementId;
-      buildGraph(elementId, currentAnimation, elementObj);
+      buildGraph(elementId, currentAnimation, elementObj, autoplay, loop);
     }
   };
   http.send();
@@ -2670,6 +2822,8 @@ function processLottie(lottieElement, JSONsrc) {
     var lottieElements = document.getElementsByTagName("lottie-player");
     var i;
     for (i = 0; i < lottieElements.length; i++) {
+      animationLoading = animationLoading + 1;
+
       var attributes = lottieElements[i].attributes;
       var j;
 
@@ -2710,20 +2864,22 @@ function processLottie(lottieElement, JSONsrc) {
         lottieElements[i],
         i,
         elementId,
-        lottieElements[i]
+        lottieElements[i],
+        true,
+        true
       );
     }
   } else {
-    var testElement = document.getElementById(lottieElement);
-    src = testElement.getAttribute("src");
-    elementId = testElement.getAttribute("id");
+    animationLoading = animationLoading + 1;
     if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
-      animationCount = animationCount + 1;
       var currentAnimation = animationCount;
-      animation[currentAnimation] = JSON.parse(http.responseText);
+      animation[currentAnimation] = JSON.parse(JSONsrc);
       animation[currentAnimation]._elementId = elementId;
-      buildGraph(elementId, currentAnimation, testElement);
+      buildGraph(elementId, currentAnimation, testElement, true, true);
     } else {
+      var testElement = document.getElementById(lottieElement);
+      src = testElement.getAttribute("src");
+      elementId = testElement.getAttribute("id");
       getJson(
         src,
         autoplay,
@@ -2734,16 +2890,12 @@ function processLottie(lottieElement, JSONsrc) {
         testElement,
         i,
         elementId,
-        testElement
+        testElement,
+        true,
+        true
       );
     }
   }
 
   window.requestAnimationFrame(lottiemate);
 }
-
-window.onload = function () {
-  console.log("START");
-  processLottie();
-  console.log("DONE");
-};
