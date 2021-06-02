@@ -6,6 +6,7 @@ var animationCount = -1;
 var animationLength = 0;
 var animationLoading = 0;
 var frozen = false;
+var playStarted = false;
 
 ///////////// BEZIER
 
@@ -252,12 +253,15 @@ jlottie.loadAnimation = function(obj) {
 			getJson(obj.path, "", "", "", "", "", obj.container, 0, obj.container.id, obj.container, autoplay, loop);
 		}
 	}
+	if (! playStarted) {
+		playStarted = true;
+		window.requestAnimationFrame(lottiemate);
+	}
 }
 
 ///////////// ANIMATOR
 
 function loadFrame(i, _currentFrame) {
-	console.log("=-=" + _currentFrame);
 	for (var ref = 0; ref < animation[i]._refObj.length; ref++) {
 		var refObj = animation[i]._refObj[ref];
 		var nextObj = false;
@@ -1901,5 +1905,8 @@ function processLottie(lottieElement, JSONsrc) {
 
 	}
 
-	window.requestAnimationFrame(lottiemate);
+	if (! playStarted) {
+		playStarted = true;
+		window.requestAnimationFrame(lottiemate);
+	}
 }
