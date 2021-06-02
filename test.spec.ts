@@ -18,24 +18,36 @@ import { it, expect, describe } from "@playwright/test";
 
 //   // await browser.close();
 // })();
+const files = fs.readdirSync("public/test_files/");
+for (const file in files) {
+  it("compares element screenshot", async ({ page, browserName }) => {
+    // get all test files
 
-it("compares element screenshot", async ({ page, browserName }) => {
-  // get all test files
-  var files = fs.readdirSync("public/test_files/");
-  // for(var file in files ){
+    // open page with a test lottie file
+    await page.goto("http://localhost:8000?src=test_files/" + files[file], {
+      waitUntil: "domcontentloaded",
+    });
 
-  // }
-  await page.goto("http://localhost:8000?src=" + files[0], {
-    waitUntil: "domcontentloaded",
+    //get a handle on the elements
+    const lf_handle = await page.$(".lottiefiles_player_container");
+    const hernan_handle = await page.$("#hernan_player");
+
+    // waiting for player to load before taking screenshots
+    setTimeout(function () {}, 3000);
+
+    // take the screen shots for comparison
+    const lf_screenie = await lf_handle.screenshot();
+    const hernan_screenie = await hernan_handle.screenshot();
+
+    // On first execution, this will generate golden snapshots. Subsequent runs will compare against the golden snapshots.
+    if (fs.existsSync("__snapshots__")) {
+      expect(lf_screenie).toMatchSnapshot(`${file}_hn_sc.png`, {
+        threshold: 0.2,
+      });
+    } else {
+      expect(hernan_screenie).toMatchSnapshot(`${file}_hn_sc.png`, {
+        threshold: 0.2,
+      });
+    }
   });
-
-  const lf_handle = await page.$(".lottiefiles_player_container");
-  const hernan_handle = await page.$(".hernan_player_container");
-
-  const lf_screenie = await lf_handle.screenshot({ path: "public/lf_sc.png" });
-  await hernan_handle.screenshot({ path: "public/hn_sc.png" });
-
-  expect(lf_screenie).toMatchSnapshot(`hn_sc.png`, {
-    threshold: 0.2,
-  });
-});
+}

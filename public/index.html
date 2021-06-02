@@ -20,37 +20,40 @@
       "
     ></div>
     <div
-      id="hernan_player_container"
-      class="hernan_player_container"
+      id="hernan_player"
+      class="hernan_player"
       style="border: 1px #000000 solid; height: 300px; width: 300px"
     ></div>
   </body>
   <script>
-    // get source param
+    // get lottie source for a single test file from url param
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const src = urlParams.get("src");
 
+    // get the container and create a lottie dom element inside of it
     var container = document.getElementById("lottiefiles_player_container");
     var newLottie = document.createElement("lottie-player");
-    newLottie.setAttribute("id", "testanim" + 0);
-    // newLottie.setAttribute(
-    //   "style",
-    //   "display: inline-block; float: left; border: 1px #000000 solid; height:300px; width:300px;"
-    // );
+    newLottie.setAttribute("id", "lottiefiles_player");
     newLottie.setAttribute("loop", false);
-    newLottie.setAttribute("src", "/test_files/" + src);
+    newLottie.setAttribute("src", "/" + src);
     container.appendChild(newLottie);
 
-    var container_2 = document.getElementById("hernan_player_container");
+    //stop the player at a specific frame
+    setTimeout(function () {
+      goToAndStop(2, "", "lottiefiles_player");
+    }, 2000);
+
+    // load  hernans player
+    var container_2 = document.getElementById("hernan_player");
     lottie.loadAnimation({
       container: container_2, // the dom element that will contain the animation
       renderer: "svg",
       loop: false,
       autoplay: false,
-      path: "/test_files/" + src,
+      path: "/" + src,
     });
-
-    // processLottie("testanim" + 0);
+    // stop hernans player at frame 2
+    lottie.goToAndStop(2, true);
   </script>
 </html>

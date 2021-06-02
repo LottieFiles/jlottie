@@ -173,7 +173,7 @@ function goToAndStop(_frame, isFrame, name) {
     }
   } else {
     name = name.replace(/#/g, "");
-    for (var i = 0; i < animationCount; i++) {
+    for (var i = 0; i <= animationCount; i++) {
       if (animation[i]._elementId == name) {
         animation[i]._paused = true;
         loadFrame(i, _frame);
