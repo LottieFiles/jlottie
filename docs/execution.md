@@ -1,0 +1,3 @@
+## Execution sequence
+
+The execution sequence begins with the function *processLotties()*, which is triggered at window.onLoad. This function iterates through all the elements with the tag name 'lottie-player'. In every iteration, the relevant attributes from the respective 'lottie-player' element is extracted and *getJson()* is fired for each element with all the attribute data. *getJson()* fires an *XMLHttpRequest()* to load 
