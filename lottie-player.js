@@ -259,6 +259,7 @@ jlottie.loadAnimation = function(obj) {
 	}
 }
 
+
 ///////////// ANIMATOR
 
 function loadFrame(i, _currentFrame) {
