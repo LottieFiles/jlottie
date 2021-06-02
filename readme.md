@@ -93,6 +93,12 @@ The following events are exposed and can be listened to via `addEventListener` c
 
 ## Testing
 
+CD into tests folder
+
+```
+cd tests
+```
+
 Install packages
 
 ```

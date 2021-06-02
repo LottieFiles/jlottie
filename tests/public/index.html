@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <script src="./lottie-player.js" type="application/javascript"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie_svg.min.js"
+      integrity="sha512-u1VfZfptvsnaARZGlc9LDazh3ZhH30yjcA75NxOEj5nwZ1O0LEOuck2QMwZpVpuQGVTOIhXTYHFYB+ggEBjhLw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div
+      id="lottiefiles_player_container"
+      class="lottiefiles_player_container"
+      style="
+        border: 1px #000000 solid;
+        height: 300px;
+        width: 300px;
+        margin-bottom: 10px;
+      "
+    ></div>
+    <div
+      id="web_player"
+      class="web_player"
+      style="border: 1px #000000 solid; height: 300px; width: 300px"
+    ></div>
+  </body>
+  <script>
+    // get lottie source for a single test file from url param
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const src = urlParams.get("src");
+
+    // get the container and create a lottie dom element inside of it
+    var container = document.getElementById("lottiefiles_player_container");
+    var newLottie = document.createElement("lottie-player");
+    newLottie.setAttribute("id", "lottiefiles_player");
+    newLottie.setAttribute("loop", false);
+    newLottie.setAttribute("src", "/" + src);
+    container.appendChild(newLottie);
+
+    //init the jlottie player
+    jlottie.loadAnimation({
+      container: newLottie, // the dom element that will contain the animation
+      loop: false,
+      autoplay: false,
+      path: "/" + src, // the path to the animation json
+    });
+
+    // stop the player at a specific frame
+    setTimeout(function () {
+      jlottie.goToAndStop(2, "", "lottiefiles_player");
+      // jlottie.play("lottiefiles_player");
+    }, 1000);
+
+    // load  lottie web player
+    var container_2 = document.getElementById("web_player");
+    lottie.loadAnimation({
+      container: container_2, // the dom element that will contain the animation
+      renderer: "svg",
+      loop: false,
+      autoplay: false,
+      path: "/" + src,
+    });
+    // stop lottie web player at frame 2
+    lottie.goToAndStop(2, true);
+  </script>
+</html>
