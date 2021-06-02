@@ -1,0 +1,48 @@
+<<<<<<< HEAD
+.DS_Store
+node_modules
+=======
+# Logs
+*.log
+yarn-debug.log*
+yarn-error.log*
+
+# Package management
+node_modules
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Tools
+/reports/*
+
+# Testing
+coverage
+
+# Build artifacts
+**/dist/
+**/release/
+
+# IDE related
+.idea
+.history
+
+# Operating system
+.DS_Store
+*.bak
+*.swp
+*~
+
+# Temporary or local data
+tmp
+.tmp
+*.tsbuildinfo
+.eslintcache
+
+# dotenv files
+.env
+>>>>>>> cfc1524234fd888a2c09475d9071c75b87e1946f

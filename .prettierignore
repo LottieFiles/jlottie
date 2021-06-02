@@ -1,0 +1,21 @@
+# Package management
+node_modules
+.yarn/*
+.pnp.*
+
+# Changelog
+CHANGELOG.md
+
+# Build artifacts
+dist
+release
+
+# Testing
+coverage
+
+# IDE related
+.idea
+.history
+
+# Temporary or local data
+tmp
