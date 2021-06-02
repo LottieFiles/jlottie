@@ -223,10 +223,9 @@ jlottie.goToAndStop = function(_frame, isFrame, name) {
 }
 
 jlottie.loadAnimation = function(obj) {
-	if (obj.container === undefined || (obj.path === undefined || obj.animationData === undefined)) {
+	if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
 		return;
 	}
-	
 	var autoplay = true;
 	var loop = true;
 
@@ -242,7 +241,7 @@ jlottie.loadAnimation = function(obj) {
 		}
 	}
 
-	if (! (obj.animationData === undefined) && obj.animationData) {
+	if (! (obj.animationData === undefined) && obj.animationData.length > 0) {
 		animationCount = animationCount + 1;
 		var currentAnimation = animationCount;
 		animation[currentAnimation] = JSON.parse(http.responseText);
@@ -250,7 +249,7 @@ jlottie.loadAnimation = function(obj) {
 		buildGraph(elementId, currentAnimation, obj.container, true, true);
 	} else {
 		if (! (obj.path === undefined) && obj.path) {
-			getJson(src, "", "", "", "", "", obj.container, 0, obj.container.id, obj.container, autoplay, loop);
+			getJson(obj.path, "", "", "", "", "", obj.container, 0, obj.container.id, obj.container, autoplay, loop);
 		}
 	}
 }
