@@ -100,8 +100,8 @@ yarn install
 ```
 
 Run serve command and leave the terminal running. This hosts a node server with both players loaded up.
-Url format _http://localhost:8000/?src=test_files/11.json_
-Path to the test files should be provide in relation to the public folder
+The Url format is _http://localhost:8000/?src=test_files/11.json_
+Path to the test files should be provided in relation to the public folder. Feel free to use this command to run the index.html test file in public folder to visually compare hernans player and jlottie player. Do note that the player js file being loaded is the file inside of the public folder. Hot reloading is not enabled so after making changes to the library, please manually copy the file over to the public folder.
 
 ```
 yarn serve
