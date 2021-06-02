@@ -1,5 +1,10 @@
 const xmlns = "http://www.w3.org/2000/svg";
 
+var animation = [];
+var frame = [];
+var animationCount = -1;
+var animationLength = 0;
+
 ///////////// BEZIER
 
 function bezierCurve(
@@ -159,102 +164,87 @@ function bezierCurve(
 
 ///////////// ANIMATOR
 
-function loadFrame(i, _currentFrame) {
-  for (
-    var j = 0;
-    j < animation[i]._scene[_currentFrame]._transform.length;
-    j++
-  ) {
-    currentObj = document.getElementById(
-      animation[i]._scene[_currentFrame]._transform[j].refObj
-    );
-    currentObj.setAttribute(
-      "transform",
-      animation[i]._scene[_currentFrame]._transform[j].translate +
-        animation[i]._scene[_currentFrame]._transform[j].rotate +
-        animation[i]._scene[_currentFrame]._transform[j].scale
-    );
+function goToAndStop(_frame, isFrame, name) {
+	if (name === undefined) {
+		console.log(animationCount);
+		for (var i = 0; i <= animationCount; i++) {
+			animation[i]._paused = true;
+			loadFrame(i, _frame);
+		}	
+	} else {
+		name = name.replace(/#/g, "");
+		for (var i = 0; i < animationCount; i++) {
+			if (animation[i]._elementId == name) {
+				animation[i]._paused = true;
+				loadFrame(i, _frame);
+				break;
+			}
+		}	
+	}
+}
 
-    //currentObj.setAttribute('transform', animation[i]._scene[_currentFrame]._transform[j].combined);
-    currentObj.setAttribute(
-      "opacity",
-      animation[i]._scene[_currentFrame]._transform[j].opacity
-    );
-  }
+function loadFrame(i, _currentFrame) {
+	for (var ref = 0; ref < animation[i]._refObj.length; ref++) {
+		var refObj = animation[i]._refObj[ref];
+		var nextObj = false;
+		//console.log(refObj);
+		for (var m = _currentFrame - 1; m >= 0; m--) {
+			for (var n = 0; n < animation[i]._scene[m]._transform.length; n++) {
+				if (animation[i]._scene[m]._transform[n].refObj == refObj) {
+					currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
+					currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
+					if (animation[i]._scene[m]._transform[n].isTween || animation[i]._scene[m]._transform[n].combined.length > 0) {
+						if (animation[i]._scene[m]._transform[n].isTween) {
+							currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
+						}
+						currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
+						currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
+						nextObj = true;
+						break;
+					}
+				}
+				if (nextObj) break;
+			}
+			if (nextObj) continue;
+		}
+	}
 }
 
 function lottiemate() {
-  var currentDate = Date.now();
-  var currentObj;
-  for (var i = 0; i <= animationCount; i++) {
-    if (currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
-      if (animation[i]._removed) {
-        continue;
-      }
-      animation[i]._lastTime = currentDate;
-      animation[i]._currentFrame++;
-      if (animation[i]._currentFrame > animation[i]._totalFrames) {
-        animation[i]._currentFrame = 0;
-      }
-      //window.setTimeout(loadFrame, 1, i, animation[i]._currentFrame);
-      for (
-        var j = 0;
-        j < animation[i]._scene[animation[i]._currentFrame]._transform.length;
-        j++
-      ) {
-        if (
-          animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj
-            .length > 0
-        ) {
-          currentObj = document.getElementById(
-            animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj
-          );
-          currentObjOther = document.getElementById(
-            animation[i]._scene[animation[i]._currentFrame]._transform[j]
-              .refObjOther
-          );
-          if (
-            animation[i]._scene[animation[i]._currentFrame]._transform[j]
-              .isTween
-          ) {
-            currentObj.setAttribute(
-              "d",
-              animation[i]._scene[animation[i]._currentFrame]._transform[j]
-                .dataString
-            );
-          } else {
-            currentObj.setAttribute(
-              "transform",
-              animation[i]._scene[animation[i]._currentFrame]._transform[j]
-                .combined
-            );
-            currentObjOther.setAttribute(
-              "opacity",
-              animation[i]._scene[animation[i]._currentFrame]._transform[j]
-                .opacity
-            );
-          }
-        }
-        if (
-          animation[i]._scene[animation[i]._currentFrame]._transform[j].hide
-        ) {
-          document.getElementById(
-            animation[i]._scene[animation[i]._currentFrame]._transform[j]
-              .stageObj
-          ).style.display = "none";
-        }
-        if (
-          animation[i]._scene[animation[i]._currentFrame]._transform[j].show
-        ) {
-          document.getElementById(
-            animation[i]._scene[animation[i]._currentFrame]._transform[j]
-              .stageObj
-          ).style.display = "block";
-        }
-      }
-    }
-  }
-  window.requestAnimationFrame(lottiemate);
+	var currentDate = Date.now();
+	var currentObj;
+	for (var i = 0; i <= animationCount; i++) {
+		if (currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
+			if (animation[i]._removed || animation[i]._paused) {
+				continue;
+			}
+			animation[i]._lastTime = currentDate;
+			animation[i]._currentFrame++;
+			if (animation[i]._currentFrame > animation[i]._totalFrames) {
+				animation[i]._currentFrame = 0;
+			}
+			//window.setTimeout(loadFrame, 1, i, animation[i]._currentFrame);
+			for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
+					currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+					currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
+					if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+						currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+					}
+					currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
+					currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+				}
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+					document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'none';
+				}
+				if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+					document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'block';
+				}
+				
+			}	
+		}
+	}
+	window.requestAnimationFrame(lottiemate);
 }
 
 ///////////// BUILD SCENE GRAPH
@@ -329,85 +319,80 @@ function findExistingTransform(transforms, animationId, frame) {
 }
 
 function stageSequence(animationId, stageObj, inPoint, outPoint) {
-  if (outPoint > animation[animationId]._totalFrames) {
-    outPoint = animation[animationId]._totalFrames;
-  }
-  var transforms = getEmptyStageTransform();
-  var found = 0;
-  if (inPoint > -1) {
-    frame = inPoint;
-    for (
-      var i = 0;
-      i < animation[animationId]._scene[parseInt(frame)]._transform.length;
-      i++
-    ) {
-      if (
-        animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj ==
-        stageObj
-      ) {
-        transforms =
-          animation[animationId]._scene[parseInt(frame)]._transform[i];
-        found = 1;
-        break;
-      }
-    }
-    transforms.stageObj = stageObj;
-    //transforms.refObjOther = refObjOther;
-    transforms.show = true;
-    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
-  }
+	if (outPoint > animation[animationId]._totalFrames) {
+		outPoint = animation[animationId]._totalFrames;
+	}
+	var transforms = getEmptyStageTransform();
+	var found = 0;
+	if (inPoint > -1) {
+		frame = inPoint;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
+		}
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
+		transforms.show = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	}
 
-  transforms = getEmptyStageTransform();
-  found = 0;
-  if (outPoint > -1) {
-    frame = outPoint;
-    for (
-      var i = 0;
-      i < animation[animationId]._scene[parseInt(frame)]._transform.length;
-      i++
-    ) {
-      if (
-        animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj ==
-        stageObj
-      ) {
-        transforms =
-          animation[animationId]._scene[parseInt(frame)]._transform[i];
-        found = 1;
-        break;
-      }
-    }
-    transforms.stageObj = stageObj;
-    //transforms.refObjOther = refObjOther;
-    transforms.hide = true;
-    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
-  } else {
-    frame = 0;
-  }
+	transforms = getEmptyStageTransform();
+	found = 0;
+	if (outPoint > -1) {
+		frame = outPoint;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
+		}
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
+		transforms.hide = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	} else {
+		frame = 0;
+	}
 
-  transforms = getEmptyStageTransform();
-  found = 0;
-  if (outPoint > -1 && inPoint > 0) {
-    frame = 0;
-    for (
-      var i = 0;
-      i < animation[animationId]._scene[parseInt(frame)]._transform.length;
-      i++
-    ) {
-      if (
-        animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj ==
-        stageObj
-      ) {
-        transforms =
-          animation[animationId]._scene[parseInt(frame)]._transform[i];
-        found = 1;
-        break;
-      }
-    }
-    transforms.stageObj = stageObj;
-    //transforms.refObjOther = refObjOther;
-    transforms.hide = true;
-    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
-  }
+	transforms = getEmptyStageTransform();
+	found = 0;
+	if (outPoint > -1 && inPoint > 0) {
+		frame = 0;
+		for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+			if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+				transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+				found = 1;
+				break;
+			}
+		}
+		transforms.stageObj = stageObj;
+		//transforms.refObjOther = refObjOther;
+		transforms.hide = true;
+		animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+	}
+
+	var lastState = 0;
+	if (frame > 1) {
+		for (var j = 0; j <= animation[animationId]._totalFrames; j++) {
+			for (var i = 0; i < animation[animationId]._scene[j]._transform.length; i++) {
+				if (animation[animationId]._scene[j]._transform[i].stageObj == stageObj) {
+					if (animation[animationId]._scene[j]._transform[i].show) {
+						lastState = 1;
+					}
+					if (animation[animationId]._scene[j]._transform[i].hide) {
+						lastState = 0;
+					}
+					if (lastState == 1) {
+						animation[animationId]._scene[j]._transform[i].show = true;
+					}
+				}
+			}
+		}
+	}
 }
 
 function addGroupPositionTransform(
@@ -500,135 +485,90 @@ function addGroupPositionTransform(
 			}
 			transforms.refObjOther = animationId + "_" + depth + "_layerGroup" + animation[animationId]._currentLayerGroup;
 			*/
-    if (objectId.td > 0) {
-      transforms.refObj =
-        animationId + "_" + depth + "_layerGroup" + objectId._layer;
-    } else {
-      transforms.refObj =
-        animationId + "_" + depth + "_layerTranslate" + objectId._layer;
-    }
-    transforms.refObjOther =
-      animationId + "_" + depth + "_layerGroup" + objectId._layer;
-    //} else {
-    //	transforms.refObj = animationId + "_" + depth + "_layer" + animation[animationId]._currentLayer;
-    //}
-  } else {
-    transforms.isLayer = false;
-    transforms.refObj =
-      animationId + "_group" + animation[animationId]._currentShapeGroup;
-    transforms.refObjOther =
-      animationId + "_group" + animation[animationId]._currentShapeGroup;
-  }
+			if (objectId.td > 0) {
+				transforms.refObj = animationId + "_" + depth + "_layerGroup" + objectId._layer;
+			} else {
+				transforms.refObj = animationId + "_" + depth + "_layerTranslate" + objectId._layer;
+			}
+			transforms.refObjOther = animationId + "_" + depth + "_layerGroup" + objectId._layer;
+		//} else {
+		//	transforms.refObj = animationId + "_" + depth + "_layer" + animation[animationId]._currentLayer;
+		//}
+	} else {
+		transforms.isLayer = false;
+		transforms.refObj = animationId + "_group" + animation[animationId]._currentShapeGroup;
+		transforms.refObjOther = animationId + "_group" + animation[animationId]._currentShapeGroup;
+	}
 
-  transforms.anchorX = objectId._anchorX;
-  transforms.anchorY = objectId._anchorY;
-  //transforms.paddingAnchorX = transforms.anchorX;
-  //transforms.paddingAnchorY = transforms.anchorY;
+	transforms.anchorX = objectId._anchorX;
+	transforms.anchorY = objectId._anchorY;
+	//transforms.paddingAnchorX = transforms.anchorX;
+	//transforms.paddingAnchorY = transforms.anchorY;
 
-  transforms = findExistingTransform(transforms, animationId, frame);
+	transforms = findExistingTransform(transforms, animationId, frame);
 
-  if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
-  } else {
-    animation[animationId]._objSize[transforms.refObj] = [];
-    //animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width - objectId._anchorX;
-    //animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
-    animation[animationId]._objSize[transforms.refObj][0] = document
-      .getElementById(transforms.refObj)
-      .getBoundingClientRect().width;
-    animation[animationId]._objSize[transforms.refObj][1] = document
-      .getElementById(transforms.refObj)
-      .getBoundingClientRect().height;
-    //animation[animationId]._objSize[transforms.refObj][2] = object
-    //animation[animationId]._objSize[transforms.refObj][3] =
-    //animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).width;
-    //animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).height;
-  }
-  if (objectId._layer == 3) {
-    console.log(
-      "ORIGINAL: " +
-        animation[animationId]._objSize[transforms.refObj][0] +
-        ", " +
-        animation[animationId]._objSize[transforms.refObj][1] +
-        " // " +
-        transforms.anchorX +
-        ", " +
-        transforms.anchorY
-    );
-  }
 
-  //var found = 0;
-  var posY = 0;
+	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
+	} else {
+		animation[animationId]._refObj.push(transforms.refObj);
+		animation[animationId]._objSize[transforms.refObj] = [];
+		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width - objectId._anchorX;
+		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height - objectId._anchorY;
+		animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width;
+		animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height;
+		//animation[animationId]._objSize[transforms.refObj][2] = object 
+		//animation[animationId]._objSize[transforms.refObj][3] =
+		//animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).width;
+		//animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).height;
+	}
+	if (objectId._layer == 3) {
+		console.log("ORIGINAL: " + animation[animationId]._objSize[transforms.refObj][0] + ", " + animation[animationId]._objSize[transforms.refObj][1] + " // " + transforms.anchorX + ", " + transforms.anchorY);
+	}
 
-  if (refKey == "r") {
-    transforms.rotateAngle = transforms.rotateAngle + posX;
-    if (
-      objectId.hasOwnProperty("_anchorX") &&
-      objectId.hasOwnProperty("_anchorY")
-    ) {
-      //transforms.rotate = 'rotate(' + transforms.rotateAngle + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().width / 2) + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().height / 2) + ') ';
-      transforms.rotate =
-        "rotate(" +
-        transforms.rotateAngle +
-        "," +
-        objectId._anchorX +
-        "," +
-        objectId._anchorY +
-        ") ";
-      //transforms.rotate = 'rotate(' + transforms.rotateAngle + ') ';
-    } else {
-      transforms.rotate =
-        "rotate(" +
-        transforms.rotateAngle +
-        "," +
-        document.getElementById(transforms.refObj).getBoundingClientRect()
-          .width /
-          2 +
-        "," +
-        document.getElementById(transforms.refObj).getBoundingClientRect()
-          .height /
-          2 +
-        ") ";
-      //transforms.rotate = 'rotate(' + transforms.rotateAngle + ') ';
-    }
-  }
-  if (refKey == "s") {
-    transforms.scaleFactorX = transforms.scaleFactorX + posX;
-    //tempBoundingW = document.getElementById(transforms.refObj).getBoundingClientRect().width;
-    //tempBoundingH = document.getElementById(transforms.refObj).getBoundingClientRect().height;
-    tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
-    tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
-    var currentScaleX;
-    var currentScaleY;
-    if (position.length > 1) {
-      transforms.scaleFactorY = transforms.scaleFactorY + position[1];
-      currentScaleX = 1 - transforms.scaleFactorX / 100;
-      currentScaleY = 1 - transforms.scaleFactorY / 100;
-    } else {
-      currentScaleX = 1 - transforms.scaleFactorX / 100;
-      currentScaleY = 1 - transforms.scaleFactorX / 100;
-    }
-    transforms.scale =
-      "scale(" +
-      transforms.scaleFactorX / 100 +
-      "," +
-      transforms.scaleFactorY / 100 +
-      ") ";
-    //transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
-    //transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
-    //transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
-    //transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
-    transforms.paddingX =
-      (transforms.anchorX - tempBoundingW) * currentScaleX +
-      tempBoundingW * currentScaleX;
-    transforms.paddingY =
-      (transforms.anchorY - tempBoundingH) * currentScaleY +
-      tempBoundingH * currentScaleY;
-    transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
-    transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
-    //transforms.translateX = transforms.translateX + (paddingX / 2);
-    //transforms.translateY = transforms.translateY + (paddingY / 2);
+	//var found = 0;
+	var posY = 0;
 
-    /*
+	if (refKey == 'r') {
+		transforms.rotateAngle = transforms.rotateAngle + posX;
+		if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
+			//transforms.rotate = 'rotate(' + transforms.rotateAngle + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().width / 2) + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().height / 2) + ') ';
+			transforms.rotate = 'rotate(' + transforms.rotateAngle + ',' + objectId._anchorX + ',' + objectId._anchorY + ') ';
+			//transforms.rotate = 'rotate(' + transforms.rotateAngle + ') ';
+		} else {
+			transforms.rotate = 'rotate(' + transforms.rotateAngle + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().width / 2) + ',' + (document.getElementById(transforms.refObj).getBoundingClientRect().height / 2) + ') ';
+			//transforms.rotate = 'rotate(' + transforms.rotateAngle + ') ';
+		}
+	}
+	if (refKey == 's') {
+		transforms.scaleFactorX = transforms.scaleFactorX + posX;
+		//tempBoundingW = document.getElementById(transforms.refObj).getBoundingClientRect().width;
+		//tempBoundingH = document.getElementById(transforms.refObj).getBoundingClientRect().height;
+		tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
+		tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
+		var currentScaleX;
+		var currentScaleY;
+		if (position.length > 1) {
+			transforms.scaleFactorY = transforms.scaleFactorY + position[1];
+			currentScaleX = 1 - (transforms.scaleFactorX / 100);
+			currentScaleY = 1 - (transforms.scaleFactorY / 100);
+		} else {
+			currentScaleX = 1 - (transforms.scaleFactorX / 100);
+			currentScaleY = 1 - (transforms.scaleFactorX / 100);
+		}
+		transforms.scale = 'scale(' + (transforms.scaleFactorX / 100) + ',' + (transforms.scaleFactorY / 100) + ') ';
+		//transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW - (tempBoundingW * (transforms.scaleFactorX / 100)));
+		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH - (tempBoundingH * (transforms.scaleFactorY / 100)));
+		//transforms.paddingX = (transforms.anchorX - tempBoundingW) + (tempBoundingW * currentScaleX);
+		//transforms.paddingY = (transforms.anchorY - tempBoundingH) + (tempBoundingH * currentScaleY);
+		transforms.paddingX = ((transforms.anchorX - tempBoundingW) * currentScaleX) + (tempBoundingW * currentScaleX);
+		transforms.paddingY = ((transforms.anchorY - tempBoundingH) * currentScaleY) + (tempBoundingH * currentScaleY);
+		transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
+		transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
+		//transforms.translateX = transforms.translateX + (paddingX / 2);
+		//transforms.translateY = transforms.translateY + (paddingY / 2);
+
+
+		/*
 		transforms.translateX = transforms.translateX + paddingX;
 		transforms.translateY = transforms.translateY + paddingY;
 		transforms.translate = 'translate(' + (transforms.translateX) + ',' + (transforms.translateY) + ') ';
@@ -840,84 +780,76 @@ function extrapolateOffsetKeyframe(
 												);
 				}
 			}*/
-      var returnedKeyframeObj;
-      if (
-        offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty("i") &&
-        offsetKeyframeObj[refKey].k[i].hasOwnProperty("o") &&
-        gotI
-      ) {
-        returnedKeyframeObj = bezierCurve(
-          offsetKeyframeObj[refKey].k[i].s,
-          offsetKeyframeObj[refKey].k[i].o,
-          offsetKeyframeObj[refKey].k[i + 1].i,
-          p2,
-          offsetKeyframeObj[refKey].k[i].t,
-          offsetKeyframeObj[refKey].k[i + 1].t,
-          isLayer,
-          animationId,
-          refKey,
-          addTransformation,
-          objectId,
-          depth
-        );
-      } else {
-        if (offsetKeyframeObj[refKey].k[i].hasOwnProperty("o") && gotO) {
-          returnedKeyframeObj = bezierCurve(
-            offsetKeyframeObj[refKey].k[i].s,
-            offsetKeyframeObj[refKey].k[i].o,
-            emptyPos,
-            p2,
-            offsetKeyframeObj[refKey].k[i].t,
-            offsetKeyframeObj[refKey].k[i + 1].t,
-            isLayer,
-            animationId,
-            refKey,
-            addTransformation,
-            objectId,
-            depth
-          );
-        } else {
-          returnedKeyframeObj = bezierCurve(
-            offsetKeyframeObj[refKey].k[i].s,
-            emptyPos,
-            emptyPos,
-            p2,
-            offsetKeyframeObj[refKey].k[i].t,
-            offsetKeyframeObj[refKey].k[i + 1].t,
-            isLayer,
-            animationId,
-            refKey,
-            addTransformation,
-            objectId,
-            depth
-          );
-        }
-      }
-      //console.log("========= " + returnedKeyframeObj[0].t);
-      for (var s = returnedKeyframeObj.length - 1; s >= 0; s--) {
-        offsetKeyframeObj[refKey].k.splice(i + 1, 0, returnedKeyframeObj[s]);
-      }
-      if (animation[animationId]._currentLayer == 133) {
-        console.log(
-          "returning: " +
-            returnedKeyframeObj.length +
-            "," +
-            offsetKeyframeObj[refKey].k.length
-        );
-      }
+			var returnedKeyframeObj;
+			if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotI) {
+				returnedKeyframeObj =
+												bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+															offsetKeyframeObj[refKey].k[i].o,
+															offsetKeyframeObj[refKey].k[i + 1].i,
+															p2,
+															offsetKeyframeObj[refKey].k[i].t,
+															offsetKeyframeObj[refKey].k[i + 1].t,
+															isLayer,
+															animationId,
+															refKey,
+															addTransformation,
+															objectId,
+															depth
+															);
+			} else {
+				if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
+					returnedKeyframeObj =
+													bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+																offsetKeyframeObj[refKey].k[i].o,
+																emptyPos,
+																p2,
+																offsetKeyframeObj[refKey].k[i].t,
+																offsetKeyframeObj[refKey].k[i + 1].t,
+																isLayer,
+																animationId,
+																refKey,
+																addTransformation,
+																objectId,
+																depth
+																);
+				} else {
+					returnedKeyframeObj =
+													bezierCurve(offsetKeyframeObj[refKey].k[i].s,
+																emptyPos,
+																emptyPos,
+																p2,
+																offsetKeyframeObj[refKey].k[i].t,
+																offsetKeyframeObj[refKey].k[i + 1].t,
+																isLayer,
+																animationId,
+																refKey,
+																addTransformation,
+																objectId,
+																depth
+																);
+				}
+			}
+			//console.log("========= " + returnedKeyframeObj[0].t);
+			for (var s = returnedKeyframeObj.length - 1; s >= 0; s--) {
+				offsetKeyframeObj[refKey].k.splice((i + 1), 0, returnedKeyframeObj[s]);
 
-      if (animation[animationId]._currentLayer == 133) {
-        //console.log(" _____ " + offsetKeyframeObj[refKey].k[i + 1].t);
-      }
-      objLength = offsetKeyframeObj[refKey].k.length;
-      i = i + (objLength - oldLength);
-      oldLength = objLength;
-    }
-    i = i + 1;
-  }
-  //console.log("DONE offset");
-  //addGroupPositionTransform(offsetKeyframeObj[refKey].k[objLength].t, offsetKeyframeObj[refKey].k[objLength].s, isLayer, animationId, refKey, addTransformation);
-  return offsetKeyframeObj;
+			}
+			if (animation[animationId]._currentLayer == 133) {
+				console.log("returning: " + returnedKeyframeObj.length + "," + offsetKeyframeObj[refKey].k.length);
+			}
+		
+			if (animation[animationId]._currentLayer == 133) {
+				//console.log(" _____ " + offsetKeyframeObj[refKey].k[i + 1].t);	
+			}
+			objLength = offsetKeyframeObj[refKey].k.length;
+			i = (i + (objLength - oldLength));
+			oldLength = objLength;
+		}
+		i = i + 1;
+	}
+	//console.log("DONE offset");
+	//addGroupPositionTransform(offsetKeyframeObj[refKey].k[objLength].t, offsetKeyframeObj[refKey].k[objLength].s, isLayer, animationId, refKey, addTransformation);
+	return offsetKeyframeObj;
 }
 
 function extrapolatePathPosition(
@@ -2479,44 +2411,39 @@ function getLayers(
 }
 
 function buildGraph(elementId, animationId, elementObj) {
-  animation[animationId].depth = 0;
-  animation[animationId].shapeCount = 0;
-  animation[animationId].layerCount = 0;
-  animation[animationId]._removed = false;
-  animation[animationId]._totalFrames = parseInt(
-    animation[animationId].op - animation[animationId].ip
-  );
-  animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
-  animation[animationId]._currentFrame = -1;
-  animation[animationId]._lastTime = Date.now();
-  elementObj.style.width = animation[animationId].w;
-  elementObj.style.height = animation[animationId].h;
-  elementObj.setAttribute("width", animation[animationId].w);
-  elementObj.setAttribute("height", animation[animationId].h);
-  //var outerDiv = document.createElement('div');
-  var newSVG = document.createElementNS(xmlns, "svg");
-  newSVG.setAttribute("xmlns", xmlns);
-  newSVG.setAttributeNS(null, "width", animation[animationId].w);
-  newSVG.setAttributeNS(null, "height", animation[animationId].h);
-  newSVG.setAttributeNS(
-    null,
-    "viewBox",
-    "0 0 " + animation[animationId].w + " " + animation[animationId].h
-  );
-  newSVG.setAttributeNS(null, "preserveAspectRatio", "xMidYMid meet");
-  newSVG.style.width = "100%";
-  newSVG.style.height = "100%";
-  newSVG.setAttributeNS(null, "id", "_svg" + animationId);
-  elementObj.prepend(newSVG);
-  animation[animationId].defs = document.createElementNS(xmlns, "defs");
-  animation[animationId].defs.setAttributeNS(null, "id", "_defs" + animationId);
-  animation[animationId].gradientCount = 0;
-  animation[animationId].maskCount = 0;
-  newSVG.prepend(animation[animationId].defs);
-  var newLayer = document.createElementNS(xmlns, "g");
-  //newLayer.setAttribute("xmlns", "http://www.w3.org/2000/xvg");
-  newLayer.setAttributeNS(null, "id", "_lanim" + animationId);
-  /*
+	animation[animationId].depth = 0;
+	animation[animationId].shapeCount = 0;
+	animation[animationId].layerCount = 0;
+	animation[animationId]._removed = false;
+	animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
+	animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
+	animation[animationId]._currentFrame = -1;
+	animation[animationId]._lastTime = Date.now();
+	animation[animationId]._paused = false;
+	elementObj.style.width = animation[animationId].w;
+	elementObj.style.height = animation[animationId].h;
+	elementObj.setAttribute("width", animation[animationId].w);
+	elementObj.setAttribute("height", animation[animationId].h);
+	//var outerDiv = document.createElement('div');
+	var newSVG = document.createElementNS(xmlns, 'svg');
+	newSVG.setAttribute("xmlns", xmlns);
+	newSVG.setAttributeNS(null, "width", animation[animationId].w);
+	newSVG.setAttributeNS(null, "height", animation[animationId].h);
+	newSVG.setAttributeNS(null, "viewBox", "0 0 " + animation[animationId].w + " " + animation[animationId].h);
+	newSVG.setAttributeNS(null, "preserveAspectRatio", "xMidYMid meet");
+	newSVG.style.width = "100%";
+	newSVG.style.height = "100%";
+	newSVG.setAttributeNS(null, "id", "_svg" + animationId);
+	elementObj.prepend(newSVG);
+	animation[animationId].defs = document.createElementNS(xmlns, 'defs');
+	animation[animationId].defs.setAttributeNS(null, "id", "_defs" + animationId);
+	animation[animationId].gradientCount = 0;
+	animation[animationId].maskCount = 0;
+	newSVG.prepend(animation[animationId].defs);
+	var newLayer = document.createElementNS(xmlns, 'g');
+	//newLayer.setAttribute("xmlns", "http://www.w3.org/2000/xvg");
+	newLayer.setAttributeNS(null, "id", "_lanim" + animationId);
+	/*
 	newLayer.setAttributeNS(null, "width", "100%");
 	newLayer.setAttributeNS(null, "height", "100%");
 	newLayer.setAttributeNS(null, "viewBox", "0 0 " + animation[animationId].w + " " + animation[animationId].h);
@@ -2524,152 +2451,115 @@ function buildGraph(elementId, animationId, elementObj) {
 	newLayer.style.width = animation[animationId].w;
 	newLayer.style.height = animation[animationId].h;
 	*/
-  newSVG.append(newLayer);
-  var newCompute = document.createElementNS(xmlns, "g");
-  //newLayer.setAttribute("xmlns", "http://www.w3.org/2000/xvg");
-  newCompute.setAttributeNS(null, "id", "_compute" + animationId);
-  newCompute.style.display = "none";
-  newLayer.prepend(newCompute);
-  animation[animationId]._scene = new Array(
-    animation[animationId]._totalFrames + 1
-  )
-    .fill(null)
-    .map(() => ({ _transform: [] }));
-  animation[animationId]._instated = {};
-  animation[animationId]._objSize = {};
-  animation[animationId] = getLayers(
-    elementId,
-    animationId,
-    newLayer,
-    animation[animationId],
-    "layers",
-    0
-  );
+	newSVG.append(newLayer);
+	var newCompute = document.createElementNS(xmlns, 'g');
+	//newLayer.setAttribute("xmlns", "http://www.w3.org/2000/xvg");
+	newCompute.setAttributeNS(null, "id", "_compute" + animationId);
+	newCompute.style.display = 'none';
+	newLayer.prepend(newCompute);
+	animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(()=>({'_transform':[]}));
+	animation[animationId]._instated = {};
+	animation[animationId]._refObj = [];
+	animation[animationId]._objSize = {};
+	animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], "layers", 0);
 
-  var clipPath = document.createElementNS(xmlns, "clipPath");
-  clipPath.setAttributeNS(null, "id", "_clip" + animationId);
-  animation[animationId].defs.prepend(clipPath);
-  var clipPathRect = document.createElementNS(xmlns, "rect");
-  clipPathRect.setAttribute("x", 0);
-  clipPathRect.setAttribute("y", 0);
-  clipPathRect.setAttribute("width", animation[animationId].w);
-  clipPathRect.setAttribute("height", animation[animationId].h);
-  clipPath.append(clipPathRect);
-  newLayer.setAttributeNS(null, "clip-path", "url(#_clip" + animationId + ")");
-  //fillScene(elementId, animationId);
-  animation[animationId]._buildDone = true;
-  //console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
+	var clipPath = document.createElementNS(xmlns, 'clipPath');
+	clipPath.setAttributeNS(null, "id", "_clip" + animationId);
+	animation[animationId].defs.prepend(clipPath);
+	var clipPathRect = document.createElementNS(xmlns, 'rect');
+	clipPathRect.setAttribute("x", 0);
+	clipPathRect.setAttribute("y", 0);
+	clipPathRect.setAttribute("width", animation[animationId].w);
+	clipPathRect.setAttribute("height", animation[animationId].h);
+	clipPath.append(clipPathRect);
+	newLayer.setAttributeNS(null, "clip-path", "url(#_clip" + animationId + ")");
+	//fillScene(elementId, animationId);
+	animation[animationId]._buildDone = true;
+	//console.log("width: " + animationSource[animationId].w + ", height: " + animationSource[animationId].h);
 }
 
-var animation = [];
-var frame = [];
-var animationCount = -1;
-var animationLength = 0;
-
-function getJson(
-  src,
-  autoplay,
-  controls,
-  loop,
-  mode,
-  style,
-  domElement,
-  elementNo,
-  elementId,
-  elementObj
-) {
-  var http = new XMLHttpRequest();
-  http.open("GET", src, true);
-  http.onreadystatechange = function () {
-    if (http.readyState == 4 && http.status == 200) {
-      var currentAnimation = ++animationCount;
-      animation[currentAnimation] = JSON.parse(http.responseText);
-      animation[currentAnimation]._elementId = elementId;
-      buildGraph(elementId, currentAnimation, elementObj);
-    }
-  };
-  http.send();
+function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, elementObj) {
+	var http = new XMLHttpRequest();
+	http.open("GET", src, true);
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			animationCount = animationCount + 1;
+			var currentAnimation = animationCount;
+			animation[currentAnimation] = JSON.parse(http.responseText);
+			animation[currentAnimation]._elementId = elementId;
+			buildGraph(elementId, currentAnimation, elementObj);
+		}
+	}
+	http.send();
 }
 
-function processLottie(lottieElement) {
-  var autoplay = "";
-  var controls = "";
-  var loop = "";
-  var mode = "";
-  var src = "";
-  var style = "";
-  var elementId = "";
+function processLottie(lottieElement, JSONsrc) {
+	var autoplay = '';
+	var controls = '';
+	var loop = '';
+	var mode = '';
+	var src = '';
+	var style = '';
+	var elementId = '';
 
-  if (lottieElement.length < 1) {
-    var lottieElements = document.getElementsByTagName("lottie-player");
-    var i;
-    for (i = 0; i < lottieElements.length; i++) {
-      var attributes = lottieElements[i].attributes;
-      var j;
+	if (lottieElement === undefined) {
+		var lottieElements = document.getElementsByTagName("lottie-player");
+		var i;
+		for (i = 0; i < lottieElements.length; i++) {
+		
+			var attributes = lottieElements[i].attributes;
+			var j;
 
-      autoplay = "";
-      controls = "";
-      loop = "";
-      mode = "";
-      src = "";
-      style = "";
-      elementId = "";
-      for (j = 0; j < attributes.length; j++) {
-        switch (attributes[j].nodeName) {
-          case "autoplay":
-            break;
-          case "controls":
-            break;
-          case "loop":
-            break;
-          case "mode":
-            break;
-          case "src":
-            src = attributes[j].nodeValue;
-            break;
-          case "style":
-            break;
-          case "id":
-            elementId = attributes[j].nodeValue;
-            break;
-        }
-      }
-      getJson(
-        src,
-        autoplay,
-        controls,
-        loop,
-        mode,
-        style,
-        lottieElements[i],
-        i,
-        elementId,
-        lottieElements[i]
-      );
-    }
-  } else {
-    var testElement = document.getElementById(lottieElement);
-    src = testElement.getAttribute("src");
-    elementId = testElement.getAttribute("id");
-    getJson(
-      src,
-      autoplay,
-      controls,
-      loop,
-      mode,
-      style,
-      testElement,
-      i,
-      elementId,
-      testElement
-    );
-  }
+			autoplay = '';
+			controls = '';
+			loop = '';
+			mode = '';
+			src = '';
+			style = '';
+			elementId = '';
+			for (j = 0; j < attributes.length; j++) {
+				switch (attributes[j].nodeName) {
+					case 'autoplay':
+						break;
+					case 'controls':
+						break;
+					case 'loop':
+						break;
+					case 'mode':
+						break;
+					case 'src':
+						src = attributes[j].nodeValue;
+						break;
+					case 'style':
+						break;
+					case 'id':
+						elementId = attributes[j].nodeValue;
+						break;
+				}
+			}
+			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i]);
+		}
+	} else {
+		var testElement = document.getElementById(lottieElement);
+		src = testElement.getAttribute("src");
+		elementId = testElement.getAttribute("id");
+		if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
+			animationCount = animationCount + 1;
+			var currentAnimation = animationCount;
+			animation[currentAnimation] = JSON.parse(http.responseText);
+			animation[currentAnimation]._elementId = elementId;
+			buildGraph(elementId, currentAnimation, testElement);	
+		} else {
+			getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, testElement);
+		}
 
-  window.requestAnimationFrame(lottiemate);
+	}
+
+	window.requestAnimationFrame(lottiemate);
 }
 
-window.onload = function () {
-  console.log("START");
-  processLottie("");
-  console.log("DONE");
-};
+window.onload = function() {
+	console.log("START");
+	processLottie();
+	console.log("DONE");
+}
