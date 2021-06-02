@@ -131,9 +131,9 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 
 ///////////// CONTROL
 
-var lottie = {};
+var jlottie = {};
 
-lottie.destroy = function(name) {
+jlottie.destroy = function(name) {
 	if (animationCount < 0) {
 		return;
 	}	
@@ -161,7 +161,7 @@ lottie.destroy = function(name) {
 	}
 }
 
-lottie.play = function(name) {
+jlottie.play = function(name) {
 	if (animationCount < 0) {
 		return;
 	}	
@@ -181,7 +181,7 @@ lottie.play = function(name) {
 	}
 }
 
-lottie.stop = function(name) {
+jlottie.stop = function(name) {
 	if (name === undefined) {
 		for (var i = 0; i <= animationCount; i++) {
 			animation[i]._paused = true;
@@ -198,7 +198,7 @@ lottie.stop = function(name) {
 	}
 }
 
-lottie.goToAndStop = function(_frame, isFrame, name) {
+jlottie.goToAndStop = function(_frame, isFrame, name) {
 	if (animationCount < 0) {
 		return;
 	}	
@@ -222,7 +222,7 @@ lottie.goToAndStop = function(_frame, isFrame, name) {
 	}
 }
 
-lottie.loadAnimation = function(obj) {
+jlottie.loadAnimation = function(obj) {
 	if (obj.container === undefined || (obj.path === undefined || obj.animationData === undefined)) {
 		return;
 	}
