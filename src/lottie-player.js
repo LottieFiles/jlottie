@@ -6,6 +6,7 @@ var animationCount = -1;
 var animationLength = 0;
 var animationLoading = 0;
 var frozen = false;
+var playStarted = false;
 
 ///////////// BEZIER
 
@@ -280,7 +281,7 @@ jlottie.loadAnimation = function (obj) {
     }
   }
 
-  if (!(obj.animationData === undefined) && obj.animationData) {
+  if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
     animationCount = animationCount + 1;
     var currentAnimation = animationCount;
     animation[currentAnimation] = JSON.parse(http.responseText);
@@ -289,7 +290,7 @@ jlottie.loadAnimation = function (obj) {
   } else {
     if (!(obj.path === undefined) && obj.path) {
       getJson(
-        src,
+        obj.path,
         "",
         "",
         "",
@@ -304,12 +305,15 @@ jlottie.loadAnimation = function (obj) {
       );
     }
   }
+  if (!playStarted) {
+    playStarted = true;
+    window.requestAnimationFrame(lottiemate);
+  }
 };
 
 ///////////// ANIMATOR
 
 function loadFrame(i, _currentFrame) {
-  console.log("=-=" + _currentFrame);
   for (var ref = 0; ref < animation[i]._refObj.length; ref++) {
     var refObj = animation[i]._refObj[ref];
     var nextObj = false;
@@ -2896,5 +2900,8 @@ function processLottie(lottieElement, JSONsrc) {
     }
   }
 
-  window.requestAnimationFrame(lottiemate);
+  if (!playStarted) {
+    playStarted = true;
+    window.requestAnimationFrame(lottiemate);
+  }
 }
