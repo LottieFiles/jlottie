@@ -22,6 +22,9 @@ import { it, expect, describe } from "@playwright/test";
 it("compares element screenshot", async ({ page, browserName }) => {
   // get all test files
   var files = fs.readdirSync("public/test_files/");
+  // for(var file in files ){
+
+  // }
   await page.goto("http://localhost:8000?src=" + files[0], {
     waitUntil: "domcontentloaded",
   });
