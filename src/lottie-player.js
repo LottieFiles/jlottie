@@ -1,12 +1,8 @@
-const xmlns = 'http://www.w3.org/2000/svg';
-
-<<<<<<< HEAD
-var animation = [];
-var frame = [];
+const xmlns = 'http://www.w3.org/2000/svg
 var animationCount = -1;
 var animationLength = 0;
 var animationLoading = 0;
-var frozen = false;
+var frozen = false
 var playStarted = false;
 =======
 const animation = [];
@@ -487,6 +483,12 @@ function goToAndStop(_frame, isFrame, name) {
   }
 }
 
+<<<<<<< HEAD
+=======
+
+///////////// ANIMATOR
+
+>>>>>>> main
 function loadFrame(i, _currentFrame) {
   for (let ref = 0; ref < animation[i]._refObj.length; ref++) {
     const refObj = animation[i]._refObj[ref];
