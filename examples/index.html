@@ -17,12 +17,14 @@
 		</lottie-player>
 
 		<script>
-			window.onload = function() {
-	console.log("START");
-	processLottie();
-	console.log("DONE");
-}
 
+jlottie.loadAnimation({
+  container: document.getElementById("soto"), // the dom element that will contain the animation
+  loop: true,
+  autoplay: true,
+  path: 'https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json' // the path to the animation json
+});
+		console.log("test");
 		</script>
 
 
