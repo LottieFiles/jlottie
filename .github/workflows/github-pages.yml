@@ -5,8 +5,6 @@ name: Github Pages
 on:
   push:
     branches: [main]
-#      paths:
-#      - 'src/lottie-player.js'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -19,6 +17,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build package
+        run: yarn build
 
       # Runs a set of commands using the runners shell
       - name: Copy the js files
