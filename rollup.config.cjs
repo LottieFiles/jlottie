@@ -1,6 +1,7 @@
 const filesize = require('rollup-plugin-filesize');
 const serve = require('rollup-plugin-serve');
 const { terser } = require('rollup-plugin-terser');
+//const { minify } = require('rollup-plugin-terser');
 const strip = require('@rollup/plugin-strip');
 
 const isProduction = process.env.NODE_ENV === 'production';
