@@ -1,6 +1,7 @@
-# Jlottie
+# jlottie
 
-> **Jlottie** is a lottie player written in javascript with an emphasis on minimizing the overall memory footprint, processor demand, and file size of the player.
+> **jlottie** is a lottie player written in javascript with an emphasis on minimizing the overall memory footprint,
+> processor demand, and file size of the player.
 
 ## Demo
 
@@ -8,20 +9,12 @@
 
 ## Installation
 
-#### In HTML, import from CDN or from the local Installation:
-
-##### Lottie Player:
+#### In HTML:
 
 - Import from CDN.
 
 ```html
-<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie-player.js"></script>
-```
-
-- Import from local node_modules directory.
-
-```html
-<script src="/node_modules/@lottiefiles/jlottie/dist/jlottie-player.js"></script>
+<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie.js" type="module"></script>
 ```
 
 #### In Javascript or TypeScript:
@@ -35,45 +28,40 @@ npm install --save @lottiefiles/jlottie
 2. Import package in your code.
 
 ```javascript
-import "@lottiefiles/jlottie";
+import jlottie from '@lottiefiles/jlottie';
+```
+OR
+```javascript
+const jlottie = require('@lottiefiles/jlottie');
 ```
 
 ## Usage
 
-### Lottie-Player
-
-Add the element `lottie-player` and set the `src` property to a URL pointing to a valid Bodymovin JSON.
+### Load an animation
 
 ```html
-<lottie-player
-  autoplay
-  controls
-  loop
-  mode="normal"
-  src="https://assets3.lottiefiles.com/packages/lf20_UJNc2t.json"
-  style="width: 320px"
->
-</lottie-player>
-```
-
-You may set and load animations programatically as well.
-
-```html
-sample html here
+<div id="my-animation"></div>
 ```
 
 ```js
-js to load player programtically here.
+jlottie.loadAnimation({
+  container: document.getElementById('my-animation'),
+  loop: true,
+  autoplay: true,
+  path: "<LOTTIE_URL>",
+});
 ```
 
-## Properties
+## API
+
+### Properties
 
 | Property     | Attribute    | Description       | Type      | Default     |
 | ------------ | ------------ | ----------------- | --------- | ----------- |
 | `example`    | `example`    | example           | `example` | `example`   |
 | `background` | `background` | Background color. | `string`  | `undefined` |
 
-## Methods
+### Methods
 
 ### `sampleMethod() => Promise<any>`
 
@@ -83,7 +71,7 @@ Description of method
 
 Type: `Promise<any>`
 
-## Events
+### Events
 
 The following events are exposed and can be listened to via `addEventListener` calls.
 
@@ -91,34 +79,22 @@ The following events are exposed and can be listened to via `addEventListener` c
 | ------ | ------------------------- |
 | `load` | Animation data is loaded. |
 
-## Testing
+## Development
 
-CD into tests folder
+### Testing
 
-```
-cd tests
-```
+1. Install packages
 
-Install packages
-
-```
+```sh
 yarn install
 ```
 
-Run serve command and leave the terminal running. This hosts a node server with both players loaded up.
-The Url format is _http://localhost:8000/?src=test_files/11.json_
-Path to the test files should be provided in relation to the public folder. Feel free to use this command to run the index.html test file in public folder to visually compare hernans player and jlottie player. Do note that the player js file being loaded is the file inside of the public folder. Hot reloading is not enabled so after making changes to the library, please manually copy the file over to the public folder.
+2. Run test command.
 
-```
-yarn serve
-```
-
-Run test command.
-Screenshots will be pushed up to git however if they are missing please note that the first run of the command will generate all the screenshots from hernans player. The second consecutive command will compare screenshots and run the validation test.
-
-```
+```sh
 yarn test
 ```
+This will generate snapshots in the `__snapshots__` directory and warn of mismatches with `lottie-web` renderer as the comparison baseline.
 
 ## Contributing
 

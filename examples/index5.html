@@ -1,33 +1,29 @@
 <html>
-	<head>
-		<script src="../lottie-player.js" type="application/javascript"></script>
-	</head>
+    <head>
+        <script src="../lottie-player.js" type="application/javascript"></script>
+    </head>
 
-	<body>
+    <body>
+        <lottie-player
+            id="soto0"
+            autoplay
+            controls
+            loop
+            mode="normal"
+            src="https://assets10.lottiefiles.com/packages/lf20_fq9jouk5.json"
+            style="display: inline-block; float: left; border: 1px #000000 solid"
+        >
+        </lottie-player>
 
+        <script>
+            window.onload = function () {
+                console.log('START');
+                processLottie();
+                console.log('DONE');
+            };
+        </script>
 
-		<lottie-player 
-			id="soto0" 
-			autoplay 
-			controls 
-			loop 
-			mode="normal" 
-			src="https://assets10.lottiefiles.com/packages/lf20_fq9jouk5.json" 
-			style="display: inline-block; float: left; border: 1px #000000 solid;" 
-			>
-		</lottie-player>
-
-		<script>
-			window.onload = function() {
-	console.log("START");
-	processLottie();
-	console.log("DONE");
-}
-
-		</script>
-
-
-		<!--
+        <!--
 
 		<lottie-player 
 			id="soto" 
@@ -67,7 +63,7 @@
 			style="display: block; float: left;">
 		</lottie-player>
 -->
-	</body>
+    </body>
 </html>
 <!--
 	src="https://assets10.lottiefiles.com/packages/lf20_90ZmDV.json"
