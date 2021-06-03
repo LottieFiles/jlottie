@@ -1362,7 +1362,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 		passedObj._currentLayer = passedObj[passedKey][i]._layer;
 		passedObj._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
 		passedObj._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
-		if (passedObj[passedKey][i].hasOwnProperty('refId')) {
+		if (passedObj[passedKey][i].hasOwnProperty('refId') && passedObj.hasOwnProperty('assets')) {
 			var tempRef = -1;
 			for (var m = 0; m < passedObj.assets.length; m++) {
 				if (passedObj.assets[m].id == passedObj[passedKey][i].refId) {

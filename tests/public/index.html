@@ -1,6 +1,6 @@
 <html>
   <head>
-    <script src="./lottie-player.js" type="application/javascript"></script>
+    <script src="../../src/lottie-player.js" type="application/javascript"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie_svg.min.js"
       integrity="sha512-u1VfZfptvsnaARZGlc9LDazh3ZhH30yjcA75NxOEj5nwZ1O0LEOuck2QMwZpVpuQGVTOIhXTYHFYB+ggEBjhLw=="
@@ -42,8 +42,8 @@
     //init the jlottie player
     jlottie.loadAnimation({
       container: newLottie, // the dom element that will contain the animation
-      loop: false,
-      autoplay: false,
+      loop: true,
+      autoplay: true,
       path: "/" + src, // the path to the animation json
     });
 
@@ -58,8 +58,8 @@
     lottie.loadAnimation({
       container: container_2, // the dom element that will contain the animation
       renderer: "svg",
-      loop: false,
-      autoplay: false,
+      loop: true,
+      autoplay: true,
       path: "/" + src,
     });
     // stop lottie web player at frame 2
