@@ -586,10 +586,6 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
 	lastRefObj = transforms.refObj;
 
 
-	if (objectId._layer == 1) {
-		console.log("padding: " + transforms.paddingX + ", " + transforms.paddingY + " -- " + transforms.paddingAnchorX + ", " + transforms.paddingAnchorY);
-	}
-
 	if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
 	} else {
 		animation[animationId]._instated[transforms.refObj] = 1;
@@ -1254,7 +1250,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 				newMask.setAttribute("id", lastMaskId);
 				newMask.setAttribute("mask-type", "alpha");
 				newMask.setAttribute("opacity", 1);
-				passedObj.defs.prepend(newMask);
+				animation[animationId].defs.prepend(newMask);
 				
 				newLayer = document.createElementNS(xmlns, 'g');
 				newLayer.setAttribute("id", animationId + "_" + depth + "_layer" + passedObj[passedKey][i].ind);
