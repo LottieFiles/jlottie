@@ -1,32 +1,18 @@
 // const playwright = require("playwright");
 const { it, expect, describe } = require('@playwright/test');
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-// (async () => {
-//   const browser = await playwright.chromium.launch({ headless: false });
-//   const page = await browser.newPage();
+// Read port from temp file created by setup process.
+// TODO: Find a better way to do this!
+const port = fs.readFileSync(path.resolve(os.tmpdir(), 'visual-comparison-test'), { encoding: 'ascii' });
 
-//   var files = fs.readdirSync("public/test_files/");
-
-//   await page.goto("http://localhost:8000?src=" + files[0]);
-
-//   // test case 1 : check if lottie is rendered :
-//   // check if svg element is inside of the lottie element
-
-//   // test case 2 : check if positioning works : check if library threw errors :
-//   // cannot read length of undefined is likely a positioning error
-
-//   // test case 3 : success on first two cases but visually check against lottie web player.
-
-//   // await browser.close();
-// })();
 const files = fs.readdirSync(__dirname + '/public/test_files/');
 for (const file in files) {
   it('compares with lottie-web', async ({ page, browserName }) => {
-    // get all test files
-
     // open page with a test lottie file
-    await page.goto(`http://localhost:8000?src=test_files/${files[file]}`, {
+    await page.goto(`http://localhost:${port}?src=test_files/${files[file]}`, {
       waitUntil: 'domcontentloaded',
     });
 
