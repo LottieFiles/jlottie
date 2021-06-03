@@ -191,7 +191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.13.12":
+"@babel/helper-module-imports@npm:^7.10.4, @babel/helper-module-imports@npm:^7.12.13, @babel/helper-module-imports@npm:^7.13.12":
   version: 7.13.12
   resolution: "@babel/helper-module-imports@npm:7.13.12"
   dependencies:
@@ -1094,7 +1094,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.11.0":
+"@babel/preset-env@npm:7.14.4, @babel/preset-env@npm:^7.11.0":
   version: 7.14.4
   resolution: "@babel/preset-env@npm:7.14.4"
   dependencies:
@@ -1482,9 +1482,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@lottiefiles/jlottie@workspace:."
   dependencies:
+    "@babel/core": 7.14.3
+    "@babel/preset-env": 7.14.4
     "@commitlint/cli": ^12.1.4
     "@commitlint/config-conventional": 12.1.4
     "@playwright/test": ^0.1111.0
+    "@rollup/plugin-babel": 5.3.0
     "@rollup/plugin-strip": ^2.0.1
     cross-env: ^7.0.3
     eslint: ^7.27.0
@@ -1581,6 +1584,23 @@ __metadata:
     playwright: =1.11.1
     rimraf: ^3.0.2
   checksum: c09a25baa2c3974dc94973e1aadd60abed24a2033b6f4fa75987ff2699ac301552d7a7c6aa573013aad8e1cc6fccf1fdaa23afa2414c02d1803282e0f50be648
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-babel@npm:5.3.0":
+  version: 5.3.0
+  resolution: "@rollup/plugin-babel@npm:5.3.0"
+  dependencies:
+    "@babel/helper-module-imports": ^7.10.4
+    "@rollup/pluginutils": ^3.1.0
+  peerDependencies:
+    "@babel/core": ^7.0.0
+    "@types/babel__core": ^7.1.9
+    rollup: ^1.20.0||^2.0.0
+  peerDependenciesMeta:
+    "@types/babel__core":
+      optional: true
+  checksum: 6cfd741790f125968cbd0fc91b6f54e235033e31853a12190f725ccf95a6eb2f1387b6368be80dedfa94536d2e84739e7af45c8b2fe7a450e91c2aeb6170867d
   languageName: node
   linkType: hard
 

@@ -35,9 +35,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
+            ["@babel/core", "npm:7.14.3"],
+            ["@babel/preset-env", "virtual:cb87ca939471c8dba02664aa0451f9779a89d1a484745fa34386f64ca22365d3097345944967322efe2b09f6a06fe1bdeba88d1a0a470e827f353b8fce78a300#npm:7.14.4"],
             ["@commitlint/cli", "npm:12.1.4"],
             ["@commitlint/config-conventional", "npm:12.1.4"],
             ["@playwright/test", "npm:0.1111.0"],
+            ["@rollup/plugin-babel", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:5.3.0"],
             ["@rollup/plugin-strip", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:2.0.1"],
             ["cross-env", "npm:7.0.3"],
             ["eslint", "npm:7.27.0"],
@@ -2446,9 +2449,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",
           "packageDependencies": [
             ["@lottiefiles/jlottie", "workspace:."],
+            ["@babel/core", "npm:7.14.3"],
+            ["@babel/preset-env", "virtual:cb87ca939471c8dba02664aa0451f9779a89d1a484745fa34386f64ca22365d3097345944967322efe2b09f6a06fe1bdeba88d1a0a470e827f353b8fce78a300#npm:7.14.4"],
             ["@commitlint/cli", "npm:12.1.4"],
             ["@commitlint/config-conventional", "npm:12.1.4"],
             ["@playwright/test", "npm:0.1111.0"],
+            ["@rollup/plugin-babel", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:5.3.0"],
             ["@rollup/plugin-strip", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:2.0.1"],
             ["cross-env", "npm:7.0.3"],
             ["eslint", "npm:7.27.0"],
@@ -2555,6 +2561,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@rollup/plugin-babel", [
+        ["npm:5.3.0", {
+          "packageLocation": "./.yarn/cache/@rollup-plugin-babel-npm-5.3.0-944843ffd9-6cfd741790.zip/node_modules/@rollup/plugin-babel/",
+          "packageDependencies": [
+            ["@rollup/plugin-babel", "npm:5.3.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:5.3.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-plugin-babel-virtual-29fb617916/0/cache/@rollup-plugin-babel-npm-5.3.0-944843ffd9-6cfd741790.zip/node_modules/@rollup/plugin-babel/",
+          "packageDependencies": [
+            ["@rollup/plugin-babel", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:5.3.0"],
+            ["@babel/core", "npm:7.14.3"],
+            ["@babel/helper-module-imports", "npm:7.13.12"],
+            ["@rollup/pluginutils", "virtual:29fb617916f77badee41168dad5b57188b044163e73d53dfd51a73dedd315981ff1de922dc9f837dcd6bbb8a03e6a8cf47ce0a2bb29b46849dc88608ef7724d3#npm:3.1.0"],
+            ["@types/babel__core", null],
+            ["@types/rollup", null],
+            ["rollup", "npm:2.50.5"]
+          ],
+          "packagePeers": [
+            "@babel/core",
+            "@types/babel__core",
+            "@types/rollup",
+            "rollup"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@rollup/plugin-strip", [
         ["npm:2.0.1", {
           "packageLocation": "./.yarn/cache/@rollup-plugin-strip-npm-2.0.1-bd9cb990bc-6f9ee33e0a.zip/node_modules/@rollup/plugin-strip/",
@@ -2567,7 +2601,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/__virtual__/@rollup-plugin-strip-virtual-7bd69eecee/0/cache/@rollup-plugin-strip-npm-2.0.1-bd9cb990bc-6f9ee33e0a.zip/node_modules/@rollup/plugin-strip/",
           "packageDependencies": [
             ["@rollup/plugin-strip", "virtual:75275c9d19daeb1a5cec08e0db6c3c477373455d0f37663fa6e5d2c4435bb4222f5a21043a752179de4d7594117332c011e01b92cba1072665b80054c0f3a0cf#npm:2.0.1"],
-            ["@rollup/pluginutils", "virtual:7bd69eeceeca91588b5d9903c28bd485b9b98a4a4c5efb6d526900db8898fc1f7664261b898f9578d97491dad81cba4b31fdc519ba3e776cae81b72ddc772bdc#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:29fb617916f77badee41168dad5b57188b044163e73d53dfd51a73dedd315981ff1de922dc9f837dcd6bbb8a03e6a8cf47ce0a2bb29b46849dc88608ef7724d3#npm:3.1.0"],
             ["@types/rollup", null],
             ["estree-walker", "npm:2.0.2"],
             ["magic-string", "npm:0.25.7"],
@@ -2588,10 +2622,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:7bd69eeceeca91588b5d9903c28bd485b9b98a4a4c5efb6d526900db8898fc1f7664261b898f9578d97491dad81cba4b31fdc519ba3e776cae81b72ddc772bdc#npm:3.1.0", {
-          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-bad3e18855/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
+        ["virtual:29fb617916f77badee41168dad5b57188b044163e73d53dfd51a73dedd315981ff1de922dc9f837dcd6bbb8a03e6a8cf47ce0a2bb29b46849dc88608ef7724d3#npm:3.1.0", {
+          "packageLocation": "./.yarn/__virtual__/@rollup-pluginutils-virtual-a17b96f34a/0/cache/@rollup-pluginutils-npm-3.1.0-b44b222e7d-8be16e2786.zip/node_modules/@rollup/pluginutils/",
           "packageDependencies": [
-            ["@rollup/pluginutils", "virtual:7bd69eeceeca91588b5d9903c28bd485b9b98a4a4c5efb6d526900db8898fc1f7664261b898f9578d97491dad81cba4b31fdc519ba3e776cae81b72ddc772bdc#npm:3.1.0"],
+            ["@rollup/pluginutils", "virtual:29fb617916f77badee41168dad5b57188b044163e73d53dfd51a73dedd315981ff1de922dc9f837dcd6bbb8a03e6a8cf47ce0a2bb29b46849dc88608ef7724d3#npm:3.1.0"],
             ["@types/estree", "npm:0.0.39"],
             ["@types/rollup", null],
             ["estree-walker", "npm:1.0.1"],

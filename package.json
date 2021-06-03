@@ -2,7 +2,9 @@
   "name": "@lottiefiles/jlottie",
   "version": "1.0.0",
   "description": "Small size, low memory footprint, high performance Lottie player.",
-  "main": "dist/index.js",
+  "main": "dist/jlottie.cjs.js",
+  "module": "dist/jlottie.esm.js",
+  "browser": "dist/jlottie.umd.js",
   "repository": "https://github.com/LottieFiles/jlottie.git",
   "author": "Mohamed Shaafiee <shaafiee@lottiefiles.com>",
   "license": "MIT",
@@ -10,6 +12,9 @@
     "yarn": ">= 2.0.0",
     "node": ">= 14.2.0"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "yarn clean && rollup -c --watch",
     "build": "yarn clean && cross-env NODE_ENV=production rollup -c",
@@ -24,9 +29,12 @@
     "scrape": "node scrape.js"
   },
   "devDependencies": {
+    "@babel/core": "7.14.3",
+    "@babel/preset-env": "7.14.4",
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "12.1.4",
     "@playwright/test": "^0.1111.0",
+    "@rollup/plugin-babel": "5.3.0",
     "@rollup/plugin-strip": "^2.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.27.0",
