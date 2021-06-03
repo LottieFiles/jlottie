@@ -28,8 +28,6 @@ const plugins = [
 module.exports = [
   // UMD build for the browser
   {
-    treeshaking: false,
-
     input: 'src/jlottie.js',
     output: {
       name: 'jlottie',
@@ -55,7 +53,6 @@ module.exports = [
 
   // CommonJS and ESM build
   {
-    treeshaking: false,
     input: 'src/jlottie.js',
     output: [
       {
