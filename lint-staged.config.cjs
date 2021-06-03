@@ -3,6 +3,6 @@
  */
 
 module.exports = {
-  '*.{js,jsx,ts,tsx}': ['eslint --fix', 'prettier --write'],
+  '*.{js,jsx,ts,tsx}': ['eslint --fix --ignore-pattern "/src/jlottie.js"', 'prettier --write'],
   '*.{json,md,html,css}': 'prettier --write',
 };
