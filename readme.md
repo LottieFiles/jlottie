@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # Jlottie
 
-**Jlottie** is a lottie player written in javascript with an emphasis on minimizing the overall memory footprint, processor demand, and file size of the player.
+> **Jlottie** is a lottie player written in javascript with an emphasis on minimizing the overall memory footprint, processor demand, and file size of the player.
 
 ## Demo
 
@@ -16,13 +15,13 @@
 - Import from CDN.
 
 ```html
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/jlottie-player.js"></script>
+<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie-player.js"></script>
 ```
 
 - Import from local node_modules directory.
 
 ```html
-<script src="/node_modules/@lottiefiles/lottie-player/dist/jlottie-player.js"></script>
+<script src="/node_modules/@lottiefiles/jlottie/dist/jlottie-player.js"></script>
 ```
 
 #### In Javascript or TypeScript:
@@ -30,13 +29,13 @@
 1. Install package using npm or yarn.
 
 ```shell
-npm install --save @lottiefiles/jlottie-player
+npm install --save @lottiefiles/jlottie
 ```
 
 2. Import package in your code.
 
 ```javascript
-import "@lottiefiles/jlottie-player";
+import "@lottiefiles/jlottie";
 ```
 
 ## Usage
@@ -128,30 +127,3 @@ See [how to contribute](contributing.md) to this project.
 ## License
 
 MIT License © LottieFiles.com
-=======
-# Jlottie
-
-> **Jlottie** is a Lottie player written in Javascript with an emphasis on minimizing the overall memory footprint,
-> processor demand, and file size of the player.
-
-[![npm](https://img.shields.io/npm/v/@lottiefiles/lottie-player.svg)](https://www.npmjs.com/package/@lottiefiles/lottie-player)
-[![webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/@lottiefiles/lottie-player)
-
-## Installation
-
-- Import from CDN.
-
-```html
-<script src="https://unpkg.com/@lottiefiles/jlottie@1.0.0/dist/lottie-player.js"></script>
-```
-
-- Node
-
-```sh
-yarn add @lottiefiles/jlottie
-```
-
-## Contributing
-
-See [how to contribute](contributing.md) to this project.
->>>>>>> cfc1524234fd888a2c09475d9071c75b87e1946f

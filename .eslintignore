@@ -12,6 +12,7 @@ release
 
 # Testing
 coverage
+tests
 
 # IDE related
 .idea

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-.DS_Store
-node_modules
-=======
 # Logs
 *.log
 yarn-debug.log*
@@ -16,12 +12,15 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+package-lock.json
 
 # Tools
 /reports/*
 
 # Testing
 coverage
+test-results
+scrape.js
 
 # Build artifacts
 **/dist/
@@ -45,4 +44,3 @@ tmp
 
 # dotenv files
 .env
->>>>>>> cfc1524234fd888a2c09475d9071c75b87e1946f
