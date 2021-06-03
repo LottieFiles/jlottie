@@ -1,6 +1,7 @@
 /**
  * Copyright 2020 Design Barn Inc.
  */
+/* eslint-disable max-len */
 
 const pkg = require('./package.json');
 
@@ -23,6 +24,7 @@ const SUCCESS_COMMENT = `:tada: This \${issue.pull_request ? 'pull request is in
  */
 module.exports = {
   branches: ['main', { name: 'beta', prerelease: true }],
+  // eslint-disable-next-line no-template-curly-in-string
   tagFormat: 'v${version}',
   ci: true,
   plugins: [
@@ -44,6 +46,7 @@ module.exports = {
     [
       '@semantic-release/github',
       {
+        // eslint-disable-next-line no-template-curly-in-string
         message: 'chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
         assets: 'dist/*.tgz',
         successComment: SUCCESS_COMMENT,
