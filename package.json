@@ -14,7 +14,7 @@
     "dev": "yarn clean && rollup -c --watch",
     "build": "yarn clean && cross-env NODE_ENV=production rollup -c",
     "clean": "shx rm -rf dist",
-    "lint": "eslint \"**/*.{cjs,mjs,js}\"",
+    "lint": "eslint --fix \"**/*.{cjs,mjs,js}\"",
     "format": "prettier --write .",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
