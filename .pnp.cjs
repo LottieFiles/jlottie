@@ -47,7 +47,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fastify", "npm:3.17.0"],
             ["fastify-static", "npm:4.2.2"],
             ["folio", "npm:0.3.18"],
-            ["https", "npm:1.0.0"],
             ["husky", "npm:6.0.0"],
             ["lint-staged", "npm:11.0.0"],
             ["pinst", "npm:2.1.6"],
@@ -2459,7 +2458,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fastify", "npm:3.17.0"],
             ["fastify-static", "npm:4.2.2"],
             ["folio", "npm:0.3.18"],
-            ["https", "npm:1.0.0"],
             ["husky", "npm:6.0.0"],
             ["lint-staged", "npm:11.0.0"],
             ["pinst", "npm:2.1.6"],
@@ -5216,15 +5214,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["assert-plus", "npm:1.0.0"],
             ["jsprim", "npm:1.4.1"],
             ["sshpk", "npm:1.16.1"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["https", [
-        ["npm:1.0.0", {
-          "packageLocation": "./.yarn/cache/https-npm-1.0.0-39254cc592-ccea8a8363.zip/node_modules/https/",
-          "packageDependencies": [
-            ["https", "npm:1.0.0"]
           ],
           "linkType": "HARD",
         }]

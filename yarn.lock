@@ -1494,7 +1494,6 @@ __metadata:
     fastify: 3.17.0
     fastify-static: 4.2.2
     folio: 0.3.18
-    https: ^1.0.0
     husky: ^6.0.0
     lint-staged: ^11.0.0
     pinst: ^2.0.0
@@ -3847,13 +3846,6 @@ fsevents@~2.3.1:
     agent-base: 6
     debug: 4
   checksum: 165bfb090bd26d47693597661298006841ab733d0c7383a8cb2f17373387a94c903a3ac687090aa739de05e379ab6f868bae84ab4eac288ad85c328cd1ec9e53
-  languageName: node
-  linkType: hard
-
-"https@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "https@npm:1.0.0"
-  checksum: ccea8a8363a018d4b241db7748cff3a85c9f5b71bf80639e9c37dc6823f590f35dda098b80b726930e9f945387c8bfd6b1461df25cab5bf65a31903d81875b5d
   languageName: node
   linkType: hard
 
