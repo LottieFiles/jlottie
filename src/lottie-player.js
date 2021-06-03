@@ -1456,7 +1456,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
 	animation[animationId]._loaded = false;
-	try {
+	//try {
 		animation[animationId].depth = 0;
 		animation[animationId].shapeCount = 0;
 		animation[animationId].layerCount = 0;
@@ -1525,14 +1525,14 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		if (! animation[animationId]._autoplay) {
 			lottie.goToAndStop(1, "", animation[animationId]._elementId);
 		}
-	} catch (e) {
+	/*} catch (e) {
 		console.error("Failed to load animation. " + e);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}
+	}*/
 
 }
 
