@@ -204,12 +204,6 @@ jlottie.goToAndStop = function(_frame, isFrame, name) {
 	}
 }
 
-exports.loadAnimation = 'jlottie.loadAnimation';
-exports.goToAndStop = 'jlottie.goToAndStop';
-exports.play = 'jlottie.play';
-exports.stop = 'jlottie.stop';
-exports.destroy = 'jlottie.destroy';
-
 jlottie.loadAnimation = function(obj) {
 	if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
 		return;
@@ -1458,7 +1452,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
 	animation[animationId]._loaded = false;
-	try {
+	//try {
 		animation[animationId].depth = 0;
 		animation[animationId].shapeCount = 0;
 		animation[animationId].layerCount = 0;
@@ -1527,14 +1521,14 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		if (! animation[animationId]._autoplay) {
 			lottie.goToAndStop(1, "", animation[animationId]._elementId);
 		}
-	} catch (e) {
+	/*} catch (e) {
 		console.error("Failed to load animation. " + e);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}
+	}*/
 
 }
 
@@ -1621,3 +1615,10 @@ function processLottie(lottieElement, JSONsrc) {
 		window.requestAnimationFrame(lottiemate);
 	}
 }
+
+exports.loadAnimation = 'jlottie.loadAnimation';
+exports.goToAndStop = 'jlottie.goToAndStop';
+exports.play = 'jlottie.play';
+exports.stop = 'jlottie.stop';
+exports.destroy = 'jlottie.destroy';
+
