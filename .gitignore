@@ -22,6 +22,9 @@ coverage
 test-results
 scrape.js
 
+# Snapshots are excluded because we want it to be generated anew every run
+__snapshots__
+
 # Build artifacts
 **/dist/
 **/release/

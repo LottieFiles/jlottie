@@ -12,6 +12,8 @@ release
 
 # Testing
 coverage
+__snapshots__
+tests/public/test_files
 
 # IDE related
 .idea
