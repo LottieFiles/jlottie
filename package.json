@@ -6,17 +6,21 @@
   "repository": "https://github.com/LottieFiles/jlottie.git",
   "author": "Mohamed Shaafiee <shaafiee@lottiefiles.com>",
   "license": "MIT",
+  "engines": {
+    "yarn": ">= 2.0.0",
+    "node": ">= 14.2.0"
+  },
   "scripts": {
     "dev": "yarn clean && rollup -c --watch",
     "build": "yarn clean && cross-env NODE_ENV=production rollup -c",
     "clean": "shx rm -rf dist",
-    "lint": "eslint --fix \"**/*.{cjs,mjs,js}\"",
+    "lint": "eslint \"**/*.{cjs,mjs,js}\"",
     "format": "prettier --write .",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
-    "serve": "http-server ./public -c-1 -a localhost -p 8000",
-    "test": "yarn dlx folio",
+    "test": "folio",
+    "test:reset": "shx rm -rf __snapshots__",
     "scrape": "node scrape.js"
   },
   "devDependencies": {
@@ -29,8 +33,9 @@
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-import-resolver-node": "0.3.4",
     "eslint-plugin-import": "2.23.4",
-    "http-server": "^0.12.3",
-    "https": "^1.0.0",
+    "fastify": "3.17.0",
+    "fastify-static": "4.2.2",
+    "folio": "0.3.18",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "pinst": "^2.0.0",

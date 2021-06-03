@@ -1,6 +1,5 @@
 // const playwright = require("playwright");
-import { it, expect, describe } from '@playwright/test';
-
+const { it, expect, describe } = require('@playwright/test');
 const fs = require('fs');
 
 // (async () => {
@@ -21,9 +20,9 @@ const fs = require('fs');
 
 //   // await browser.close();
 // })();
-const files = fs.readdirSync('public/test_files/');
+const files = fs.readdirSync(__dirname + '/public/test_files/');
 for (const file in files) {
-  it('compares element screenshot', async ({ page, browserName }) => {
+  it('compares with lottie-web', async ({ page, browserName }) => {
     // get all test files
 
     // open page with a test lottie file
@@ -32,25 +31,22 @@ for (const file in files) {
     });
 
     // get a handle on the elements
-    const lf_handle = await page.$('.lottiefiles_player_container');
-    const web_handle = await page.$('#web_player');
+    const jlottieElem = await page.$('#jlottie-container');
+    const lottiewebElem = await page.$('#lottieweb-container');
 
     // waiting for player to load before taking screenshots
     setTimeout(() => {}, 3000);
 
     // take the screen shots for comparison
-    const lf_screenie = await lf_handle.screenshot();
-    const web_screenie = await web_handle.screenshot();
+    const jlottieScreenshot = await jlottieElem.screenshot();
+    const lottiewebScreenshot = await lottiewebElem.screenshot();
 
-    // On first execution, this will generate golden snapshots. Subsequent runs will compare against the golden snapshots.
-    if (fs.existsSync('./__snapshots__')) {
-      expect(lf_screenie).toMatchSnapshot(`${file}_hn_sc.png`, {
-        threshold: 0.5,
-      });
-    } else {
-      expect(web_screenie).toMatchSnapshot(`${file}_hn_sc.png`, {
-        threshold: 0.5,
-      });
-    }
+    expect(lottiewebScreenshot).toMatchSnapshot(`${file}.lw.png`, {
+      threshold: 0.5,
+    });
+
+    expect(jlottieScreenshot).toMatchSnapshot(`${file}.lw.png`, {
+      threshold: 0.5,
+    });
   });
 }
