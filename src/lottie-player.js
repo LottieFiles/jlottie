@@ -231,7 +231,7 @@ jlottie.loadAnimation = function(obj) {
 		buildGraph(elementId, currentAnimation, obj.container, true, true);
 	} else {
 		if (! (obj.path === undefined) && obj.path) {
-			getJson(obj.path, "", "", "", "", "", obj.container, 0, obj.container.id, obj.container, autoplay, loop);
+			getJson(obj.path, "", "", "", "", "", obj.container, 0, obj.container.id, autoplay, loop);
 		}
 	}
 	if (! playStarted) {
@@ -1452,7 +1452,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
 	animation[animationId]._loaded = false;
-	//try {
+	try {
 		animation[animationId].depth = 0;
 		animation[animationId].shapeCount = 0;
 		animation[animationId].layerCount = 0;
@@ -1521,18 +1521,18 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		if (! animation[animationId]._autoplay) {
 			lottie.goToAndStop(1, "", animation[animationId]._elementId);
 		}
-	/*} catch (e) {
+	} catch (e) {
 		console.error("Failed to load animation. " + e);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}*/
+	}
 
 }
 
-function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, elementObj, autoplay, loop) {
+function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, _autoplay, _loop) {
 	var http = new XMLHttpRequest();
 	http.open("GET", src, true);
 	http.onreadystatechange = function() {
@@ -1541,7 +1541,7 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
 			var currentAnimation = animationCount;
 			animation[currentAnimation] = JSON.parse(http.responseText);
 			animation[currentAnimation]._elementId = elementId;
-			buildGraph(elementId, currentAnimation, elementObj, autoplay, loop);
+			buildGraph(elementId, currentAnimation, domElement, _autoplay, _loop);
 		}
 	}
 	http.send();
@@ -1592,7 +1592,7 @@ function processLottie(lottieElement, JSONsrc) {
 						break;
 				}
 			}
-			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, lottieElements[i], true, true);
+			getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, true, true);
 		}
 	} else {
 		animationLoading = animationLoading + 1;
@@ -1605,7 +1605,7 @@ function processLottie(lottieElement, JSONsrc) {
 			var testElement = document.getElementById(lottieElement);
 			src = testElement.getAttribute("src");
 			elementId = testElement.getAttribute("id");
-			getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, testElement, true, true);
+			getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, true, true);
 		}
 
 	}
