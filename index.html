@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <script src="./jlottie.umd.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+        <div>
+            <label>Lottie URL:</label>
+            <input type="text" id="lottieSrc" value="https://assets1.lottiefiles.com/packages/lf20_zs7pmjo6.json" />
+            <button onClick="loadLottie()">Load lottie</button>
+        </div>
+        <br />
+
+        <div id="jlottie-container"></div>
+
+        <script>
+            function loadLottie() {
+                jlottie.loadAnimation({
+                    container: document.getElementById('jlottie-container'),
+                    loop: true,
+                    autoplay: true,
+                    path: document.getElementById('lottieSrc').value,
+                });
+            }
+
+            // Load an initial animation
+            loadLottie();
+        </script>
+    </body>
+</html>
