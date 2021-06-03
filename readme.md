@@ -30,7 +30,9 @@ npm install --save @lottiefiles/jlottie
 ```javascript
 import jlottie from '@lottiefiles/jlottie';
 ```
+
 OR
+
 ```javascript
 const jlottie = require('@lottiefiles/jlottie');
 ```
@@ -48,7 +50,7 @@ jlottie.loadAnimation({
   container: document.getElementById('my-animation'),
   loop: true,
   autoplay: true,
-  path: "<LOTTIE_URL>",
+  path: '<LOTTIE_URL>',
 });
 ```
 
@@ -81,6 +83,31 @@ The following events are exposed and can be listened to via `addEventListener` c
 
 ## Development
 
+### Building
+
+##### 1. Install dependencies.
+
+```sh
+yarn install
+```
+
+##### 2. Dev mode.
+
+```sh
+yarn dev
+```
+
+Automatically build and preview while developing. This runs `rollup` in watch mode and spins up a server at port 10000
+to preview and test the builds.
+
+##### 3. Production builds.
+
+```sh
+yarn build
+```
+
+This creates ESM, CJS and UMD builds in the `dist` directory.
+
 ### Testing
 
 1. Install packages
@@ -94,7 +121,9 @@ yarn install
 ```sh
 yarn test
 ```
-This will generate snapshots in the `__snapshots__` directory and warn of mismatches with `lottie-web` renderer as the comparison baseline.
+
+This will generate snapshots in the `__snapshots__` directory and warn of mismatches with `lottie-web` renderer as the
+comparison baseline.
 
 ## Contributing
 
