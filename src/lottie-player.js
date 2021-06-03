@@ -204,6 +204,12 @@ jlottie.goToAndStop = function(_frame, isFrame, name) {
 	}
 }
 
+exports.loadAnimation = 'jlottie.loadAnimation';
+exports.goToAndStop = 'jlottie.goToAndStop';
+exports.play = 'jlottie.play';
+exports.stop = 'jlottie.stop';
+exports.destroy = 'jlottie.destroy';
+
 jlottie.loadAnimation = function(obj) {
 	if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
 		return;
