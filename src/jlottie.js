@@ -1699,6 +1699,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
         );
       }
     }
+
     if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
       passedObj._currentLayerGroup = passedObj[passedKey][i]._layer;
       passedObj._currentLayerGroup._inPoint = passedObj[passedKey][i]._inPoint;
@@ -1721,6 +1722,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
       // console.log("layer: " + i);
       // newLayer.style.display = 'none';
     }
+
     if (passedObj[passedKey][i].hasOwnProperty('ks')) {
       if (passedObj[passedKey][i].ks.hasOwnProperty('a')) {
         if (passedObj[passedKey][i].ks.a.hasOwnProperty('k')) {
@@ -1923,6 +1925,7 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
   http.send();
 }
 
+/*
 function processLottie(lottieElement, JSONsrc) {
   let autoplay = '';
   let controls = '';
@@ -1934,7 +1937,7 @@ function processLottie(lottieElement, JSONsrc) {
 
   if (lottieElement === undefined) {
     const lottieElements = document.getElementsByTagName('lottie-player');
-    var i;
+    let i;
     for (i = 0; i < lottieElements.length; i++) {
       animationLoading += 1;
 
@@ -1981,7 +1984,7 @@ function processLottie(lottieElement, JSONsrc) {
       var testElement = document.getElementById(lottieElement);
       src = testElement.getAttribute('src');
       elementId = testElement.getAttribute('id');
-      getJson(src, autoplay, controls, loop, mode, style, testElement, i, elementId, true, true);
+      getJson(src, autoplay, controls, loop, mode, style, testElement, 0, elementId, true, true);
     }
   }
 
@@ -1990,6 +1993,7 @@ function processLottie(lottieElement, JSONsrc) {
     window.requestAnimationFrame(lottiemate);
   }
 }
+*/
 
 if (typeof exports === 'object') {
   module.exports = jlottie;
