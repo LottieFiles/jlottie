@@ -20,7 +20,6 @@ package-lock.json
 # Testing
 coverage
 test-results
-scrape.js
 
 # Snapshots are excluded because we want it to be generated anew every run
 __snapshots__
