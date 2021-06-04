@@ -1,3 +1,17 @@
+ 
+/*(typeof navigator !== "undefined") && (function(root, factory) {
+  if (typeof define === "function" && define.amd) {
+      define(function() {
+          return factory(root);
+      });
+  //} else if (typeof module === "object" && module.exports) {
+  } else if (typeof exports === 'object') {
+      module.exports = factory(root);
+  } else {
+      root.jlottie = factory(root);
+  }
+}((window || {}), function(window) {*/
+
 const xmlns = 'http://www.w3.org/2000/svg';
 
 var animation = [];
@@ -127,132 +141,142 @@ function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, a
 
 ///////////// CONTROL
 
-var jlottie = {};
+//var animationManager = (function () {
+  var jlottie = {};
 
-jlottie.destroy = function (name) {
-  if (animationCount < 0) {
-    return;
-  }
-  if (name === undefined) {
-    var elements = [];
-    for (var i = 0; i <= animationCount; i++) {
-      elements.push(animation[i]._elementId);
+  function destroy(name) {
+    if (animationCount < 0) {
+      return;
     }
-    animation = [];
-    for (var i = 0; i <= elements; i++) {
-      document.getElementById(elements[i]).innerHTML = '';
-      animationCount = animationCount - 1;
-    }
-  } else {
-    name.toString();
-    name = name.replace(/#/g, '');
-    for (var i = 0; i <= animationCount; i++) {
-      if (animation[i]._elementId == name || animation[i]._customName == name) {
-        animation.splice(i, 1);
-        document.getElementById(name).innerHTML = '';
+    if (name === undefined) {
+      var elements = [];
+      for (var i = 0; i <= animationCount; i++) {
+        elements.push(animation[i]._elementId);
+      }
+      animation = [];
+      for (var i = 0; i <= elements; i++) {
+        document.getElementById(elements[i]).innerHTML = '';
         animationCount = animationCount - 1;
-        break;
+      }
+    } else {
+      name.toString();
+      name = name.replace(/#/g, '');
+      for (var i = 0; i <= animationCount; i++) {
+        if (animation[i]._elementId == name || animation[i]._customName == name) {
+          animation.splice(i, 1);
+          document.getElementById(name).innerHTML = '';
+          animationCount = animationCount - 1;
+          break;
+        }
       }
     }
-  }
-};
+  };
 
-jlottie.play = function (name) {
-  if (animationCount < 0) {
-    return;
-  }
-  if (name === undefined) {
-    for (var i = 0; i <= animationCount; i++) {
-      animation[i]._paused = false;
+  function play(name) {
+    if (animationCount < 0) {
+      return;
     }
-  } else {
-    name.toString();
-    name = name.replace(/#/g, '');
-    for (var i = 0; i <= animationCount; i++) {
-      if (animation[i]._elementId == name || animation[i]._customName == name) {
+    if (name === undefined) {
+      for (var i = 0; i <= animationCount; i++) {
         animation[i]._paused = false;
-        break;
+      }
+    } else {
+      name.toString();
+      name = name.replace(/#/g, '');
+      for (var i = 0; i <= animationCount; i++) {
+        if (animation[i]._elementId == name || animation[i]._customName == name) {
+          animation[i]._paused = false;
+          break;
+        }
       }
     }
-  }
-};
+  };
 
-jlottie.stop = function (name) {
-  if (name === undefined) {
-    for (var i = 0; i <= animationCount; i++) {
-      animation[i]._paused = true;
-    }
-  } else {
-    name.toString();
-    name = name.replace(/#/g, '');
-    for (var i = 0; i < animationCount; i++) {
-      if (animation[i]._elementId == name || animation[i]._customName == name) {
+  function stop(name) {
+    if (name === undefined) {
+      for (var i = 0; i <= animationCount; i++) {
         animation[i]._paused = true;
-        break;
+      }
+    } else {
+      name.toString();
+      name = name.replace(/#/g, '');
+      for (var i = 0; i < animationCount; i++) {
+        if (animation[i]._elementId == name || animation[i]._customName == name) {
+          animation[i]._paused = true;
+          break;
+        }
       }
     }
-  }
-};
+  };
 
-jlottie.goToAndStop = function (_frame, isFrame, name) {
-  if (animationCount < 0) {
-    return;
-  }
-  if (name === undefined) {
-    console.log(animationCount);
-    for (var i = 0; i <= animationCount; i++) {
-      animation[i]._paused = true;
-      loadFrame(i, _frame);
+  function goToAndStop(_frame, isFrame, name) {
+    if (animationCount < 0) {
+      return;
     }
-  } else {
-    name.toString();
-    name = name.replace(/#/g, '');
-    for (var i = 0; i <= animationCount; i++) {
-      if (animation[i]._elementId == name || animation[i]._customName == name) {
+    if (name === undefined) {
+      console.log(animationCount);
+      for (var i = 0; i <= animationCount; i++) {
         animation[i]._paused = true;
-        console.log(name + ' == ' + _frame);
         loadFrame(i, _frame);
-        break;
+      }
+    } else {
+      name.toString();
+      name = name.replace(/#/g, '');
+      for (var i = 0; i <= animationCount; i++) {
+        if (animation[i]._elementId == name || animation[i]._customName == name) {
+          animation[i]._paused = true;
+          console.log(name + ' == ' + _frame);
+          loadFrame(i, _frame);
+          break;
+        }
       }
     }
-  }
-};
+  };
 
-jlottie.loadAnimation = function (obj) {
-  if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
-    return;
-  }
-  var autoplay = true;
-  var loop = true;
-
-  if (!(obj.autoplay === undefined)) {
-    if (obj.autoplay === true || obj.autoplay === false) {
-      autoplay = obj.autoplay;
+  function loadAnimation(obj) {
+    if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
+      return;
     }
-  }
+    var autoplay = true;
+    var loop = true;
 
-  if (!(obj.loop === undefined)) {
-    if (obj.loop === true || obj.loop === false) {
-      loop = obj.loop;
+    if (!(obj.autoplay === undefined)) {
+      if (obj.autoplay === true || obj.autoplay === false) {
+        autoplay = obj.autoplay;
+      }
     }
-  }
 
-  if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
-    animationCount = animationCount + 1;
-    var currentAnimation = animationCount;
-    animation[currentAnimation] = JSON.parse(http.responseText);
-    animation[currentAnimation]._elementId = elementId;
-    buildGraph(elementId, currentAnimation, obj.container, true, true);
-  } else {
-    if (!(obj.path === undefined) && obj.path) {
-      getJson(obj.path, '', '', '', '', '', obj.container, 0, obj.container.id, autoplay, loop);
+    if (!(obj.loop === undefined)) {
+      if (obj.loop === true || obj.loop === false) {
+        loop = obj.loop;
+      }
     }
-  }
-  if (!playStarted) {
-    playStarted = true;
-    window.requestAnimationFrame(lottiemate);
-  }
-};
+
+    if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
+      animationCount = animationCount + 1;
+      var currentAnimation = animationCount;
+      animation[currentAnimation] = JSON.parse(http.responseText);
+      animation[currentAnimation]._elementId = elementId;
+      buildGraph(elementId, currentAnimation, obj.container, true, true);
+    } else {
+      if (!(obj.path === undefined) && obj.path) {
+        getJson(obj.path, '', '', '', '', '', obj.container, 0, obj.container.id, autoplay, loop);
+      }
+    }
+    if (!playStarted) {
+      playStarted = true;
+      window.requestAnimationFrame(lottiemate);
+    }
+  };
+
+  jlottie.destroy = destroy;
+  jlottie.play = play;
+  jlottie.stop = stop;
+  jlottie.goToAndStop = goToAndStop;
+  jlottie.loadAnimation = loadAnimation;
+
+//  return moduleIf;
+//})();
 
 ///////////// ANIMATOR
 
@@ -1999,8 +2023,8 @@ function processLottie(lottieElement, JSONsrc) {
   }
 }
 
-exports.loadAnimation = 'jlottie.loadAnimation';
-exports.goToAndStop = 'jlottie.goToAndStop';
-exports.play = 'jlottie.play';
-exports.stop = 'jlottie.stop';
-exports.destroy = 'jlottie.destroy';
+if (typeof exports === 'object') {
+  module.exports = jlottie;
+}
+
+//}));
