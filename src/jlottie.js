@@ -1810,8 +1810,8 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
         animation[currentAnimation]._debugContainer = _debugContainer;
         animation[currentAnimation]._curFPS = 0;
         animation[currentAnimation]._timeElapsed = 0;
-        animation[currentAnimation]._debugObj = document.createElementNS(xmlns, 'div');
-        animation[currentAnimation]._debugObj.setAttributeNS(null, 'id', `__dbg__${currentAnimation}`);
+        animation[currentAnimation]._debugObj = document.createElement('div');
+        animation[currentAnimation]._debugObj.setAttribute('id', `__dbg__${currentAnimation}`);
         animation[currentAnimation]._debugObj.style.display = 'block';
         _debugContainer.prepend(animation[currentAnimation]._debugObj);
       }
