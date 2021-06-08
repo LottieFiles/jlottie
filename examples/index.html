@@ -4,6 +4,7 @@
     </head>
 
     <body>
+		<div style="display:block; width: 600px; min-height: 200px; border: 1px solid #000000;" id='debug'></div>
         <lottie-player
             id="soto"
             autoplay
@@ -11,7 +12,7 @@
             loop
             mode="normal"
             src="https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json"
-            style="display: inline-block; float: left; border: 1px #000000 solid"
+            style="display: block; border: 1px #000000 solid"
         >
         </lottie-player>
 
@@ -21,8 +22,9 @@
                 loop: true,
                 autoplay: true,
                 path: 'https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json', // the path to the animation json
+				debug: true,
+				debugContainer: document.getElementById('debug'),
             });
-            console.log('test');
         </script>
 
         <!--
