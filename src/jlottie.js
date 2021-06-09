@@ -1,3 +1,4 @@
+'use strict';
 
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -156,6 +157,7 @@ function loadFrame(i, _currentFrame) {
 function lottiemate() {
   const currentDate = Date.now();
   let currentObj;
+  let currentObjOther;
   for (let i = 0; i <= animationCount; i++) {
     if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
       if (animation[i]._removed || animation[i]._paused) {
@@ -267,6 +269,7 @@ function getEmptyStageTransform() {
 }
 
 function findExistingTransform(transforms, animationId, frame) {
+  let found = 0;
   if (animation[animationId]._scene[parseInt(frame)] === undefined) {
     console.log(frame);
     return transforms;
@@ -367,9 +370,37 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
   let posX = 0;
 
   if (isLayer) {
+    if (objectId.hasOwnProperty('_currentLayerGroup')) {
+    //if (objectId._currentLayerGroup._layer > 0) {
+        //console.log('inpoint');
+        if (objectId._currentLayerGroup._inPoint >= 0) {
+        //console.log('inpoint');
+        transforms.inPoint = parseInt(objectId._currentLayerGroup._inPoint);
+      }
+      if (objectId._currentLayerGroup._outPoint > 0) {
+        transforms.outPoint = parseInt(objectId._currentLayerGroup._outPoint);
+      }
+    } else {
+      if (objectId.hasOwnProperty('_currentLayer')) {
+        if (objectId._currentLayer._inPoint >= 0) {
+          //console.log('inpoint');
+          transforms.inPoint = parseInt(objectId._currentLayer._inPoint);
+        }
+        if (objectId._currentLayer._outPoint > 0) {
+          transforms.outPoint = parseInt(objectId._currentLayer._outPoint);
+        }
+      }
+    }
+  } else {
+  }
+
+  /*
+  if (isLayer) {
     if (animation[animationId].hasOwnProperty('_currentLayerGroup')) {
-      if (animation[animationId]._currentLayerGroup._inPoint >= 0) {
-        console.log('inpoint');
+    //if (animation[animationId]._currentLayerGroup._layer > 0) {
+        //console.log('inpoint');
+        if (animation[animationId]._currentLayerGroup._inPoint >= 0) {
+        //console.log('inpoint');
         transforms.inPoint = parseInt(animation[animationId]._currentLayerGroup._inPoint);
       }
       if (animation[animationId]._currentLayerGroup._outPoint > 0) {
@@ -377,7 +408,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
       }
     } else {
       if (animation[animationId]._currentLayer._inPoint >= 0) {
-        console.log('inpoint');
+        //console.log('inpoint');
         transforms.inPoint = parseInt(animation[animationId]._currentLayer._inPoint);
       }
       if (animation[animationId]._currentLayer._outPoint > 0) {
@@ -386,6 +417,7 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
     }
   } else {
   }
+  */
 
   if (transforms.inPoint < 0 && transforms.outPoint < 0) {
     if (frame != transforms.inPoint && frame != transforms.outPoint) {
@@ -397,7 +429,10 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
       } else {
         posX = position;
         if (Number.isNaN(posX)) {
-          return;
+          posX = position[0];
+          if (Number.isNaN(posX)) {
+            return;
+          }
         }
       }
     }
@@ -462,6 +497,8 @@ function addGroupPositionTransform(frame, position, isLayer, animationId, refKey
       }) `;
     }
   }
+  var tempBoundingW;
+  var tempBoundingH;
   if (refKey == 's') {
     transforms.scaleFactorX += posX;
     tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
@@ -1557,7 +1594,9 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
         .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
         .setAttribute('style', 'display: block;');
     }
-    passedObj._currentLayer = passedObj[passedKey][i]._layer;
+    passedObj._currentLayer = {"_layer":"", "_inPoint":"", "_outPoint":""};
+    //passedObj._currentLayer = passedObj[passedKey][i]._layer;
+    passedObj._currentLayer._layer = passedObj[passedKey][i]._layer;
     passedObj._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
     passedObj._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
     if (passedObj[passedKey][i].hasOwnProperty('refId') && passedObj.hasOwnProperty('assets')) {
@@ -1581,7 +1620,9 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
     }
 
     if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
-      passedObj._currentLayerGroup = passedObj[passedKey][i]._layer;
+      passedObj._currentLayerGroup = {"_layer":0, "_inPoint":"", "_outPoint":""};
+      //passedObj._currentLayerGroup = passedObj[passedKey][i]._layer;
+      passedObj._currentLayerGroup._layer = passedObj[passedKey][i]._layer;
       passedObj._currentLayerGroup._inPoint = passedObj[passedKey][i]._inPoint;
       passedObj._currentLayerGroup._outPoint = passedObj[passedKey][i]._outPoint;
       passedObj[passedKey][i] = getShapes(
@@ -1709,7 +1750,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -1785,14 +1826,14 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     if (!animation[animationId]._autoplay) {
       jlottie.goToAndStop(1, '', animation[animationId]._elementId);
     }
-  } catch (e) {
+  /*} catch (e) {
 		console.error("Failed to load animation. " + e);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	} 
+	}*/
 }
 
 function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, _autoplay, _loop, _debugAnimation, _debugContainer) {

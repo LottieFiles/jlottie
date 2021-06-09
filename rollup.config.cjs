@@ -16,7 +16,7 @@ const banner = `/*!
 
 const createConfig = (options) => {
   const {
-    fileExt, format, minify = false, serve = false, transpile = true,
+    fileExt, format, minify = true, serve = false, transpile = true,
   } = options;
 
   return {
