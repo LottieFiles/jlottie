@@ -32,7 +32,7 @@ const createConfig = (options) => {
       sourcemap: true,
 
       // TODO: Remove this after strict-mode complaincy is achieved
-      strict: false,
+      strict: true,
     },
 
     plugins: [
