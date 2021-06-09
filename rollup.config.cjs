@@ -1,74 +1,102 @@
 const filesize = require('rollup-plugin-filesize');
-const serve = require('rollup-plugin-serve');
+const server = require('rollup-plugin-serve');
 const { terser } = require('rollup-plugin-terser');
 const strip = require('@rollup/plugin-strip');
 const { babel } = require('@rollup/plugin-babel');
 const pkg = require('./package.json');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const isWatch = process.env.ROLLUP_WATCH;
+
+// Extract the package name from the scoped name in package.json
+const pkgName = pkg.name.replace(/^@.*\//u, '');
 
 const banner = `/*!
  * ${pkg.name} v${pkg.version}
  */`;
 
-// Common plugin configs for all builds
-const plugins = [
-  babel({
-    babelHelpers: 'bundled',
-  }),
+const createConfig = (options) => {
+  const {
+    fileExt, format, minify = false, serve = false, transpile = true,
+  } = options;
 
-  isProduction && strip(),
+  return {
+    input: 'src/jlottie.js',
 
-  isProduction && terser(),
+    treeshake: false,
 
-  filesize(),
-];
+    output: {
+      name: 'jlottie',
+      format,
+      file: `dist/${pkgName}${fileExt}`,
+      banner,
+      sourcemap: true,
+
+      // TODO: Remove this after strict-mode complaincy is achieved
+      strict: false,
+    },
+
+    plugins: [
+      transpile && babel({
+        babelHelpers: 'bundled',
+      }),
+
+      isProduction && strip(),
+
+      minify && terser(),
+
+      filesize(),
+
+      serve
+        && server({
+          contentBase: ['src', 'dist', 'public'],
+          open: true,
+          host: 'localhost',
+          port: 8100,
+        }),
+    ],
+  };
+};
 
 module.exports = [
   // UMD build for the browser
   {
-    input: 'src/jlottie.js',
-    output: {
-      name: 'jlottie',
-      file: pkg.browser,
-      format: 'umd',
-      sourcemap: true,
-      banner,
-    },
-
-    plugins: [
-      ...plugins,
-
-      !isProduction
-        && isWatch
-        && serve({
-          contentBase: ['src', 'dist', 'public'],
-          open: true,
-          host: 'localhost',
-          port: 10000,
-        }),
-    ],
+    fileExt: '.js',
+    format: 'umd',
+    serve: true,
+    transpile: true,
   },
 
-  // CommonJS and ESM build
+  // Minified UMD build for the browser
   {
-    input: 'src/jlottie.js',
-    output: [
-      {
-        file: pkg.main,
-        format: 'cjs',
-        sourcemap: true,
-        banner,
-      },
-      {
-        file: pkg.module,
-        format: 'es',
-        sourcemap: true,
-        banner,
-      },
-    ],
-
-    plugins,
+    fileExt: '.min.js',
+    format: 'umd',
+    minify: true,
+    transpile: true,
   },
-];
+
+  // CJS build for the browser
+  {
+    fileExt: '.cjs.js',
+    format: 'cjs',
+  },
+
+  // Minified CJS build for the browser
+  {
+    fileExt: '.min.cjs.js',
+    format: 'cjs',
+    minify: true,
+  },
+
+  // ESM build for the browser
+  {
+    fileExt: '.esm.js',
+    format: 'es',
+  },
+
+  // Minified ESM build for the browser
+  {
+    fileExt: '.min.esm.js',
+    format: 'es',
+    minify: true,
+  },
+].map((config) => createConfig(config));
