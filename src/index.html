@@ -112,6 +112,12 @@
 
             // Load an initial animation
             loadLottie();
+
+            var input = document.getElementById('lottieSrc');
+            input.addEventListener('change', (event) => {
+              jlottie.destroy('jlottie-container');
+               loadLottie();
+          });
     </script>
   </body>
 </html>
