@@ -1,5 +1,2115 @@
 /*!
  * @lottiefiles/jlottie v1.0.0
  */
-"use strict";function t(e){return(t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(e)}var e="http://www.w3.org/2000/svg",n=[],r=[],a=-1,o=!1;function s(t,e,n,r,a,o,s,c,i,p,l,u){var h=[];e.hasOwnProperty("x")||e.length>=1&&(e.x=e[0],"p"!=i&&"s"!=i||(e.y=e[1])),n.hasOwnProperty("x")||n.length>=1&&(n.x=e[0],"p"!=i&&"s"!=i||(n.y=e[1])),"s"==i&&(e.x.length>1&&(e.x=e.x[0],e.y=e.y[0]),n.x.length>1&&(n.x=n.x[0],n.y=n.y[0]));for(var d,k,y=o-a,m=a,f=1;f<y;f++){if(k=1-(d=f/y),h.push({_comp:1,t:0}),m++,h[h.length-1]._frame=parseInt(m),h[h.length-1].t=parseInt(m),h[h.length-1].s=[],"ks"!=i)h[h.length-1].s.push(Math.pow(k,3)*t[0]+3*Math.pow(k,2)*d*(e.x+t[0])+3*k*Math.pow(d,2)*(n.x+r[0])+Math.pow(d,3)*r[0]),"x"!=i&&"y"!=i&&("p"!=i&&"s"!=i||h[h.length-1].s.push(Math.pow(k,3)*t[1]+3*Math.pow(k,2)*d*(e.y+t[1])+3*k*Math.pow(d,2)*(n.y+r[1])+Math.pow(d,3)*r[1]));else{h[h.length-1].s.push({i:[],o:[],v:[]});for(var g=0;g<t[0].i.length;g++)h[h.length-1].s[h[h.length-1].s.length-1].i.push([Math.pow(k,3)*t[0].i[g][0]+3*Math.pow(k,2)*d*(e.x+t[0].i[g][0])+3*k*Math.pow(d,2)*(n.x+r[0].i[g][0])+Math.pow(d,3)*r[0].i[g][0],Math.pow(k,3)*t[0].i[g][1]+3*Math.pow(k,2)*d*(e.y+t[0].i[g][1])+3*k*Math.pow(d,2)*(n.y+r[0].i[g][1])+Math.pow(d,3)*r[0].i[g][1]]),h[h.length-1].s[h[h.length-1].s.length-1].o.push([Math.pow(k,3)*t[0].o[g][0]+3*Math.pow(k,2)*d*(e.x+t[0].o[g][0])+3*k*Math.pow(d,2)*(n.x+r[0].o[g][0])+Math.pow(d,3)*r[0].o[g][0],Math.pow(k,3)*t[0].o[g][1]+3*Math.pow(k,2)*d*(e.y+t[0].o[g][1])+3*k*Math.pow(d,2)*(n.y+r[0].o[g][1])+Math.pow(d,3)*r[0].o[g][1]]),h[h.length-1].s[h[h.length-1].s.length-1].v.push([Math.pow(k,3)*t[0].v[g][0]+3*Math.pow(k,2)*d*(e.x+t[0].v[g][0])+3*k*Math.pow(d,2)*(n.x+r[0].v[g][0])+Math.pow(d,3)*r[0].v[g][0],Math.pow(k,3)*t[0].v[g][1]+3*Math.pow(k,2)*d*(e.y+t[0].v[g][1])+3*k*Math.pow(d,2)*(n.y+r[0].v[g][1])+Math.pow(d,3)*r[0].v[g][1]])}p&&"ks"!=i&&_(m,h[h.length-1].s,s,c,i,p,l,u)}return h}function c(t,e){for(var r=0;r<n[t]._refObj.length;r++)for(var a=n[t]._refObj[r],o=!1,s=e-1;s>=0;s--)for(var c=0;c<n[t]._scene[s]._transform.length;c++){if(n[t]._scene[s]._transform[c].refObj==a&&(currentObj=document.getElementById(n[t]._scene[s]._transform[c].refObj),currentObjOther=document.getElementById(n[t]._scene[s]._transform[c].refObjOther),n[t]._scene[s]._transform[c].isTween||n[t]._scene[s]._transform[c].combined.length>0)){n[t]._scene[s]._transform[c].isTween&&currentObj.setAttribute("d",n[t]._scene[s]._transform[c].dataString),currentObj.setAttribute("transform",n[t]._scene[s]._transform[c].combined),currentObjOther.setAttribute("opacity",n[t]._scene[s]._transform[c].opacity),o=!0;break}if(o)break}}function i(){for(var t,e=Date.now(),r=function(r){if(n[r]._loaded&&e-n[r]._lastTime>=n[r]._frameTime){if(n[r]._removed||n[r]._paused)return"continue";if(n[r]._debugAnimation&&(n[r]._timeElapsed=n[r]._timeElapsed+(e-n[r]._lastTime)),n[r]._lastTime=e,n[r]._currentFrame++,n[r]._currentFrame>=n[r]._totalFrames&&(n[r]._currentFrame=0,!n[r]._loop))return n[r]._paused=!0,B.goToAndStop(n[r]._totalFrames-1,"",n[r]._elementId),"continue";setTimeout((function(){for(var e=0;e<n[r]._scene[n[r]._currentFrame]._transform.length;e++)n[r]._scene[n[r]._currentFrame]._transform[e].refObj.length>0&&(t=document.getElementById(n[r]._scene[n[r]._currentFrame]._transform[e].refObj),currentObjOther=document.getElementById(n[r]._scene[n[r]._currentFrame]._transform[e].refObjOther),n[r]._scene[n[r]._currentFrame]._transform[e].isTween&&t.setAttribute("d",n[r]._scene[n[r]._currentFrame]._transform[e].dataString),t.setAttribute("transform",n[r]._scene[n[r]._currentFrame]._transform[e].combined),currentObjOther.setAttribute("opacity",n[r]._scene[n[r]._currentFrame]._transform[e].opacity)),n[r]._scene[n[r]._currentFrame]._transform[e].hide&&(document.getElementById(n[r]._scene[n[r]._currentFrame]._transform[e].stageObj).style.display="none"),n[r]._scene[n[r]._currentFrame]._transform[e].show&&(document.getElementById(n[r]._scene[n[r]._currentFrame]._transform[e].stageObj).style.display="block")}),0)}n[r]._debugAnimation&&(s=Date.now(),n[r]._timeElapsed=n[r]._timeElapsed+(s-e),n[r]._timeElapsed>=2e3&&(n[r]._curFPS=n[r]._timeElapsed/2*n[r].fr,n[r]._debugObj.innerHTML="required fps: ".concat(n[r].fr,", current fps: ").concat(n[r]._curFPS/1e3),n[r]._timeElapsed=0))},o=0;o<=a;o++){var s;r(o)}window.requestAnimationFrame(i)}function p(){var t={translateX:0,translateY:0,scaleFactorX:0,scaleFactorY:0,rotateAngle:0,opacityFactor:0,anchorX:0,anchorY:0,paddingX:0,paddingY:0,paddingAnchorX:0,paddingAnchorY:0,isTranslate:!1,dataString:"",isTween:!1,tweenShape:"",refObj:"",combined:"",translate:"",rotate:"",scale:"",opacity:1,hide:!1,show:!1,inPoint:-1,outPoint:-1,isLayer:!0,stageObj:"",isSet:!1};return t}function l(){var t={stageObj:"",refObj:"",hide:!1,show:!1};return t}function u(t,e,r){if(void 0===n[e]._scene[parseInt(r)])return t;for(var a=0;a<n[e]._scene[parseInt(r)]._transform.length;a++)if(n[e]._scene[parseInt(r)]._transform[a].refObj==t.refObj){t=n[e]._scene[parseInt(r)]._transform[a],found=1;break}return t}function h(t,e,a,o){o>n[t]._totalFrames&&(o=n[t]._totalFrames);var s=l();if(a>-1){r=a;for(var c=0;c<n[t]._scene[parseInt(r)]._transform.length;c++)if(n[t]._scene[parseInt(r)]._transform[c].stageObj==e){s=n[t]._scene[parseInt(r)]._transform[c];break}s.stageObj=e,s.show=!0,n[t]._scene[parseInt(r)]._transform.push(s)}if(s=l(),o>-1){r=o;for(c=0;c<n[t]._scene[parseInt(r)]._transform.length;c++)if(n[t]._scene[parseInt(r)]._transform[c].stageObj==e){s=n[t]._scene[parseInt(r)]._transform[c];break}s.stageObj=e,s.hide=!0,n[t]._scene[parseInt(r)]._transform.push(s)}else r=0;if(s=l(),o>-1&&a>0){r=0;for(c=0;c<n[t]._scene[parseInt(r)]._transform.length;c++)if(n[t]._scene[parseInt(r)]._transform[c].stageObj==e){s=n[t]._scene[parseInt(r)]._transform[c];break}s.stageObj=e,s.hide=!0,n[t]._scene[parseInt(r)]._transform.push(s)}var i=0;if(r>1)for(var p=0;p<=n[t]._totalFrames;p++)for(c=0;c<n[t]._scene[p]._transform.length;c++)n[t]._scene[p]._transform[c].stageObj==e&&(n[t]._scene[p]._transform[c].show&&(i=1),n[t]._scene[p]._transform[c].hide&&(i=0),1==i&&(n[t]._scene[p]._transform[c].show=!0))}function _(t,e,r,a,o,s,c,i){if(!(t<0||s<1||t>n[a]._totalFrames)){var l=p(),h=0;if(r&&(n[a].hasOwnProperty("_currentLayerGroup")?(n[a]._currentLayerGroup._inPoint>=0&&(l.inPoint=parseInt(n[a]._currentLayerGroup._inPoint)),n[a]._currentLayerGroup._outPoint>0&&(l.outPoint=parseInt(n[a]._currentLayerGroup._outPoint))):(n[a]._currentLayer._inPoint>=0&&(l.inPoint=parseInt(n[a]._currentLayer._inPoint)),n[a]._currentLayer._outPoint>0&&(l.outPoint=parseInt(n[a]._currentLayer._outPoint)))),l.inPoint<0&&l.outPoint<0&&t!=l.inPoint&&t!=l.outPoint)if(Array.isArray(e)){if(h=e[0],Number.isNaN(h))return}else if(h=e,Number.isNaN(h))return;r?(l.isLayer=!0,c.td>0?l.refObj="".concat(a,"_").concat(i,"_layerGroup").concat(c._layer):l.refObj="".concat(a,"_").concat(i,"_layerTranslate").concat(c._layer),l.refObjOther="".concat(a,"_").concat(i,"_layerGroup").concat(c._layer)):(l.isLayer=!1,l.refObj="".concat(a,"_group").concat(n[a]._currentShapeGroup),l.refObjOther="".concat(a,"_group").concat(n[a]._currentShapeGroup)),l.anchorX=c._anchorX,l.anchorY=c._anchorY,l=u(l,a,t),n[a]._instated.hasOwnProperty(l.refObj)||(n[a]._refObj.push(l.refObj),n[a]._objSize[l.refObj]=[],n[a]._objSize[l.refObj][0]=document.getElementById(l.refObj).getBoundingClientRect().width,n[a]._objSize[l.refObj][1]=document.getElementById(l.refObj).getBoundingClientRect().height),c._layer;var _,d,k=0;if("r"==o&&(l.rotateAngle+=h,c.hasOwnProperty("_anchorX")&&c.hasOwnProperty("_anchorY")?l.rotate="rotate(".concat(l.rotateAngle,",").concat(c._anchorX,",").concat(c._anchorY,") "):l.rotate="rotate(".concat(l.rotateAngle,",").concat(document.getElementById(l.refObj).getBoundingClientRect().width/2,",").concat(document.getElementById(l.refObj).getBoundingClientRect().height/2,") ")),"s"==o)l.scaleFactorX+=h,tempBoundingW=n[a]._objSize[l.refObj][0],tempBoundingH=n[a]._objSize[l.refObj][1],e.length>1?(l.scaleFactorY+=e[1],_=1-l.scaleFactorX/100,d=1-l.scaleFactorY/100):(_=1-l.scaleFactorX/100,d=1-l.scaleFactorX/100),l.scale="scale(".concat(l.scaleFactorX/100,",").concat(l.scaleFactorY/100,") "),l.paddingX=(l.anchorX-tempBoundingW)*_+tempBoundingW*_,l.paddingY=(l.anchorY-tempBoundingH)*d+tempBoundingH*d,l.paddingAnchorX=l.anchorX*_,l.paddingAnchorY=l.anchorY*d;"p"==o&&(k=e[1],c.hasOwnProperty("_anchorX")&&(l.translateX+=h),c.hasOwnProperty("_anchorY")&&(l.translateY+=k),l.translate="translate(".concat(l.translateX-l.anchorX,",").concat(l.translateY-l.anchorY,") "),l.isTranslate=!0),l.isTranslate||(l.translate="translate(".concat(l.paddingX,",").concat(l.paddingY,") ")),"o"==o&&(l.opacityFactor+=h,l.opacity=l.opacityFactor/100),l.combined=l.translate+l.scale+l.rotate,l.isSet=!0,n[a]._scene[parseInt(t)]._transform.push(l),n[a]._instated.hasOwnProperty(l.refObj)||(n[a]._instated[l.refObj]=1,n[a]._scene[0]._transform.push(l))}}function d(t,e,n,r,a,o,c){for(var i,p=0,l=t[e].k.length,u=l,h={x:0,y:0};p<l-1;){if(!0,!0,t[e].k[p].hasOwnProperty("_comp"));else{var d;a>-1&&_(t[e].k[p].t,t[e].k[p].s,n,r,e,a,o,c),t[e].k[p].hasOwnProperty("e")?i=t[e].k[p].e:t[e].k[p+1].hasOwnProperty("s")&&(i=t[e].k[p+1].s),t[e].k[p+1].hasOwnProperty("i")&&"ks"!=e&&(t[e].k[p+1].i.x<1&&(t[e].k[p+1].i.x=0),t[e].k[p+1].i.y<1&&(t[e].k[p+1].i.y=0)),t[e].k[p].hasOwnProperty("o")&&"ks"!=e&&(t[e].k[p].o.x<1&&(t[e].k[p].o.x=0),t[e].k[p].o.y<1&&(t[e].k[p].o.y=0));for(var k=(d=t[e].k[p+1].hasOwnProperty("i")&&t[e].k[p].hasOwnProperty("o")?s(t[e].k[p].s,t[e].k[p].o,t[e].k[p+1].i,i,t[e].k[p].t,t[e].k[p+1].t,n,r,e,a,o,c):t[e].k[p].hasOwnProperty("o")?s(t[e].k[p].s,t[e].k[p].o,h,i,t[e].k[p].t,t[e].k[p+1].t,n,r,e,a,o,c):s(t[e].k[p].s,h,h,i,t[e].k[p].t,t[e].k[p+1].t,n,r,e,a,o,c)).length-1;k>=0;k--)t[e].k.splice(p+1,0,d[k]);p+=(l=t[e].k.length)-u,u=l}p+=1}return t}function k(t,e,n,r,a,o,s,c){if(t[n].k=[],t[n].x.k.length>1&&(t[n]=d(t[n],"x",r,a,!1,s,c)),t[n].y.k.length>1&&(t[n]=d(t[n],"y",r,a,!1,s,c)),!Array.isArray(t[n].x.k)){for(var i=0;i<t[n].y.k.length;i++)t[n].y.k[i].hasOwnProperty("s")&&t[n].k.push({i:[0,0,0],o:[0,0,0],s:[t[n].x.k,t[n].y.k[i].s[0],0],t:t[n].y.k[i].t});for(i=0;i<t[n].k.length;i++)_(t[n].k[i].t,t[n].k[i].s,r,a,n,o,s,c);return t}if(!t[n].y.k.isArray){for(i=0;i<t[n].x.k.length;i++)t[n].x.k[i].hasOwnProperty("s")&&t[n].k.push({i:[0,0,0],o:[0,0,0],s:[t[n].x.k[i].s[0],t[n].y.k,0],t:t[n].x.k[i].t});for(i=0;i<t[n].k.length;i++)_(t[n].k[i].t,t[n].k[i].s,r,a,n,o,s,c);return t}if(t[n].x.k.length>t[n].y.k.length){for(i=0;i<t[n].x.k.length;i++)t[n].k.push({i:[0,0,0],o:[0,0,0],s:[t[n].x.k[i].s[0],0,0],t:t[n].x.k[i].t});for(i=0;i<t[n].y.k.length;i++)t[n].k[0].t>t[n].y.k[i].t?t[n].k.splice(i,0,{i:[0,0,0],o:[0,0,0],s:[0,t[n].y.k[i].s[0],0],t:t[n].y.k[i].t}):t[n].k[0].t<t[n].y.k[i].t?t[n].k.push({i:[0,0,0],o:[0,0,0],s:[0,t[n].y.k[i].s[0],0],t:t[n].y.k[i].t}):t[n].k[0].t==t[n].y.k[i].t&&(t[n].k.s[1]=t[n].y.k[i].s[0]);for(i=0;i<t[n].k.length;i++)_(t[n].k[i].t,t[n].k[i].s,r,a,n,o,s);return t}if(t[n].x.k.length<t[n].y.k.length){for(i=0;i<t[n].y.k.length;i++)t[n].k.push({i:[0,0,0],o:[0,0,0],s:[0,t[n].y.k[i].s[0],0],t:t[n].y.k[i].t});for(i=0;i<t[n].x.k.length;i++)t[n].k[0].t>t[n].x.k[i].t?t[n].k.splice(i,0,{i:[0,0,0],o:[0,0,0],s:[t[n].x.k[i].s[0],0,0],t:t[n].x.k[i].t}):t[n].k[0].t<t[n].x.k[i].t?t[n].k.push({i:[0,0,0],o:[0,0,0],s:[t[n].x.k[i].s[0],0,0],t:t[n].x.k[i].t}):t[n].k[0].t==t[n].x.k[i].t&&(t[n].k.s[0]=t[n].x.k[i].s[0]);for(i=0;i<t[n].k.length;i++)_(t[n].k[i].t,t[n].k[i].s,r,a,n,o,s,c);return t}return t}function y(t,e,n,r,a,o,s,c){return t.hasOwnProperty(n)&&(t[n].hasOwnProperty("x")&&t[n].hasOwnProperty("y")&&(t=k(t,0,n,r,a,o,s,c)),t[n].hasOwnProperty("k")&&t[n].k.length>1&&t[n].k[0].hasOwnProperty("s")&&(t=d(t,n,r,a,o,s,c))),t}function m(t,n,r,a,o){var s=document.createElementNS(e,"rect");return s.setAttribute("fill","transparent"),s.setAttribute("width",t.s.k[0]),s.setAttribute("height",t.s.k[1]),t.p.k.length>0&&(s.setAttribute("x",t.p.k[0]+t.s.k[0]/2),s.setAttribute("y",t.p.k[1]+t.s.k[1]/2)),s.setAttribute("id","".concat(r,"_shape").concat(t._shape)),s.classList.add("rectangle"),n.prepend(s),t._isShape=!0,t}function f(t,e,n,r,a){return t}function g(t,r,a,o,s){if(!t.ks.k.hasOwnProperty("v")){if(t.ks.k[0].hasOwnProperty("s")){var c,i="";c=(t=d(t,"ks",!1,a,-1,t,s)).ks.k[t.ks.k.length-1].hasOwnProperty("s")?t.ks.k.length:t.ks.k.length-1;for(var l=0;l<c;l++){var h=p();h.isLayer=!1,h.isTween=!0,h.refObj="".concat(a,"_shape").concat(t._shape),h.refObjOther="".concat(a,"_shape").concat(t._shape),h=u(h,a,t.ks.k[l].t);i="M".concat(t.ks.k[l].s[0].v[0][0],",").concat(t.ks.k[l].s[0].v[0][1]);for(var _=1;_<t.ks.k[l].s[0].v.length;_++)i="".concat(i," C").concat(t.ks.k[l].s[0].v[_-1][0]+t.ks.k[l].s[0].o[_-1][0],",").concat(t.ks.k[l].s[0].v[_-1][1]+t.ks.k[l].s[0].o[_-1][1]," ").concat(t.ks.k[l].s[0].v[_][0]+t.ks.k[l].s[0].i[_][0],",").concat(t.ks.k[l].s[0].v[_][1]+t.ks.k[l].s[0].i[_][1]," ").concat(t.ks.k[l].s[0].v[_][0],",").concat(t.ks.k[l].s[0].v[_][1]);if(t.ks.k[0].s[0].c&&(i="".concat(i," C").concat(t.ks.k[l].s[0].v[t.ks.k[l].s[0].v.length-1][0]+t.ks.k[l].s[0].o[t.ks.k[l].s[0].v.length-1][0],",").concat(t.ks.k[l].s[0].v[t.ks.k[l].s[0].v.length-1][1]+t.ks.k[l].s[0].o[t.ks.k[l].s[0].v.length-1][1]," ").concat(t.ks.k[l].s[0].v[0][0]+t.ks.k[l].s[0].i[0][0],",").concat(t.ks.k[l].s[0].v[0][1]+t.ks.k[l].s[0].i[0][1]," ").concat(t.ks.k[l].s[0].v[0][0],",").concat(t.ks.k[l].s[0].v[0][1]),i+=" Z"),h.dataString=i,0==l)(k=document.createElementNS(e,"path")).setAttribute("fill","transparent"),k.setAttribute("id","".concat(a,"_shape").concat(t._shape)),k.setAttribute("d",i),k.classList.add("shape"),r.prepend(k),t._isShape=!0;if(t.ks.k[l].t>n[a]._totalFrames)break;n[a]._scene[parseInt(t.ks.k[l].t)]._transform.push(h)}}return t}for(i="M".concat(t.ks.k.v[0][0],",").concat(t.ks.k.v[0][1]),_=1;_<t.ks.k.v.length;_++)i="".concat(i," C").concat(t.ks.k.v[_-1][0]+t.ks.k.o[_-1][0],",").concat(t.ks.k.v[_-1][1]+t.ks.k.o[_-1][1]," ").concat(t.ks.k.v[_][0]+t.ks.k.i[_][0],",").concat(t.ks.k.v[_][1]+t.ks.k.i[_][1]," ").concat(t.ks.k.v[_][0],",").concat(t.ks.k.v[_][1]);var k;return t.ks.k.c&&(i="".concat(i," C").concat(t.ks.k.v[t.ks.k.v.length-1][0]+t.ks.k.o[t.ks.k.v.length-1][0],",").concat(t.ks.k.v[t.ks.k.v.length-1][1]+t.ks.k.o[t.ks.k.v.length-1][1]," ").concat(t.ks.k.v[0][0]+t.ks.k.i[0][0],",").concat(t.ks.k.v[0][1]+t.ks.k.i[0][1]," ").concat(t.ks.k.v[0][0],",").concat(t.ks.k.v[0][1]),i+=" Z"),t._data=i,(k=document.createElementNS(e,"path")).setAttribute("fill","transparent"),k.setAttribute("id","".concat(a,"_shape").concat(t._shape)),k.setAttribute("d",i),k.classList.add("shape"),r.prepend(k),t._isShape=!0,t}function b(t,e,n,r){return t}function w(t,e,n,r,a){return"fl"==t.ty&&t.c.k.hasOwnProperty("s")&&(t=y(t,0,"c",!1,n,3,t,a)),"tr"==t.ty&&(t.hasOwnProperty("a")&&(t.a.k.hasOwnProperty("s")&&(t=y(t,0,"a",!1,n,2,t,a)).a.k[0].t>0&&(t._startI=!0),t.a.k.length>1&&(t._anchorX=t.a.k[0],t._anchorY=t.a.k[1])),t.hasOwnProperty("p")&&t.p.k.hasOwnProperty("s")&&(t=y(t,0,"p",!1,n,2,t,a)).p.k[0].t>0&&(t._startI=!0)),"sh"==t.ty&&(t.hasOwnProperty("ks")&&t.ks.k.length>1&&(t=b(t)),t=g(t,e,n)),"rc"==t.ty&&(t.hasOwnProperty("ks")&&t.ks.k.length>1&&(t=f(t)),t=m(t,e,n)),t}function v(t,r,a,o,s){n[s].gradientCount++;var c="".concat(s,"_gradient").concat(n[s].gradientCount),i=document.createElementNS(e,"linearGradient");i.setAttribute("id",c),i.setAttribute("spreadMethod","pad"),i.setAttribute("gradientUnits","userSpaceOnUse"),i.setAttribute("x1",t.k[0]),i.setAttribute("x2",r.k[0]),i.setAttribute("y1",t.k[1]),i.setAttribute("y2",r.k[1]),n[s].defs.prepend(i);for(var p=[],l=[],u=[],h=0;h<o.p;h++)p.push("".concat(100*o.k.k[4*h+0],"%")),l.push("stop-color:rgb(".concat(parseInt(255*o.k.k[4*h+1]),",").concat(parseInt(255*o.k.k[4*h+2]),",").concat(parseInt(255*o.k.k[4*h+3]),");")),u.push("stop-opacity:1;");if(o.k.k.length>4*o.p)for(h=0;h<o.p;h++)u[h]="stop-opacity:".concat(o.k.k[2*h+4*o.p+1],";");for(h=0;h<o.p;h++){var _=document.createElementNS(e,"stop");_.setAttribute("offset",p[h]),_.setAttribute("style",l[h]+u[h]),i.append(_)}return"url(#".concat(c,")")}var O={1:"butt",2:"round",3:"square"};function A(t,e,n,r,a,o){var s={color:"",opacity:1,width:1,lineCap:"round",lineJoin:"round",miterLimit:0};return s.color="rgb(".concat(255*t.k[0],",").concat(255*t.k[1],",").concat(255*t.k[2],")"),s.opacity=e.k/100,s.width=n.k,s.lineCap=O[r],s.lineJoin=O[a],1==a&&(s.miterLimit=a),s}function S(t,e,n){return"rgb(".concat(255*t,",").concat(255*e,",").concat(255*n,")")}function P(t,e,n,r){for(var a=0;a<t.length;a++)t[a]._isShape&&(document.getElementById("".concat(n,"_shape").concat(t[a]._shape)).setAttribute("stroke",e.color),document.getElementById("".concat(n,"_shape").concat(t[a]._shape)).setAttribute("stroke-width",e.width),document.getElementById("".concat(n,"_shape").concat(t[a]._shape)).setAttribute("stroke-linecap",e.lineCap),document.getElementById("".concat(n,"_shape").concat(t[a]._shape)).setAttribute("stroke-linejoin",e.lineJoin),1==e.lineJoin&&document.getElementById("".concat(n,"_shape").concat(t[a]._shape)).setAttribute("stroke-miterlimit",e.miterLimit))}function I(t,e,n,r,a){for(var o=0;o<t.length;o++)t[o]._isShape&&void 0!==e&&(document.getElementById("".concat(n,"_shape").concat(t[o]._shape)).setAttribute("fill",e),document.getElementById("".concat(n,"_shape").concat(t[o]._shape)).setAttribute("fill-opacity",1))}function E(t,r,a,o,s,c,i){for(var p,l,u=!1,h=0;h<a.it.length;h++)if(a._isGradient=!1,n[r].shapeCount++,a.tt,"gr"==a.it[h].ty){a.it[h]._group=n[r].shapeCount;var _=document.createElementNS(e,"g");_.setAttribute("id","".concat(r,"_group").concat(n[r].shapeCount)),n[r]._currentShapeGroup=n[r].shapeCount,o.prepend(_),a.it[h]=E(t,r,a.it[h],_,"".concat(r,"_group").concat(n[r].shapeCount))}else a.it[h]._shape=n[r].shapeCount,a.it[h]=w(a.it[h],o,r),"tr"==a.it[h].ty&&(a.it[h]._trIndex=h,a.it[h].p.hasOwnProperty("k")&&a.it[h].p.k.length>1&&(a.it[h].hasOwnProperty("a")?document.getElementById(s).setAttribute("transform","matrix(1,0,0,1,".concat(a.it[h].p.k[0]-a.it[h].a.k[0],",").concat(a.it[h].p.k[1]-a.it[h].a.k[1],")")):document.getElementById(s).setAttribute("transform","matrix(1,0,0,1,".concat(a.it[h].p.k[0],",").concat(a.it[h].p.k[1],")")))),"fl"==a.it[h].ty&&a.it[h].c.k.length>1&&(p=S(a.it[h].c.k[0],a.it[h].c.k[1],a.it[h].c.k[2])),"st"==a.it[h].ty&&a.it[h].c.k.length>1&&(l=A(a.it[h].c,a.it[h].o,a.it[h].w,a.it[h].lc,a.it[h].lj,a.it[h].ml),u=!0),"gf"==a.it[h].ty&&(a._isGradient=!0,p=v(a.it[h].s,a.it[h].e,a.it[h].o,a.it[h].g,r));return I(a.it,p,r,a._isGradient),u&&P(a.it,l,r),a}function x(t,r,a,o,s,c,i){for(var p,l,u=!1,h=0;h<a.shapes.length;h++)if(a._isGradient=!1,n[r].shapeCount++,a.tt,"gr"==a.shapes[h].ty){a.shapes[h]._group=n[r].shapeCount;var _=document.createElementNS(e,"g");_.setAttribute("id","".concat(r,"_group").concat(n[r].shapeCount)),_.setAttribute("opacity",1),n[r]._currentShapeGroup=n[r].shapeCount,o.prepend(_),a.shapes[h]=E(t,r,a.shapes[h],_,"".concat(r,"_group").concat(n[r].shapeCount))}else a.shapes[h]._shape=n[r].shapeCount,a.shapes[h]=w(a.shapes[h],o,r),"tr"==a.shapes[h].ty&&(a.shapes[h]._trIndex=h,a.shapes[h].p.hasOwnProperty("k")&&a.shapes[h].p.k>1&&document.getElementById("".concat(r,"_").concat(i,"_layerGroup").concat(a._layer)).setAttribute("transform","matrix(1,0,0,1,".concat(a.shapes[h].p.k[0],",").concat(a.shapes[h].p.k[1],")"))),"fl"==a.shapes[h].ty&&a.shapes[h].c.k.length>1&&(p=S(a.shapes[h].c.k[0],a.shapes[h].c.k[1],a.shapes[h].c.k[2])),"st"==a.shapes[h].ty&&a.shapes[h].c.k.length>1&&(l=A(a.shapes[h].c,a.shapes[h].o,a.shapes[h].w,a.shapes[h].lc,a.shapes[h].lj,a.shapes[h].ml),u=!0),"gf"==a.shapes[h].ty&&(a._isGradient=!0,p=v(a.shapes[h].s,a.shapes[h].e,a.shapes[h].o,a.shapes[h].g,r));return I(a.shapes,p,r,a._isGradient),u&&P(a.shapes,l,r),a}function j(t,r,a,o,s,c){for(var i,p,l=0;l<o[s].length;l++)if(o[s][l].ind==o[s][r].parent){if(o[s][l].tt>0)for(var u=l-1;u>=0;u--)if(o[s][u].td>0){o[s][l]._mask="_".concat(t,"_").concat(c,"_layerMask").concat(o[s][u].ind),o[s][l]._isMasked=!0;break}return o[s][l]._addedToDom||j(t,l,a,o,s,c),n[t].layerCount++,o[s][r]._parent=o[s][l]._layer,newLayer=document.createElementNS(e,"g"),newLayer.setAttribute("id","".concat(t,"_").concat(c,"_layer").concat(o[s][r]._layer)),newLayer.setAttribute("mask",a),newLayer.setAttribute("opacity",1),document.getElementById("".concat(t,"_").concat(c,"_layerTranslate").concat(o[s][r]._parent)).prepend(newLayer),(p=document.createElementNS(e,"g")).setAttribute("id","".concat(t,"_").concat(c,"_layerTranslate").concat(o[s][r]._layer)),p.setAttribute("opacity",1),newLayer.prepend(p),o[s][r].w>0&&(newLayer.style.width=o[s][r].w),o[s][r].h>0&&(newLayer.style.height=o[s][r].h),(i=document.createElementNS(e,"g")).setAttribute("id","".concat(t,"_").concat(c,"_layerGroup").concat(o[s][r]._layer)),i.setAttribute("opacity",1),p.prepend(i),o[s][l]._child.push("_layerGroup".concat(o[s][r].parent)),o[s][l]._childId.push(r),void(o[s][l]._addedToDom=!0)}}function N(t,r,a,o,s,c){var i,p,l,u,_,d;n[r].depth++,c=n[r].depth;for(var k="",m=0;m<o[s].length;m++)o.layerCount++,o[s][m]._layer=o[s][m].ind,o[s][m]._child=[],o[s][m]._childId=[],o[s][m].parent>0||(o[s][m].td>0?(o[s][m]._isMask=!0,l=document.createElementNS(e,"mask"),k="_".concat(r,"_").concat(c,"_layerMask").concat(o[s][m].ind),l.setAttribute("id",k),l.setAttribute("mask-type","alpha"),l.setAttribute("opacity",1),n[r].defs.prepend(l),(i=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layer").concat(o[s][m].ind)),i.setAttribute("style","display: block;"),i.setAttribute("opacity",1),l.prepend(i)):((i=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layer").concat(o[s][m].ind)),i.setAttribute("opacity",1),a.prepend(i),o[s][m].tt>0&&(o[s][m]._mask=k,o[s][m]._isMasked=!0)),o[s][m]._addedToDom=!0,(u=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layerTranslate").concat(o[s][m]._layer)),u.setAttribute("opacity",1),i.prepend(u),o[s][m].w>0&&(i.style.width=o[s][m].w),o[s][m].h>0&&(i.style.height=o[s][m].h),(p=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer)),p.setAttribute("opacity",1),u.prepend(p));for(m=0;m<o.layers.length;m++)if(o.layerCount=o[s][m]._layer,o[s][m].parent>0)for(var f=0;f<o.layers.length;f++)if(o[s][f].ind==o[s][m].parent){if(o[s][m].tt>0)for(var g=m-1;g>=0;g--)if(o[s][g].td>0){o[s][m]._mask="_".concat(r,"_").concat(c,"_layerMask").concat(o[s][g].ind);break}o.layerCount++,o[s][f]._addedToDom||j(r,f,k,o,s,c),o[s][m]._parent=o[s][f]._layer,(i=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layer").concat(o[s][m]._layer)),i.setAttribute("opacity",1),document.getElementById("".concat(r,"_").concat(c,"_layerTranslate").concat(o[s][m]._parent)).prepend(i),(u=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layerTranslate").concat(o[s][m]._layer)),u.setAttribute("opacity",1),i.prepend(u),o[s][m].w>0&&(i.style.width=o[s][m].w),o[s][m].h>0&&(i.style.height=o[s][m].h),(p=document.createElementNS(e,"g")).setAttribute("id","".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer)),p.setAttribute("opacity",1),u.prepend(p),o[s][f]._child.push("".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m].parent)),o[s][f]._childId.push(m),o[s][f]._addedToDom=!0}for(m=0;m<o.layers.length;m++){if(o[s][m]._inPoint=-1,o[s][m]._outPoint=-1,o[s][m].hasOwnProperty("ip")&&o[s][m].ip>=0&&(o[s][m]._inPoint=o[s][m].ip),o[s][m].hasOwnProperty("op")&&o[s][m].op>0?(o[s][m]._outPoint=o[s][m].op,o[s][m]._outPoint>o._totalFrames&&(o[s][m]._outPoint=o._totalFrames)):o[s][m]._outPoint=o._totalFrames,h(r,"".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer),o[s][m]._inPoint,o[s][m]._outPoint),o.layerCount=o[s][m]._layer,i=document.getElementById("".concat(r,"_").concat(c,"_layer").concat(o[s][m]._layer)),p=document.getElementById("".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer)),o[s][m].tt>0&&(document.getElementById("".concat(r,"_").concat(c,"_layer").concat(o[s][m]._layer)).setAttribute("mask","url(#".concat(o[s][m]._mask,")")),document.getElementById("".concat(r,"_").concat(c,"_layer").concat(o[s][m]._layer)).setAttribute("style","display: block;")),o._currentLayer=o[s][m]._layer,o._currentLayer._inPoint=o[s][m]._inPoint,o._currentLayer._outPoint=o[s][m]._outPoint,o[s][m].hasOwnProperty("refId")&&o.hasOwnProperty("assets")){for(var b=-1,w=0;w<o.assets.length;w++)if(o.assets[w].id==o[s][m].refId){b=w;break}b>=0&&(o.assets[b]=N(t,r,p,o.assets[b],"layers",c))}o[s][m].hasOwnProperty("shapes")?(o._currentLayerGroup=o[s][m]._layer,o._currentLayerGroup._inPoint=o[s][m]._inPoint,o._currentLayerGroup._outPoint=o[s][m]._outPoint,o[s][m]=x(t,r,o[s][m],p,"".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer),0,o[s][m].td),o[s][m].hasOwnProperty("shapes")&&(o._boundingX=p.getBoundingClientRect().width/2,o._boundingY=p.getBoundingClientRect().height/2)):o[s][m]._inPoint,o[s][m].hasOwnProperty("ks")&&(o[s][m].ks.hasOwnProperty("a")&&o[s][m].ks.a.hasOwnProperty("k")&&o[s][m].ks.a.k.length>1&&(o[s][m]._anchorX=o[s][m].ks.a.k[0],o[s][m]._anchorY=o[s][m].ks.a.k[1]),o[s][m].ks.hasOwnProperty("p")&&(o[s][m].ks=y(o[s][m].ks,0,"p",!0,r,1,o[s][m],c),o[s][m].ks.p.hasOwnProperty("k")&&o[s][m].ks.p.k.length>1&&(o[s][m].ks.p.k[0].hasOwnProperty("s")||(_=0!=o[s][m]._anchorX?o[s][m].ks.p.k[0]-o[s][m]._anchorX:o[s][m].ks.p.k[0],d=0!=o[s][m]._anchorY?o[s][m].ks.p.k[1]-o[s][m]._anchorY:o[s][m].ks.p.k[1],o[s][m].td>0?document.getElementById("".concat(r,"_").concat(c,"_layerGroup").concat(o[s][m]._layer)).setAttribute("transform","matrix(1,0,0,1,".concat(_,",").concat(d,")")):document.getElementById("".concat(r,"_").concat(c,"_layer").concat(o[s][m]._layer)).setAttribute("transform","matrix(1,0,0,1,".concat(_,",").concat(d,")")),o[s][m]._posX=_,o[s][m]._posY=d))),o[s][m].ks.hasOwnProperty("r")&&o[s][m].ks.r.k.length>1&&o[s][m].ks.r.k[0].hasOwnProperty("s")&&(o[s][m].ks=y(o[s][m].ks,0,"r",!0,r,1,o[s][m],c)),o[s][m].ks.hasOwnProperty("s")&&o[s][m].ks.s.k.length>1&&o[s][m].ks.s.k[0].hasOwnProperty("s")&&(o[s][m].ks=y(o[s][m].ks,0,"s",!0,r,1,o[s][m],c)),o[s][m].ks.hasOwnProperty("o")&&o[s][m].ks.o.k.length>1&&o[s][m].ks.o.k[0].hasOwnProperty("s")&&(o[s][m].ks=y(o[s][m].ks,0,"o",!0,r,1,o[s][m],c)))}return o}function M(t,r,o,s,c,i){n[r]._loaded=!1;try{n[r].depth=0,n[r].shapeCount=0,n[r].layerCount=0,n[r]._removed=!1,n[r]._totalFrames=parseInt(n[r].op-n[r].ip),n[r]._frameTime=1/n[r].fr*1e3,n[r]._currentFrame=-1,n[r]._lastTime=Date.now(),n[r]._autoplay=s,n[r]._loop=c,n[r]._customName=i,n[r]._paused=!1,n[r]._debugTimeElapsed=0,n[r]._debugContainer="",o.style.width=n[r].w,o.style.height=n[r].h,o.setAttribute("width",n[r].w),o.setAttribute("height",n[r].h);var p=document.createElementNS(e,"svg");p.setAttribute("xmlns",e),p.setAttributeNS(null,"width",n[r].w),p.setAttributeNS(null,"height",n[r].h),p.setAttributeNS(null,"viewBox","0 0 ".concat(n[r].w," ").concat(n[r].h)),p.setAttributeNS(null,"preserveAspectRatio","xMidYMid meet"),p.style.width="100%",p.style.height="100%",p.setAttributeNS(null,"id","_svg".concat(r)),o.prepend(p),n[r].defs=document.createElementNS(e,"defs"),n[r].defs.setAttributeNS(null,"id","_defs".concat(r)),n[r].gradientCount=0,n[r].maskCount=0,p.prepend(n[r].defs);var l=document.createElementNS(e,"g");l.setAttributeNS(null,"id","_lanim".concat(r)),p.append(l);var u=document.createElementNS(e,"g");u.setAttributeNS(null,"id","_compute".concat(r)),u.style.display="none",l.prepend(u),n[r]._scene=new Array(n[r]._totalFrames+1).fill(null).map((function(){return{_transform:[]}})),n[r]._instated={},n[r]._refObj=[],n[r]._objSize={},n[r]=N(t,r,l,n[r],"layers",0);var h=document.createElementNS(e,"clipPath");h.setAttributeNS(null,"id","_clip".concat(r)),n[r].defs.prepend(h);var _=document.createElementNS(e,"rect");_.setAttribute("x",0),_.setAttribute("y",0),_.setAttribute("width",n[r].w),_.setAttribute("height",n[r].h),h.append(_),l.setAttributeNS(null,"clip-path","url(#_clip".concat(r,")")),n[r]._buildDone=!0,1,n[r]._loaded=!0,n[r]._autoplay||B.goToAndStop(1,"",n[r]._elementId)}catch(t){a-=1,o.style.height=0,o.style.width=0,o.innerHTML="",n.splice(r,1)}}function F(e,r,o,s,c,i,p,l,u,h,_,d,k){var y=new XMLHttpRequest;y.open("GET",e,!0),y.onreadystatechange=function(){if(4==y.readyState&&200==y.status){var e=a+=1;n[e]=JSON.parse(y.responseText),n[e]._elementId=u,d&&"object"===t(k)&&(n[e]._debugAnimation=d,n[e]._debugContainer=k,n[e]._curFPS=0,n[e]._timeElapsed=0,n[e]._debugObj=document.createElement("div"),n[e]._debugObj.setAttribute("id","__dbg__".concat(e)),n[e]._debugObj.style.display="block",k.prepend(n[e]._debugObj)),M(u,e,p,h,_)}},y.send()}var B={};function C(t){if(!(a<0))if(void 0===t){for(var e=[],r=0;r<=a;r++)e.push(n[r]._elementId);n=[];for(r=0;r<=e;r++)document.getElementById(e[r]).innerHTML="",a-=1}else{t.toString(),t=t.replace(/#/g,"");for(r=0;r<=a;r++)if(n[r]._elementId==t||n[r]._customName==t){n.splice(r,1),document.getElementById(t).innerHTML="",a-=1;break}}}function T(t){if(!(a<0))if(void 0===t)for(var e=0;e<=a;e++)n[e]._paused=!1;else{t.toString(),t=t.replace(/#/g,"");for(e=0;e<=a;e++)if(n[e]._elementId==t||n[e]._customName==t){n[e]._paused=!1;break}}}function L(t){if(void 0===t)for(var e=0;e<=a;e++)n[e]._paused=!0;else{t.toString(),t=t.replace(/#/g,"");for(e=0;e<a;e++)if(n[e]._elementId==t||n[e]._customName==t){n[e]._paused=!0;break}}}function G(t,e,r){if(!(a<0))if(void 0===r)for(var o=0;o<=a;o++)n[o]._paused=!0,c(o,t);else{r.toString(),r=r.replace(/#/g,"");for(o=0;o<=a;o++)if(n[o]._elementId==r||n[o]._customName==r){n[o]._paused=!0,c(o,t);break}}}function X(t){if(void 0!==t.container||void 0!==t.path||void 0!==t.animationData){var e,r=!0,s=!0,c=!1;if(void 0!==t.autoplay&&(!0!==t.autoplay&&!1!==t.autoplay||(r=t.autoplay)),void 0!==t.loop&&(!0!==t.loop&&!1!==t.loop||(s=t.loop)),void 0!==t.debug&&!0===t.debug&&void 0!==t.debugContainer&&(c=!0,e=t.debugContainer),void 0!==t.animationData&&t.animationData.length>0){var p=a+=1;n[p]=JSON.parse(http.responseText),n[p]._elementId=elementId,M(elementId,p,t.container,!0,!0)}else void 0!==t.path&&t.path&&F(t.path,0,0,0,0,0,t.container,0,t.container.id,r,s,c,e);o||(o=!0,window.requestAnimationFrame(i))}}B.destroy=C,B.play=T,B.stop=L,B.goToAndStop=G,B.loadAnimation=X,"object"===("undefined"==typeof exports?"undefined":t(exports))&&(module.exports={jlottie:B,bezierCurve:s,loadFrame:c,lottiemate:i,getEmptyTransform:p,getEmptyStageTransform:l,findExistingTransform:u,stageSequence:h,addGroupPositionTransform:_,extrapolateValueKeyframe:function(t){return t},extrapolateOffsetKeyframe:d,extrapolatePathPosition:k,getPosition:y,prepShapeEl:function(t,n,r,a,o){var s=document.createElementNS(e,"ellipse");return s.setAttribute("d",dataString),s.setAttribute("fill","transparent"),s.setAttribute("id","".concat(r,"_shape").concat(t._shape)),s.classList.add("ellipse"),n.prepend(s),t._isShape=!0,t},prepShapeElKeyframe:function(t,e,n,r,a){return t},prepShapeSr:function(t,n,r,a,o){var s=document.createElementNS(e,"path");return s.setAttribute("d",dataString),s.setAttribute("fill","transparent"),s.setAttribute("id","".concat(r,"_shape").concat(t._shape)),s.classList.add("star"),n.prepend(s),t._isShape=!0,t},prepShapeSrKeyframe:function(t,e,n,r,a){return t},prepShapeRc:m,prepShapeRcKeyframe:f,prepShapeSh:g,prepShapeShKeyframe:b,prepShape:w,createGradientDef:v,getStrokeString:A,getColorString:S,setShapeStrokes:P,setShapeColors:I,getShapesGr:E,getShapes:x,resolveParents:j,getLayers:N,buildGraph:M,getJson:F,destroy:C,play:T,stop:L,goToAndStop:G,loadAnimation:X},exports.default=B);
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+const xmlns = 'http://www.w3.org/2000/svg';
+
+let animation = [];
+let frame = [];
+let animationCount = -1;
+const animationLength = 0;
+let animationLoading = 0;
+const frozen = false;
+let playStarted = false;
+
+/// ////////// BEZIER
+
+function bezierCurve(
+  p1,
+  c1,
+  c2,
+  p2,
+  fromT,
+  toT,
+  isLayer,
+  animationId,
+  refKey,
+  addTransformation,
+  objectId,
+  depth,
+) {
+  const newNodes = [];
+
+  if (c1.hasOwnProperty('x')) {
+  } else if (c1.length >= 1) {
+    c1.x = c1[0];
+    if (refKey == 'p' || refKey == 's') {
+      c1.y = c1[1];
+    }
+  }
+  if (c2.hasOwnProperty('x')) {
+  } else if (c2.length >= 1) {
+    c2.x = c1[0];
+    if (refKey == 'p' || refKey == 's') {
+      c2.y = c1[1];
+    }
+  }
+  if (refKey == 's') {
+    if (c1.x.length > 1) {
+      c1.x = c1.x[0];
+      c1.y = c1.y[0];
+    }
+    if (c2.x.length > 1) {
+      c2.x = c2.x[0];
+      c2.y = c2.y[0];
+    }
+  }
+  const frames = toT - fromT;
+  let timeTick;
+  let oneMinusT;
+  let currentFrame = fromT;
+  for (let i = 1; i < frames; i++) {
+    timeTick = i / frames;
+    oneMinusT = 1 - timeTick;
+    newNodes.push({ _comp: 1, t: 0 });
+    currentFrame++;
+    newNodes[newNodes.length - 1]._frame = parseInt(currentFrame);
+    newNodes[newNodes.length - 1].t = parseInt(currentFrame);
+    newNodes[newNodes.length - 1].s = [];
+    if (refKey != 'ks') {
+      newNodes[newNodes.length - 1].s.push(
+        Math.pow(oneMinusT, 3) * p1[0] +
+          3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0]) +
+          3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0]) +
+          Math.pow(timeTick, 3) * p2[0],
+      );
+      if (refKey != 'x' && refKey != 'y') {
+        if (refKey == 'p' || refKey == 's') {
+          newNodes[newNodes.length - 1].s.push(
+            Math.pow(oneMinusT, 3) * p1[1] +
+              3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1]) +
+              3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1]) +
+              Math.pow(timeTick, 3) * p2[1],
+          );
+        }
+      }
+    } else {
+      newNodes[newNodes.length - 1].s.push({ i: [], o: [], v: [] });
+      const j = 0;
+      for (let k = 0; k < p1[j].i.length; k++) {
+        newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].i.push([
+          Math.pow(oneMinusT, 3) * p1[j].i[k][0] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].i[k][0]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].i[k][0]) +
+            Math.pow(timeTick, 3) * p2[j].i[k][0],
+          Math.pow(oneMinusT, 3) * p1[j].i[k][1] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].i[k][1]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].i[k][1]) +
+            Math.pow(timeTick, 3) * p2[j].i[k][1],
+        ]);
+
+        newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].o.push([
+          Math.pow(oneMinusT, 3) * p1[j].o[k][0] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].o[k][0]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].o[k][0]) +
+            Math.pow(timeTick, 3) * p2[j].o[k][0],
+          Math.pow(oneMinusT, 3) * p1[j].o[k][1] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].o[k][1]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].o[k][1]) +
+            Math.pow(timeTick, 3) * p2[j].o[k][1],
+        ]);
+
+        newNodes[newNodes.length - 1].s[newNodes[newNodes.length - 1].s.length - 1].v.push([
+          Math.pow(oneMinusT, 3) * p1[j].v[k][0] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[j].v[k][0]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[j].v[k][0]) +
+            Math.pow(timeTick, 3) * p2[j].v[k][0],
+          Math.pow(oneMinusT, 3) * p1[j].v[k][1] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[j].v[k][1]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[j].v[k][1]) +
+            Math.pow(timeTick, 3) * p2[j].v[k][1],
+        ]);
+      }
+    }
+    if (addTransformation && refKey != 'ks') {
+      addGroupPositionTransform(
+        currentFrame,
+        newNodes[newNodes.length - 1].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    }
+  }
+
+  return newNodes;
+}
+
+/// ////////// ANIMATOR
+
+function loadFrame(i, _currentFrame) {
+  for (let ref = 0; ref < animation[i]._refObj.length; ref++) {
+    const refObj = animation[i]._refObj[ref];
+    let nextObj = false;
+    for (let m = _currentFrame - 1; m >= 0; m--) {
+      for (let n = 0; n < animation[i]._scene[m]._transform.length; n++) {
+        if (animation[i]._scene[m]._transform[n].refObj == refObj) {
+          currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
+          currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
+          if (
+            animation[i]._scene[m]._transform[n].isTween ||
+            animation[i]._scene[m]._transform[n].combined.length > 0
+          ) {
+            if (animation[i]._scene[m]._transform[n].isTween) {
+              currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
+            }
+            currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
+            currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
+            nextObj = true;
+            break;
+          }
+        }
+        if (nextObj) break;
+      }
+      if (nextObj) continue;
+    }
+  }
+}
+
+function lottiemate() {
+  const currentDate = Date.now();
+  let currentObj;
+  let currentObjOther;
+  for (let i = 0; i <= animationCount; i++) {
+    if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
+      if (animation[i]._removed || animation[i]._paused) {
+        continue;
+      }
+      if (animation[i]._debugAnimation) {
+        // DEBUG
+        animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
+      }
+      animation[i]._lastTime = currentDate;
+      animation[i]._currentFrame++;
+      if (animation[i]._currentFrame >= animation[i]._totalFrames) {
+        animation[i]._currentFrame = 0;
+        if (!animation[i]._loop) {
+          animation[i]._paused = true;
+          jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
+          continue;
+        }
+      }
+
+      setTimeout(function () {
+        for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
+            currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+            currentObjOther = document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+            );
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+              currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+            }
+            currentObj.setAttribute(
+              'transform',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
+            );
+            currentObjOther.setAttribute(
+              'opacity',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+            );
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'none';
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'block';
+          }
+        }
+      }, 0);
+    }
+    if (animation[i]._debugAnimation) {
+      // DEBUG
+      var debugDate = Date.now();
+      animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
+      //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
+      if (animation[i]._timeElapsed >= 2000) {
+        animation[i]._curFPS = (animation[i]._timeElapsed / 2) * animation[i].fr;
+        animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
+          animation[i]._curFPS / 1000
+        }`;
+        animation[i]._timeElapsed = 0;
+      }
+    }
+  }
+  window.requestAnimationFrame(lottiemate);
+}
+
+/// ////////// BUILD SCENE GRAPH
+let lastRefObj;
+
+function getEmptyTransform() {
+  const transforms = {};
+  transforms.translateX = 0;
+  transforms.translateY = 0;
+  transforms.scaleFactorX = 0;
+  transforms.scaleFactorY = 0;
+  transforms.rotateAngle = 0;
+  transforms.opacityFactor = 0;
+  transforms.anchorX = 0;
+  transforms.anchorY = 0;
+  transforms.paddingX = 0;
+  transforms.paddingY = 0;
+  transforms.paddingAnchorX = 0;
+  transforms.paddingAnchorY = 0;
+  transforms.isTranslate = false;
+
+  transforms.dataString = '';
+  transforms.isTween = false;
+  transforms.tweenShape = '';
+  transforms.refObj = '';
+  transforms.combined = '';
+
+  transforms.translate = '';
+  transforms.rotate = '';
+  transforms.scale = '';
+  transforms.opacity = 1;
+  transforms.hide = false;
+  transforms.show = false;
+  transforms.inPoint = -1;
+  transforms.outPoint = -1;
+  transforms.isLayer = true;
+  transforms.stageObj = '';
+  transforms.isSet = false;
+  return transforms;
+}
+
+function getEmptyStageTransform() {
+  const transforms = {};
+  transforms.stageObj = '';
+  transforms.refObj = '';
+  transforms.hide = false;
+  transforms.show = false;
+  return transforms;
+}
+
+function findExistingTransform(transforms, animationId, frame) {
+  let found = 0;
+  if (animation[animationId]._scene[parseInt(frame)] === undefined) {
+    return transforms;
+  }
+  for (let i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+    if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == transforms.refObj) {
+      transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+      found = 1;
+      break;
+    }
+  }
+  return transforms;
+}
+
+function stageSequence(animationId, stageObj, inPoint, outPoint) {
+  if (outPoint > animation[animationId]._totalFrames) {
+    outPoint = animation[animationId]._totalFrames;
+  }
+  let transforms = getEmptyStageTransform();
+  let found = 0;
+  if (inPoint > -1) {
+    frame = inPoint;
+    for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+      if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+        transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+        found = 1;
+        break;
+      }
+    }
+    transforms.stageObj = stageObj;
+    transforms.show = true;
+    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+  }
+
+  transforms = getEmptyStageTransform();
+  found = 0;
+  if (outPoint > -1) {
+    frame = outPoint;
+    for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+      if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+        transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+        found = 1;
+        break;
+      }
+    }
+    transforms.stageObj = stageObj;
+    transforms.hide = true;
+    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+  } else {
+    frame = 0;
+  }
+
+  transforms = getEmptyStageTransform();
+  found = 0;
+  if (outPoint > -1 && inPoint > 0) {
+    frame = 0;
+    for (var i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
+      if (animation[animationId]._scene[parseInt(frame)]._transform[i].stageObj == stageObj) {
+        transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+        found = 1;
+        break;
+      }
+    }
+    transforms.stageObj = stageObj;
+    transforms.hide = true;
+    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+  }
+
+  let lastState = 0;
+  if (frame > 1) {
+    for (let j = 0; j <= animation[animationId]._totalFrames; j++) {
+      for (var i = 0; i < animation[animationId]._scene[j]._transform.length; i++) {
+        if (animation[animationId]._scene[j]._transform[i].stageObj == stageObj) {
+          if (animation[animationId]._scene[j]._transform[i].show) {
+            lastState = 1;
+          }
+          if (animation[animationId]._scene[j]._transform[i].hide) {
+            lastState = 0;
+          }
+          if (lastState == 1) {
+            animation[animationId]._scene[j]._transform[i].show = true;
+          }
+        }
+      }
+    }
+  }
+}
+
+function addGroupPositionTransform(
+  frame,
+  position,
+  isLayer,
+  animationId,
+  refKey,
+  addTransformation,
+  objectId,
+  depth,
+) {
+  if (frame < 0 || addTransformation < 1) {
+    return;
+  }
+  if (frame > animation[animationId]._totalFrames) {
+    return;
+  }
+  let transforms = getEmptyTransform();
+
+  let posX = 0;
+
+  if (isLayer) {
+    if (objectId.hasOwnProperty('_currentLayerGroup')) {
+      //if (objectId._currentLayerGroup._layer > 0) {
+      //console.log('inpoint');
+      if (objectId._currentLayerGroup._inPoint >= 0) {
+        //console.log('inpoint');
+        transforms.inPoint = parseInt(objectId._currentLayerGroup._inPoint);
+      }
+      if (objectId._currentLayerGroup._outPoint > 0) {
+        transforms.outPoint = parseInt(objectId._currentLayerGroup._outPoint);
+      }
+    } else {
+      if (objectId.hasOwnProperty('_currentLayer')) {
+        if (objectId._currentLayer._inPoint >= 0) {
+          //console.log('inpoint');
+          transforms.inPoint = parseInt(objectId._currentLayer._inPoint);
+        }
+        if (objectId._currentLayer._outPoint > 0) {
+          transforms.outPoint = parseInt(objectId._currentLayer._outPoint);
+        }
+      }
+    }
+  } else {
+  }
+
+  /*
+  if (isLayer) {
+    if (animation[animationId].hasOwnProperty('_currentLayerGroup')) {
+    //if (animation[animationId]._currentLayerGroup._layer > 0) {
+        //console.log('inpoint');
+        if (animation[animationId]._currentLayerGroup._inPoint >= 0) {
+        //console.log('inpoint');
+        transforms.inPoint = parseInt(animation[animationId]._currentLayerGroup._inPoint);
+      }
+      if (animation[animationId]._currentLayerGroup._outPoint > 0) {
+        transforms.outPoint = parseInt(animation[animationId]._currentLayerGroup._outPoint);
+      }
+    } else {
+      if (animation[animationId]._currentLayer._inPoint >= 0) {
+        //console.log('inpoint');
+        transforms.inPoint = parseInt(animation[animationId]._currentLayer._inPoint);
+      }
+      if (animation[animationId]._currentLayer._outPoint > 0) {
+        transforms.outPoint = parseInt(animation[animationId]._currentLayer._outPoint);
+      }
+    }
+  } else {
+  }
+  */
+
+  if (transforms.inPoint < 0 && transforms.outPoint < 0) {
+    if (frame != transforms.inPoint && frame != transforms.outPoint) {
+      if (Array.isArray(position)) {
+        posX = position[0];
+        if (Number.isNaN(posX)) {
+          return;
+        }
+      } else {
+        posX = position;
+        if (Number.isNaN(posX)) {
+          posX = position[0];
+          if (Number.isNaN(posX)) {
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  if (isLayer) {
+    transforms.isLayer = true;
+    if (objectId.td > 0) {
+      transforms.refObj = `${animationId}_${depth}_layerGroup${objectId._layer}`;
+    } else {
+      transforms.refObj = `${animationId}_${depth}_layerTranslate${objectId._layer}`;
+    }
+    transforms.refObjOther = `${animationId}_${depth}_layerGroup${objectId._layer}`;
+  } else {
+    transforms.isLayer = false;
+    transforms.refObj = `${animationId}_group${animation[animationId]._currentShapeGroup}`;
+    transforms.refObjOther = `${animationId}_group${animation[animationId]._currentShapeGroup}`;
+  }
+
+  transforms.anchorX = objectId._anchorX;
+  transforms.anchorY = objectId._anchorY;
+
+  transforms = findExistingTransform(transforms, animationId, frame);
+
+  if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
+  } else {
+    animation[animationId]._refObj.push(transforms.refObj);
+    animation[animationId]._objSize[transforms.refObj] = [];
+    animation[animationId]._objSize[transforms.refObj][0] = document
+      .getElementById(transforms.refObj)
+      .getBoundingClientRect().width;
+    animation[animationId]._objSize[transforms.refObj][1] = document
+      .getElementById(transforms.refObj)
+      .getBoundingClientRect().height;
+  }
+  if (objectId._layer == 3) {
+  }
+
+  let posY = 0;
+
+  if (refKey == 'r') {
+    transforms.rotateAngle += posX;
+    if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
+      transforms.rotate = `rotate(${transforms.rotateAngle},${objectId._anchorX},${objectId._anchorY}) `;
+    } else {
+      transforms.rotate = `rotate(${transforms.rotateAngle},${
+        document.getElementById(transforms.refObj).getBoundingClientRect().width / 2
+      },${document.getElementById(transforms.refObj).getBoundingClientRect().height / 2}) `;
+    }
+  }
+  var tempBoundingW;
+  var tempBoundingH;
+  if (refKey == 's') {
+    transforms.scaleFactorX += posX;
+    tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
+    tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
+    let currentScaleX;
+    let currentScaleY;
+    if (position.length > 1) {
+      transforms.scaleFactorY += position[1];
+      currentScaleX = 1 - transforms.scaleFactorX / 100;
+      currentScaleY = 1 - transforms.scaleFactorY / 100;
+    } else {
+      currentScaleX = 1 - transforms.scaleFactorX / 100;
+      currentScaleY = 1 - transforms.scaleFactorX / 100;
+    }
+    transforms.scale = `scale(${transforms.scaleFactorX / 100},${transforms.scaleFactorY / 100}) `;
+    transforms.paddingX = (transforms.anchorX - tempBoundingW) * currentScaleX + tempBoundingW * currentScaleX;
+    transforms.paddingY = (transforms.anchorY - tempBoundingH) * currentScaleY + tempBoundingH * currentScaleY;
+    transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
+    transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
+  }
+  if (refKey == 'p') {
+    posY = position[1];
+    if (objectId.hasOwnProperty('_anchorX')) {
+      transforms.translateX += posX;
+    }
+    if (objectId.hasOwnProperty('_anchorY')) {
+      transforms.translateY += posY;
+    }
+    transforms.translate = `translate(${transforms.translateX - transforms.anchorX},${
+      transforms.translateY - transforms.anchorY
+    }) `;
+    transforms.isTranslate = true;
+  }
+
+  if (!transforms.isTranslate) {
+    transforms.translate = `translate(${transforms.paddingX},${transforms.paddingY}) `;
+  }
+
+  if (refKey == 'o') {
+    transforms.opacityFactor += posX;
+    transforms.opacity = transforms.opacityFactor / 100;
+  }
+
+  transforms.combined = transforms.translate + transforms.scale + transforms.rotate;
+  transforms.isSet = true;
+  animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+
+  lastRefObj = transforms.refObj;
+
+  if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
+  } else {
+    animation[animationId]._instated[transforms.refObj] = 1;
+    animation[animationId]._scene[0]._transform.push(transforms);
+  }
+}
+
+/// ////////// PREP JSON
+
+function extrapolateValueKeyframe(valueKeyframeObj) {
+  return valueKeyframeObj;
+}
+
+function extrapolateOffsetKeyframe(
+  offsetKeyframeObj,
+  refKey,
+  isLayer,
+  animationId,
+  addTransformation,
+  objectId,
+  depth,
+) {
+  let i = 0;
+  let objLength = offsetKeyframeObj[refKey].k.length;
+  let oldLength = objLength;
+  const emptyPos = { x: 0, y: 0 };
+  let p2;
+  let gotI;
+  let gotO;
+
+  while (i < objLength - 1) {
+    gotI = true;
+    gotO = true;
+
+    if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('_comp')) {
+    } else {
+      if (addTransformation > -1) {
+        addGroupPositionTransform(
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
+      if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
+        p2 = offsetKeyframeObj[refKey].k[i].e;
+      } else if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('s')) {
+        p2 = offsetKeyframeObj[refKey].k[i + 1].s;
+      }
+
+      if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && refKey != 'ks') {
+        if (offsetKeyframeObj[refKey].k[i + 1].i.x < 1) offsetKeyframeObj[refKey].k[i + 1].i.x = 0.0;
+        if (offsetKeyframeObj[refKey].k[i + 1].i.y < 1) offsetKeyframeObj[refKey].k[i + 1].i.y = 0.0;
+      }
+      if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && refKey != 'ks') {
+        if (offsetKeyframeObj[refKey].k[i].o.x < 1) offsetKeyframeObj[refKey].k[i].o.x = 0.0;
+        if (offsetKeyframeObj[refKey].k[i].o.y < 1) offsetKeyframeObj[refKey].k[i].o.y = 0.0;
+      }
+
+      var returnedKeyframeObj;
+      if (
+        offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') &&
+        offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') &&
+        gotI
+      ) {
+        returnedKeyframeObj = bezierCurve(
+          offsetKeyframeObj[refKey].k[i].s,
+          offsetKeyframeObj[refKey].k[i].o,
+          offsetKeyframeObj[refKey].k[i + 1].i,
+          p2,
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i + 1].t,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      } else if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
+        returnedKeyframeObj = bezierCurve(
+          offsetKeyframeObj[refKey].k[i].s,
+          offsetKeyframeObj[refKey].k[i].o,
+          emptyPos,
+          p2,
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i + 1].t,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      } else {
+        returnedKeyframeObj = bezierCurve(
+          offsetKeyframeObj[refKey].k[i].s,
+          emptyPos,
+          emptyPos,
+          p2,
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i + 1].t,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
+      for (let s = returnedKeyframeObj.length - 1; s >= 0; s--) {
+        offsetKeyframeObj[refKey].k.splice(i + 1, 0, returnedKeyframeObj[s]);
+      }
+
+      objLength = offsetKeyframeObj[refKey].k.length;
+      i += objLength - oldLength;
+      oldLength = objLength;
+    }
+    i += 1;
+  }
+  return offsetKeyframeObj;
+}
+
+function extrapolatePathPosition(
+  currentObj,
+  parentObj,
+  refKey,
+  isLayer,
+  animationId,
+  addTransformation,
+  objectId,
+  depth,
+) {
+  currentObj[refKey].k = [];
+  if (currentObj[refKey].x.k.length > 1) {
+    currentObj[refKey] = extrapolateOffsetKeyframe(
+      currentObj[refKey],
+      'x',
+      isLayer,
+      animationId,
+      false,
+      objectId,
+      depth,
+    );
+  } else {
+  }
+  if (currentObj[refKey].y.k.length > 1) {
+    currentObj[refKey] = extrapolateOffsetKeyframe(
+      currentObj[refKey],
+      'y',
+      isLayer,
+      animationId,
+      false,
+      objectId,
+      depth,
+    );
+  } else {
+  }
+
+  if (!Array.isArray(currentObj[refKey].x.k)) {
+    for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+      if (currentObj[refKey].y.k[i].hasOwnProperty('s')) {
+        currentObj[refKey].k.push({
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [currentObj[refKey].x.k, currentObj[refKey].y.k[i].s[0], 0],
+          t: currentObj[refKey].y.k[i].t,
+        });
+      }
+    }
+
+    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+      addGroupPositionTransform(
+        currentObj[refKey].k[i].t,
+        currentObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    }
+
+    return currentObj;
+  }
+
+  if (!currentObj[refKey].y.k.isArray) {
+    for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+      if (currentObj[refKey].x.k[i].hasOwnProperty('s')) {
+        currentObj[refKey].k.push({
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [currentObj[refKey].x.k[i].s[0], currentObj[refKey].y.k, 0],
+          t: currentObj[refKey].x.k[i].t,
+        });
+      }
+    }
+
+    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+      addGroupPositionTransform(
+        currentObj[refKey].k[i].t,
+        currentObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    }
+
+    return currentObj;
+  }
+
+  if (currentObj[refKey].x.k.length > currentObj[refKey].y.k.length) {
+    for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+      currentObj[refKey].k.push({
+        i: [0, 0, 0],
+        o: [0, 0, 0],
+        s: [currentObj[refKey].x.k[i].s[0], 0, 0],
+        t: currentObj[refKey].x.k[i].t,
+      });
+    }
+    for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+      if (currentObj[refKey].k[0].t > currentObj[refKey].y.k[i].t) {
+        currentObj[refKey].k.splice(i, 0, {
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [0, currentObj[refKey].y.k[i].s[0], 0],
+          t: currentObj[refKey].y.k[i].t,
+        });
+      } else if (currentObj[refKey].k[0].t < currentObj[refKey].y.k[i].t) {
+        currentObj[refKey].k.push({
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [0, currentObj[refKey].y.k[i].s[0], 0],
+          t: currentObj[refKey].y.k[i].t,
+        });
+      } else if (currentObj[refKey].k[0].t == currentObj[refKey].y.k[i].t) {
+        currentObj[refKey].k.s[1] = currentObj[refKey].y.k[i].s[0];
+      }
+    }
+
+    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+      addGroupPositionTransform(
+        currentObj[refKey].k[i].t,
+        currentObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+      );
+    }
+
+    return currentObj;
+  }
+
+  if (currentObj[refKey].x.k.length < currentObj[refKey].y.k.length) {
+    for (var i = 0; i < currentObj[refKey].y.k.length; i++) {
+      currentObj[refKey].k.push({
+        i: [0, 0, 0],
+        o: [0, 0, 0],
+        s: [0, currentObj[refKey].y.k[i].s[0], 0],
+        t: currentObj[refKey].y.k[i].t,
+      });
+    }
+    for (var i = 0; i < currentObj[refKey].x.k.length; i++) {
+      if (currentObj[refKey].k[0].t > currentObj[refKey].x.k[i].t) {
+        currentObj[refKey].k.splice(i, 0, {
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [currentObj[refKey].x.k[i].s[0], 0, 0],
+          t: currentObj[refKey].x.k[i].t,
+        });
+      } else if (currentObj[refKey].k[0].t < currentObj[refKey].x.k[i].t) {
+        currentObj[refKey].k.push({
+          i: [0, 0, 0],
+          o: [0, 0, 0],
+          s: [currentObj[refKey].x.k[i].s[0], 0, 0],
+          t: currentObj[refKey].x.k[i].t,
+        });
+      } else if (currentObj[refKey].k[0].t == currentObj[refKey].x.k[i].t) {
+        currentObj[refKey].k.s[0] = currentObj[refKey].x.k[i].s[0];
+      }
+    }
+
+    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+      addGroupPositionTransform(
+        currentObj[refKey].k[i].t,
+        currentObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    }
+
+    return currentObj;
+  }
+
+  return currentObj;
+}
+
+function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
+  if (currentObj.hasOwnProperty(refKey)) {
+    if (currentObj[refKey].hasOwnProperty('x') && currentObj[refKey].hasOwnProperty('y')) {
+      currentObj = extrapolatePathPosition(
+        currentObj,
+        parentObj,
+        refKey,
+        isLayer,
+        animationId,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    }
+    if (currentObj[refKey].hasOwnProperty('k')) {
+      if (currentObj[refKey].k.length > 1) {
+        if (currentObj[refKey].k[0].hasOwnProperty('s')) {
+          currentObj = extrapolateOffsetKeyframe(
+            currentObj,
+            refKey,
+            isLayer,
+            animationId,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
+      }
+    }
+  }
+  return currentObj;
+}
+
+function prepShapeEl(shapeObj, referrer, animationId, addTransformation, depth) {
+  const newShape = document.createElementNS(xmlns, 'ellipse');
+  newShape.setAttribute('d', dataString);
+  newShape.setAttribute('fill', 'transparent');
+  newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
+  newShape.classList.add('ellipse');
+  referrer.prepend(newShape);
+  shapeObj._isShape = true;
+  return shapeObj;
+}
+
+function prepShapeElKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
+  return shapeObj;
+}
+
+function prepShapeSr(shapeObj, referrer, animationId, addTransformation, depth) {
+  const newShape = document.createElementNS(xmlns, 'path');
+  newShape.setAttribute('d', dataString);
+  newShape.setAttribute('fill', 'transparent');
+  newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
+  newShape.classList.add('star');
+  referrer.prepend(newShape);
+  shapeObj._isShape = true;
+  return shapeObj;
+}
+
+function prepShapeSrKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
+  return shapeObj;
+}
+
+function prepShapeRc(shapeObj, referrer, animationId, addTransformation, depth) {
+  const newShape = document.createElementNS(xmlns, 'rect');
+  newShape.setAttribute('fill', 'transparent');
+
+  newShape.setAttribute('width', shapeObj.s.k[0]);
+  newShape.setAttribute('height', shapeObj.s.k[1]);
+  if (shapeObj.p.k.length > 0) {
+    newShape.setAttribute('x', shapeObj.p.k[0] + shapeObj.s.k[0] / 2);
+    newShape.setAttribute('y', shapeObj.p.k[1] + shapeObj.s.k[1] / 2);
+  }
+  newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
+  newShape.classList.add('rectangle');
+  referrer.prepend(newShape);
+  shapeObj._isShape = true;
+  return shapeObj;
+}
+
+function prepShapeRcKeyframe(shapeObj, referrer, animationId, addTransformation, depth) {
+  return shapeObj;
+}
+
+function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) {
+  if (shapeObj.ks.k.hasOwnProperty('v')) {
+  } else {
+    if (shapeObj.ks.k[0].hasOwnProperty('s')) {
+      shapeObj = extrapolateOffsetKeyframe(shapeObj, 'ks', false, animationId, -1, shapeObj, depth);
+      var dataString = '';
+      let totalK;
+      if (shapeObj.ks.k[shapeObj.ks.k.length - 1].hasOwnProperty('s')) {
+        totalK = shapeObj.ks.k.length;
+      } else {
+        totalK = shapeObj.ks.k.length - 1;
+      }
+      for (let kCount = 0; kCount < totalK; kCount++) {
+        let transforms = getEmptyTransform();
+        transforms.isLayer = false;
+        transforms.isTween = true;
+        transforms.refObj = `${animationId}_shape${shapeObj._shape}`;
+        transforms.refObjOther = `${animationId}_shape${shapeObj._shape}`;
+        transforms = findExistingTransform(transforms, animationId, shapeObj.ks.k[kCount].t);
+        var dataString = `M${shapeObj.ks.k[kCount].s[0].v[0][0]},${shapeObj.ks.k[kCount].s[0].v[0][1]}`;
+        for (var i = 1; i < shapeObj.ks.k[kCount].s[0].v.length; i++) {
+          dataString = `${dataString} C${
+            shapeObj.ks.k[kCount].s[0].v[i - 1][0] + shapeObj.ks.k[kCount].s[0].o[i - 1][0]
+          },${shapeObj.ks.k[kCount].s[0].v[i - 1][1] + shapeObj.ks.k[kCount].s[0].o[i - 1][1]} ${
+            shapeObj.ks.k[kCount].s[0].v[i][0] + shapeObj.ks.k[kCount].s[0].i[i][0]
+          },${shapeObj.ks.k[kCount].s[0].v[i][1] + shapeObj.ks.k[kCount].s[0].i[i][1]} ${
+            shapeObj.ks.k[kCount].s[0].v[i][0]
+          },${shapeObj.ks.k[kCount].s[0].v[i][1]}`;
+        }
+        if (shapeObj.ks.k[0].s[0].c) {
+          dataString = `${dataString} C${
+            shapeObj.ks.k[kCount].s[0].v[shapeObj.ks.k[kCount].s[0].v.length - 1][0] +
+            shapeObj.ks.k[kCount].s[0].o[shapeObj.ks.k[kCount].s[0].v.length - 1][0]
+          },${
+            shapeObj.ks.k[kCount].s[0].v[shapeObj.ks.k[kCount].s[0].v.length - 1][1] +
+            shapeObj.ks.k[kCount].s[0].o[shapeObj.ks.k[kCount].s[0].v.length - 1][1]
+          } ${shapeObj.ks.k[kCount].s[0].v[0][0] + shapeObj.ks.k[kCount].s[0].i[0][0]},${
+            shapeObj.ks.k[kCount].s[0].v[0][1] + shapeObj.ks.k[kCount].s[0].i[0][1]
+          } ${shapeObj.ks.k[kCount].s[0].v[0][0]},${shapeObj.ks.k[kCount].s[0].v[0][1]}`;
+          dataString += ' Z';
+        }
+
+        transforms.dataString = dataString;
+        if (kCount == 0) {
+          var newShape = document.createElementNS(xmlns, 'path');
+          newShape.setAttribute('fill', 'transparent');
+          newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
+          newShape.setAttribute('d', dataString);
+          newShape.classList.add('shape');
+          referrer.prepend(newShape);
+          shapeObj._isShape = true;
+        }
+
+        if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames) {
+          break;
+        }
+        animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
+      }
+    }
+    return shapeObj;
+  }
+  var dataString = `M${shapeObj.ks.k.v[0][0]},${shapeObj.ks.k.v[0][1]}`;
+  for (var i = 1; i < shapeObj.ks.k.v.length; i++) {
+    dataString = `${dataString} C${shapeObj.ks.k.v[i - 1][0] + shapeObj.ks.k.o[i - 1][0]},${
+      shapeObj.ks.k.v[i - 1][1] + shapeObj.ks.k.o[i - 1][1]
+    } ${shapeObj.ks.k.v[i][0] + shapeObj.ks.k.i[i][0]},${shapeObj.ks.k.v[i][1] + shapeObj.ks.k.i[i][1]} ${
+      shapeObj.ks.k.v[i][0]
+    },${shapeObj.ks.k.v[i][1]}`;
+  }
+  if (shapeObj.ks.k.c) {
+    dataString = `${dataString} C${
+      shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][0] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][0]
+    },${shapeObj.ks.k.v[shapeObj.ks.k.v.length - 1][1] + shapeObj.ks.k.o[shapeObj.ks.k.v.length - 1][1]} ${
+      shapeObj.ks.k.v[0][0] + shapeObj.ks.k.i[0][0]
+    },${shapeObj.ks.k.v[0][1] + shapeObj.ks.k.i[0][1]} ${shapeObj.ks.k.v[0][0]},${shapeObj.ks.k.v[0][1]}`;
+    dataString += ' Z';
+  }
+  shapeObj._data = dataString;
+  var newShape = document.createElementNS(xmlns, 'path');
+  newShape.setAttribute('fill', 'transparent');
+  newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
+  newShape.setAttribute('d', dataString);
+  newShape.classList.add('shape');
+  referrer.prepend(newShape);
+  shapeObj._isShape = true;
+  return shapeObj;
+}
+
+function prepShapeShKeyframe(shapeObj, referrer, animationId, depth) {
+  return shapeObj;
+}
+
+function prepShape(shapeObj, referrer, animationId, isMasked, depth) {
+  if (shapeObj.ty == 'fl') {
+    if (shapeObj.c.k.hasOwnProperty('s')) {
+      shapeObj = getPosition(shapeObj, null, 'c', false, animationId, 3, shapeObj, depth);
+    }
+  }
+  if (shapeObj.ty == 'tr') {
+    if (shapeObj.hasOwnProperty('a')) {
+      if (shapeObj.a.k.hasOwnProperty('s')) {
+        shapeObj = getPosition(shapeObj, null, 'a', false, animationId, 2, shapeObj, depth);
+        if (shapeObj.a.k[0].t > 0) {
+          shapeObj._startI = true;
+        }
+      }
+      if (shapeObj.a.k.length > 1) {
+        shapeObj._anchorX = shapeObj.a.k[0];
+        shapeObj._anchorY = shapeObj.a.k[1];
+      }
+    }
+    if (shapeObj.hasOwnProperty('p')) {
+      if (shapeObj.p.k.hasOwnProperty('s')) {
+        shapeObj = getPosition(shapeObj, null, 'p', false, animationId, 2, shapeObj, depth);
+        if (shapeObj.p.k[0].t > 0) {
+          shapeObj._startI = true;
+        }
+      }
+    }
+  }
+
+  if (shapeObj.ty == 'sh') {
+    if (shapeObj.hasOwnProperty('ks') && shapeObj.ks.k.length > 1) {
+      shapeObj = prepShapeShKeyframe(shapeObj, referrer, animationId, depth);
+    }
+    shapeObj = prepShapeSh(shapeObj, referrer, animationId, depth);
+  }
+
+  if (shapeObj.ty == 'rc') {
+    if (shapeObj.hasOwnProperty('ks') && shapeObj.ks.k.length > 1) {
+      shapeObj = prepShapeRcKeyframe(shapeObj, referrer, animationId, depth);
+    }
+    shapeObj = prepShapeRc(shapeObj, referrer, animationId, depth);
+  }
+
+  return shapeObj;
+}
+
+function createGradientDef(start, end, opacity, gradient, animationId) {
+  animation[animationId].gradientCount++;
+  const newDefId = `${animationId}_gradient${animation[animationId].gradientCount}`;
+  const newDef = document.createElementNS(xmlns, 'linearGradient');
+  newDef.setAttribute('id', newDefId);
+  newDef.setAttribute('spreadMethod', 'pad');
+  newDef.setAttribute('gradientUnits', 'userSpaceOnUse');
+  newDef.setAttribute('x1', start.k[0]);
+  newDef.setAttribute('x2', end.k[0]);
+  newDef.setAttribute('y1', start.k[1]);
+  newDef.setAttribute('y2', end.k[1]);
+  animation[animationId].defs.prepend(newDef);
+
+  const offsets = [];
+  const styles = [];
+  const opacities = [];
+  for (var i = 0; i < gradient.p; i++) {
+    offsets.push(`${gradient.k.k[i * 4 + 0] * 100}%`);
+    styles.push(
+      `stop-color:rgb(${parseInt(gradient.k.k[i * 4 + 1] * 255)},${parseInt(gradient.k.k[i * 4 + 2] * 255)},${parseInt(
+        gradient.k.k[i * 4 + 3] * 255,
+      )});`,
+    );
+    opacities.push('stop-opacity:1;');
+  }
+  if (gradient.k.k.length > gradient.p * 4) {
+    for (var i = 0; i < gradient.p; i++) {
+      opacities[i] = `stop-opacity:${gradient.k.k[i * 2 + gradient.p * 4 + 1]};`;
+    }
+  }
+  for (var i = 0; i < gradient.p; i++) {
+    const newStop = document.createElementNS(xmlns, 'stop');
+    newStop.setAttribute('offset', offsets[i]);
+    newStop.setAttribute('style', styles[i] + opacities[i]);
+    newDef.append(newStop);
+  }
+
+  return `url(#${newDefId})`;
+}
+
+const lcEnum = {
+  1: 'butt',
+  2: 'round',
+  3: 'square',
+};
+
+const ljEnum = {
+  1: 'miter',
+  2: 'round',
+  3: 'bevel',
+};
+
+function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
+  const strokeString = {
+    color: '',
+    opacity: 1,
+    width: 1,
+    lineCap: 'round',
+    lineJoin: 'round',
+    miterLimit: 0,
+  };
+  strokeString.color = `rgb(${color.k[0] * 255},${color.k[1] * 255},${color.k[2] * 255})`;
+  strokeString.opacity = opacity.k / 100;
+  strokeString.width = width.k;
+  strokeString.lineCap = lcEnum[lineCap];
+  strokeString.lineJoin = lcEnum[lineJoin];
+  if (lineJoin == 1) {
+    strokeString.miterLimit = lineJoin;
+  }
+  return strokeString;
+}
+
+function getColorString(redVal, greenVal, blueVal) {
+  const color = `rgb(${redVal * 255},${greenVal * 255},${blueVal * 255})`;
+  return color;
+}
+
+function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
+  for (let i = 0; i < shapesGroup.length; i++) {
+    if (shapesGroup[i]._isShape) {
+      document.getElementById(`${animationId}_shape${shapesGroup[i]._shape}`).setAttribute('stroke', strokeToSet.color);
+      document
+        .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
+        .setAttribute('stroke-width', strokeToSet.width);
+      document
+        .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
+        .setAttribute('stroke-linecap', strokeToSet.lineCap);
+      document
+        .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
+        .setAttribute('stroke-linejoin', strokeToSet.lineJoin);
+      if (strokeToSet.lineJoin == 1) {
+        document
+          .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
+          .setAttribute('stroke-miterlimit', strokeToSet.miterLimit);
+      }
+    }
+  }
+}
+
+function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMasked) {
+  for (let i = 0; i < shapesGroup.length; i++) {
+    if (shapesGroup[i]._isShape && typeof colorToSet !== 'undefined') {
+      document.getElementById(`${animationId}_shape${shapesGroup[i]._shape}`).setAttribute('fill', colorToSet);
+      document.getElementById(`${animationId}_shape${shapesGroup[i]._shape}`).setAttribute('fill-opacity', 1);
+    }
+  }
+}
+
+function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+  let currentColor;
+  let currentStroke;
+  let stroked = false;
+  for (let i = 0; i < layerObj.it.length; i++) {
+    layerObj._isGradient = false;
+    animation[animationId].shapeCount++;
+    if (layerObj.tt > 0) {
+      isMasked = layerObj.td;
+    }
+    if (layerObj.it[i].ty == 'gr') {
+      layerObj.it[i]._group = animation[animationId].shapeCount;
+      const newGroup = document.createElementNS(xmlns, 'g');
+      newGroup.setAttribute('id', `${animationId}_group${animation[animationId].shapeCount}`);
+      animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
+      referrer.prepend(newGroup);
+      layerObj.it[i] = getShapesGr(
+        elementId,
+        animationId,
+        layerObj.it[i],
+        newGroup,
+        `${animationId}_group${animation[animationId].shapeCount}`,
+        isMasked,
+        depth,
+      );
+    } else {
+      layerObj.it[i]._shape = animation[animationId].shapeCount;
+      layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+      if (layerObj.it[i].ty == 'tr') {
+        layerObj.it[i]._trIndex = i;
+        if (layerObj.it[i].p.hasOwnProperty('k')) {
+          if (layerObj.it[i].p.k.length > 1) {
+            if (layerObj.it[i].hasOwnProperty('a')) {
+              document
+                .getElementById(refGroup)
+                .setAttribute(
+                  'transform',
+                  `matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
+                    layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
+                  })`,
+                );
+            } else {
+              document
+                .getElementById(refGroup)
+                .setAttribute('transform', `matrix(1,0,0,1,${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
+            }
+          }
+        }
+      }
+      if (layerObj.it[i].ty == 'fl') {
+        if (layerObj.it[i].c.k.length > 1) {
+          currentColor = getColorString(layerObj.it[i].c.k[0], layerObj.it[i].c.k[1], layerObj.it[i].c.k[2]);
+        }
+      }
+      if (layerObj.it[i].ty == 'st') {
+        if (layerObj.it[i].c.k.length > 1) {
+          currentStroke = getStrokeString(
+            layerObj.it[i].c,
+            layerObj.it[i].o,
+            layerObj.it[i].w,
+            layerObj.it[i].lc,
+            layerObj.it[i].lj,
+            layerObj.it[i].ml,
+          );
+          stroked = true;
+        }
+      }
+      if (layerObj.it[i].ty == 'gf') {
+        layerObj._isGradient = true;
+        currentColor = createGradientDef(
+          layerObj.it[i].s,
+          layerObj.it[i].e,
+          layerObj.it[i].o,
+          layerObj.it[i].g,
+          animationId,
+        );
+      }
+    }
+  }
+  setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked);
+  if (stroked) {
+    setShapeStrokes(layerObj.it, currentStroke, animationId);
+  }
+  return layerObj;
+}
+
+function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+  let currentColor;
+  let currentStroke;
+  let stroked = false;
+  for (let i = 0; i < layerObj.shapes.length; i++) {
+    layerObj._isGradient = false;
+    animation[animationId].shapeCount++;
+    if (layerObj.tt > 0) {
+      isMasked = layerObj.td;
+    }
+    if (layerObj.shapes[i].ty == 'gr') {
+      layerObj.shapes[i]._group = animation[animationId].shapeCount;
+      const newGroup = document.createElementNS(xmlns, 'g');
+      newGroup.setAttribute('id', `${animationId}_group${animation[animationId].shapeCount}`);
+      newGroup.setAttribute('opacity', 1);
+      animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
+      referrer.prepend(newGroup);
+      layerObj.shapes[i] = getShapesGr(
+        elementId,
+        animationId,
+        layerObj.shapes[i],
+        newGroup,
+        `${animationId}_group${animation[animationId].shapeCount}`,
+        isMasked,
+        depth,
+      );
+    } else {
+      layerObj.shapes[i]._shape = animation[animationId].shapeCount;
+      layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+      if (layerObj.shapes[i].ty == 'tr') {
+        layerObj.shapes[i]._trIndex = i;
+        if (layerObj.shapes[i].p.hasOwnProperty('k')) {
+          if (layerObj.shapes[i].p.k > 1) {
+            document
+              .getElementById(`${animationId}_${depth}_layerGroup${layerObj._layer}`)
+              .setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
+          }
+        }
+      }
+      if (layerObj.shapes[i].ty == 'fl') {
+        if (layerObj.shapes[i].c.k.length > 1) {
+          currentColor = getColorString(
+            layerObj.shapes[i].c.k[0],
+            layerObj.shapes[i].c.k[1],
+            layerObj.shapes[i].c.k[2],
+          );
+        }
+      }
+      if (layerObj.shapes[i].ty == 'st') {
+        if (layerObj.shapes[i].c.k.length > 1) {
+          currentStroke = getStrokeString(
+            layerObj.shapes[i].c,
+            layerObj.shapes[i].o,
+            layerObj.shapes[i].w,
+            layerObj.shapes[i].lc,
+            layerObj.shapes[i].lj,
+            layerObj.shapes[i].ml,
+          );
+          stroked = true;
+        }
+      }
+      if (layerObj.shapes[i].ty == 'gf') {
+        layerObj._isGradient = true;
+        currentColor = createGradientDef(
+          layerObj.shapes[i].s,
+          layerObj.shapes[i].e,
+          layerObj.shapes[i].o,
+          layerObj.shapes[i].g,
+          animationId,
+        );
+      }
+    }
+    // console.log("leastY " + layerObj._leastY);
+  }
+  setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked);
+  if (stroked) {
+    setShapeStrokes(layerObj.shapes, currentStroke, animationId);
+  }
+  return layerObj;
+}
+
+function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
+  let newGroup;
+  let newTranslateGroup;
+
+  for (let j = 0; j < passedObj[passedKey].length; j++) {
+    if (passedObj[passedKey][j].ind == passedObj[passedKey][layerId].parent) {
+      if (passedObj[passedKey][j].tt > 0) {
+        for (let k = j - 1; k >= 0; k--) {
+          if (passedObj[passedKey][k].td > 0) {
+            passedObj[passedKey][j]._mask = `_${animationId}_${depth}_layerMask${passedObj[passedKey][k].ind}`;
+            passedObj[passedKey][j]._isMasked = true;
+            break;
+          }
+        }
+      }
+      if (!passedObj[passedKey][j]._addedToDom) {
+        resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
+      }
+      animation[animationId].layerCount++;
+      passedObj[passedKey][layerId]._parent = passedObj[passedKey][j]._layer;
+      newLayer = document.createElementNS(xmlns, 'g');
+      newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][layerId]._layer}`);
+      newLayer.setAttribute('mask', lastMaskId);
+      newLayer.setAttribute('opacity', 1);
+
+      document
+        .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._parent}`)
+        .prepend(newLayer);
+      newTranslateGroup = document.createElementNS(xmlns, 'g');
+      newTranslateGroup.setAttribute(
+        'id',
+        `${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._layer}`,
+      );
+      newTranslateGroup.setAttribute('opacity', 1);
+      newLayer.prepend(newTranslateGroup);
+      if (passedObj[passedKey][layerId].w > 0) {
+        newLayer.style.width = passedObj[passedKey][layerId].w;
+      }
+      if (passedObj[passedKey][layerId].h > 0) {
+        newLayer.style.height = passedObj[passedKey][layerId].h;
+      }
+      newGroup = document.createElementNS(xmlns, 'g');
+      newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][layerId]._layer}`);
+      newGroup.setAttribute('opacity', 1);
+      newTranslateGroup.prepend(newGroup);
+
+      passedObj[passedKey][j]._child.push(`_layerGroup${passedObj[passedKey][layerId].parent}`);
+      passedObj[passedKey][j]._childId.push(layerId);
+      passedObj[passedKey][j]._addedToDom = true;
+      return;
+    }
+  }
+}
+
+function getLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
+  animation[animationId].depth++;
+  depth = animation[animationId].depth;
+  let newLayer;
+  let newGroup;
+  let newMask;
+  let newTranslateGroup;
+  let posX;
+  let posY;
+  let lastMaskId = '';
+  for (var i = 0; i < passedObj[passedKey].length; i++) {
+    passedObj.layerCount++;
+    passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
+    passedObj[passedKey][i]._child = [];
+    passedObj[passedKey][i]._childId = [];
+    if (passedObj[passedKey][i].parent > 0) {
+    } else {
+      if (passedObj[passedKey][i].td > 0) {
+        passedObj[passedKey][i]._isMask = true;
+        newMask = document.createElementNS(xmlns, 'mask');
+        lastMaskId = `_${animationId}_${depth}_layerMask${passedObj[passedKey][i].ind}`;
+        newMask.setAttribute('id', lastMaskId);
+        newMask.setAttribute('mask-type', 'alpha');
+        newMask.setAttribute('opacity', 1);
+        animation[animationId].defs.prepend(newMask);
+
+        newLayer = document.createElementNS(xmlns, 'g');
+        newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
+        newLayer.setAttribute('style', 'display: block;');
+        newLayer.setAttribute('opacity', 1);
+        newMask.prepend(newLayer);
+      } else {
+        newLayer = document.createElementNS(xmlns, 'g');
+        newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
+        newLayer.setAttribute('opacity', 1);
+        elementObj.prepend(newLayer);
+        if (passedObj[passedKey][i].tt > 0) {
+          passedObj[passedKey][i]._mask = lastMaskId;
+          passedObj[passedKey][i]._isMasked = true;
+        }
+      }
+      passedObj[passedKey][i]._addedToDom = true;
+
+      newTranslateGroup = document.createElementNS(xmlns, 'g');
+      newTranslateGroup.setAttribute('id', `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`);
+      newTranslateGroup.setAttribute('opacity', 1);
+      newLayer.prepend(newTranslateGroup);
+      if (passedObj[passedKey][i].w > 0) {
+        newLayer.style.width = passedObj[passedKey][i].w;
+      }
+      if (passedObj[passedKey][i].h > 0) {
+        newLayer.style.height = passedObj[passedKey][i].h;
+      }
+      newGroup = document.createElementNS(xmlns, 'g');
+      newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
+      newGroup.setAttribute('opacity', 1);
+      newTranslateGroup.prepend(newGroup);
+    }
+  }
+
+  for (var i = 0; i < passedObj.layers.length; i++) {
+    passedObj.layerCount = passedObj[passedKey][i]._layer;
+    if (passedObj[passedKey][i].parent > 0) {
+      for (let j = 0; j < passedObj.layers.length; j++) {
+        if (passedObj[passedKey][j].ind == passedObj[passedKey][i].parent) {
+          if (passedObj[passedKey][i].tt > 0) {
+            for (let k = i - 1; k >= 0; k--) {
+              if (passedObj[passedKey][k].td > 0) {
+                passedObj[passedKey][i]._mask = `_${animationId}_${depth}_layerMask${passedObj[passedKey][k].ind}`;
+                break;
+              }
+            }
+          }
+          passedObj.layerCount++;
+          if (!passedObj[passedKey][j]._addedToDom) {
+            resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
+          }
+          passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
+          newLayer = document.createElementNS(xmlns, 'g');
+          newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`);
+          newLayer.setAttribute('opacity', 1);
+
+          document
+            .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+            .prepend(newLayer);
+          newTranslateGroup = document.createElementNS(xmlns, 'g');
+          newTranslateGroup.setAttribute(
+            'id',
+            `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`,
+          );
+          newTranslateGroup.setAttribute('opacity', 1);
+          newLayer.prepend(newTranslateGroup);
+          if (passedObj[passedKey][i].w > 0) {
+            newLayer.style.width = passedObj[passedKey][i].w;
+          }
+          if (passedObj[passedKey][i].h > 0) {
+            newLayer.style.height = passedObj[passedKey][i].h;
+          }
+          newGroup = document.createElementNS(xmlns, 'g');
+          newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
+          newGroup.setAttribute('opacity', 1);
+          newTranslateGroup.prepend(newGroup);
+
+          passedObj[passedKey][j]._child.push(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i].parent}`);
+          passedObj[passedKey][j]._childId.push(i);
+          passedObj[passedKey][j]._addedToDom = true;
+        }
+      }
+    }
+  }
+  for (var i = 0; i < passedObj.layers.length; i++) {
+    passedObj[passedKey][i]._inPoint = -1;
+    passedObj[passedKey][i]._outPoint = -1;
+    if (passedObj[passedKey][i].hasOwnProperty('ip') && passedObj[passedKey][i].ip >= 0) {
+      passedObj[passedKey][i]._inPoint = passedObj[passedKey][i].ip;
+    }
+    if (passedObj[passedKey][i].hasOwnProperty('op') && passedObj[passedKey][i].op > 0) {
+      passedObj[passedKey][i]._outPoint = passedObj[passedKey][i].op;
+      if (passedObj[passedKey][i]._outPoint > passedObj._totalFrames) {
+        passedObj[passedKey][i]._outPoint = passedObj._totalFrames;
+      }
+    } else {
+      passedObj[passedKey][i]._outPoint = passedObj._totalFrames;
+    }
+    stageSequence(
+      animationId,
+      `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`,
+      passedObj[passedKey][i]._inPoint,
+      passedObj[passedKey][i]._outPoint,
+    );
+
+    passedObj.layerCount = passedObj[passedKey][i]._layer;
+    newLayer = document.getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`);
+    newGroup = document.getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
+    if (passedObj[passedKey][i].tt > 0) {
+      document
+        .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
+        .setAttribute('mask', `url(#${passedObj[passedKey][i]._mask})`);
+      document
+        .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
+        .setAttribute('style', 'display: block;');
+    }
+    passedObj._currentLayer = { _layer: '', _inPoint: '', _outPoint: '' };
+    //passedObj._currentLayer = passedObj[passedKey][i]._layer;
+    passedObj._currentLayer._layer = passedObj[passedKey][i]._layer;
+    passedObj._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
+    passedObj._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
+    if (passedObj[passedKey][i].hasOwnProperty('refId') && passedObj.hasOwnProperty('assets')) {
+      let tempRef = -1;
+      for (let m = 0; m < passedObj.assets.length; m++) {
+        if (passedObj.assets[m].id == passedObj[passedKey][i].refId) {
+          tempRef = m;
+          break;
+        }
+      }
+      if (tempRef >= 0) {
+        passedObj.assets[tempRef] = getLayers(
+          elementId,
+          animationId,
+          newGroup,
+          passedObj.assets[tempRef],
+          'layers',
+          depth,
+        );
+      }
+    }
+
+    if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
+      passedObj._currentLayerGroup = { _layer: 0, _inPoint: '', _outPoint: '' };
+      //passedObj._currentLayerGroup = passedObj[passedKey][i]._layer;
+      passedObj._currentLayerGroup._layer = passedObj[passedKey][i]._layer;
+      passedObj._currentLayerGroup._inPoint = passedObj[passedKey][i]._inPoint;
+      passedObj._currentLayerGroup._outPoint = passedObj[passedKey][i]._outPoint;
+      passedObj[passedKey][i] = getShapes(
+        elementId,
+        animationId,
+        passedObj[passedKey][i],
+        newGroup,
+        `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`,
+        false,
+        passedObj[passedKey][i].td,
+        depth,
+      );
+      if (passedObj[passedKey][i].hasOwnProperty('shapes')) {
+        passedObj._boundingX = newGroup.getBoundingClientRect().width / 2;
+        passedObj._boundingY = newGroup.getBoundingClientRect().height / 2;
+      }
+    } else if (passedObj[passedKey][i]._inPoint > 0) {
+      // console.log("layer: " + i);
+      // newLayer.style.display = 'none';
+    }
+
+    if (passedObj[passedKey][i].hasOwnProperty('ks')) {
+      if (passedObj[passedKey][i].ks.hasOwnProperty('a')) {
+        if (passedObj[passedKey][i].ks.a.hasOwnProperty('k')) {
+          if (passedObj[passedKey][i].ks.a.k.length > 1) {
+            passedObj[passedKey][i]._anchorX = passedObj[passedKey][i].ks.a.k[0];
+            passedObj[passedKey][i]._anchorY = passedObj[passedKey][i].ks.a.k[1];
+          }
+        }
+      }
+
+      if (passedObj[passedKey][i].ks.hasOwnProperty('p')) {
+        passedObj[passedKey][i].ks = getPosition(
+          passedObj[passedKey][i].ks,
+          null,
+          'p',
+          true,
+          animationId,
+          1,
+          passedObj[passedKey][i],
+          depth,
+        );
+        if (passedObj[passedKey][i].ks.p.hasOwnProperty('k')) {
+          if (passedObj[passedKey][i].ks.p.k.length > 1) {
+            if (passedObj[passedKey][i].ks.p.k[0].hasOwnProperty('s')) {
+            } else {
+              if (passedObj[passedKey][i]._anchorX != 0) {
+                posX = passedObj[passedKey][i].ks.p.k[0] - passedObj[passedKey][i]._anchorX;
+              } else {
+                posX = passedObj[passedKey][i].ks.p.k[0]; // passedObj._boundingX;
+              }
+              if (passedObj[passedKey][i]._anchorY != 0) {
+                posY = passedObj[passedKey][i].ks.p.k[1] - passedObj[passedKey][i]._anchorY;
+              } else {
+                posY = passedObj[passedKey][i].ks.p.k[1]; // passedObj._boundingY;
+              }
+              if (passedObj[passedKey][i].td > 0) {
+                document
+                  .getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`)
+                  .setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+              } else {
+                document
+                  .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
+                  .setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+              }
+              passedObj[passedKey][i]._posX = posX;
+              passedObj[passedKey][i]._posY = posY;
+            }
+          }
+        }
+      }
+
+      if (passedObj[passedKey][i].ks.hasOwnProperty('r')) {
+        if (passedObj[passedKey][i].ks.r.k.length > 1) {
+          if (passedObj[passedKey][i].ks.r.k[0].hasOwnProperty('s')) {
+            passedObj[passedKey][i].ks = getPosition(
+              passedObj[passedKey][i].ks,
+              null,
+              'r',
+              true,
+              animationId,
+              1,
+              passedObj[passedKey][i],
+              depth,
+            );
+          }
+        }
+      }
+      if (passedObj[passedKey][i].ks.hasOwnProperty('s')) {
+        if (passedObj[passedKey][i].ks.s.k.length > 1) {
+          if (passedObj[passedKey][i].ks.s.k[0].hasOwnProperty('s')) {
+            passedObj[passedKey][i].ks = getPosition(
+              passedObj[passedKey][i].ks,
+              null,
+              's',
+              true,
+              animationId,
+              1,
+              passedObj[passedKey][i],
+              depth,
+            );
+          }
+        }
+      }
+      if (passedObj[passedKey][i].ks.hasOwnProperty('o')) {
+        if (passedObj[passedKey][i].ks.o.k.length > 1) {
+          if (passedObj[passedKey][i].ks.o.k[0].hasOwnProperty('s')) {
+            passedObj[passedKey][i].ks = getPosition(
+              passedObj[passedKey][i].ks,
+              null,
+              'o',
+              true,
+              animationId,
+              1,
+              passedObj[passedKey][i],
+              depth,
+            );
+          }
+        }
+      }
+    }
+  }
+  return passedObj;
+}
+
+function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
+  animation[animationId]._loaded = false;
+  //try {
+  animation[animationId].depth = 0;
+  animation[animationId].shapeCount = 0;
+  animation[animationId].layerCount = 0;
+  animation[animationId]._removed = false;
+  animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
+  animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
+  animation[animationId]._currentFrame = -1;
+  animation[animationId]._lastTime = Date.now();
+  animation[animationId]._autoplay = autoplay;
+  animation[animationId]._loop = loop;
+  animation[animationId]._customName = customName;
+  animation[animationId]._paused = false;
+
+  //for debugging
+  animation[animationId]._debugTimeElapsed = 0;
+  animation[animationId]._debugContainer = '';
+  //////
+
+  //elementObj.style.width = animation[animationId].w;
+  //elementObj.style.height = animation[animationId].h;
+  //elementObj.setAttribute('width', animation[animationId].w);
+  //elementObj.setAttribute('height', animation[animationId].h);
+
+  const newSVG = document.createElementNS(xmlns, 'svg');
+  newSVG.setAttribute('xmlns', xmlns);
+  // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
+  // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
+  newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId].w} ${animation[animationId].h}`);
+  newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
+  newSVG.style.width = '100%';
+  newSVG.style.height = '100%';
+  newSVG.setAttributeNS(null, 'id', `_svg${animationId}`);
+  elementObj.prepend(newSVG);
+
+  animation[animationId].defs = document.createElementNS(xmlns, 'defs');
+  animation[animationId].defs.setAttributeNS(null, 'id', `_defs${animationId}`);
+  animation[animationId].gradientCount = 0;
+  animation[animationId].maskCount = 0;
+  newSVG.prepend(animation[animationId].defs);
+
+  const newLayer = document.createElementNS(xmlns, 'g');
+  newLayer.setAttributeNS(null, 'id', `_lanim${animationId}`);
+  newSVG.append(newLayer);
+
+  const newCompute = document.createElementNS(xmlns, 'g');
+  newCompute.setAttributeNS(null, 'id', `_compute${animationId}`);
+  newCompute.style.display = 'none';
+  newLayer.prepend(newCompute);
+
+  animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1)
+    .fill(null)
+    .map(() => ({ _transform: [] }));
+  animation[animationId]._instated = {};
+  animation[animationId]._refObj = [];
+  animation[animationId]._objSize = {};
+
+  animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 0);
+
+  const clipPath = document.createElementNS(xmlns, 'clipPath');
+  clipPath.setAttributeNS(null, 'id', `_clip${animationId}`);
+  animation[animationId].defs.prepend(clipPath);
+  const clipPathRect = document.createElementNS(xmlns, 'rect');
+  clipPathRect.setAttribute('x', 0);
+  clipPathRect.setAttribute('y', 0);
+  clipPathRect.setAttribute('width', animation[animationId].w);
+  clipPathRect.setAttribute('height', animation[animationId].h);
+  clipPath.append(clipPathRect);
+
+  newLayer.setAttributeNS(null, 'clip-path', `url(#_clip${animationId})`);
+  animation[animationId]._buildDone = true;
+  animationLoading -= 1;
+  animation[animationId]._loaded = true;
+  if (!animation[animationId]._autoplay) {
+    jlottie.goToAndStop(1, '', animation[animationId]._elementId);
+  }
+  /*} catch (e) {
+		console.error("Failed to load animation. " + e);
+		animationCount = animationCount - 1;
+		elementObj.style.height = 0;
+		elementObj.style.width = 0;
+		elementObj.innerHTML = "";
+		animation.splice(animationId, 1);
+	}*/
+}
+
+function getJson(
+  src,
+  autoplay,
+  controls,
+  loop,
+  mode,
+  style,
+  domElement,
+  elementNo,
+  elementId,
+  _autoplay,
+  _loop,
+  _debugAnimation,
+  _debugContainer,
+) {
+  const http = new XMLHttpRequest();
+  http.open('GET', src, true);
+  http.onreadystatechange = function () {
+    if (http.readyState == 4 && http.status == 200) {
+      animationCount += 1;
+      const currentAnimation = animationCount;
+      animation[currentAnimation] = JSON.parse(http.responseText);
+      animation[currentAnimation]._elementId = elementId;
+
+      if (_debugAnimation && typeof _debugContainer === 'object') {
+        animation[currentAnimation]._debugAnimation = _debugAnimation;
+        animation[currentAnimation]._debugContainer = _debugContainer;
+        animation[currentAnimation]._curFPS = 0;
+        animation[currentAnimation]._timeElapsed = 0;
+        animation[currentAnimation]._debugObj = document.createElement('div');
+        animation[currentAnimation]._debugObj.setAttribute('id', `__dbg__${currentAnimation}`);
+        animation[currentAnimation]._debugObj.style.display = 'block';
+        _debugContainer.prepend(animation[currentAnimation]._debugObj);
+      }
+
+      buildGraph(elementId, currentAnimation, domElement, _autoplay, _loop);
+    }
+  };
+  http.send();
+}
+
+/*
+export function processLottie(lottieElement, JSONsrc) {
+  let autoplay = '';
+  let controls = '';
+  let loop = '';
+  let mode = '';
+  let src = '';
+  let style = '';
+  let elementId = '';
+
+  if (lottieElement === undefined) {
+    const lottieElements = document.getElementsByTagName('lottie-player');
+    let i;
+    for (i = 0; i < lottieElements.length; i++) {
+      animationLoading += 1;
+
+      const attributes = lottieElements[i].attributes;
+      var j;
+
+      autoplay = '';
+      controls = '';
+      loop = '';
+      mode = '';
+      src = '';
+      style = '';
+      elementId = '';
+      for (j = 0; j < attributes.length; j++) {
+        switch (attributes[j].nodeName) {
+          case 'autoplay':
+            break;
+          case 'controls':
+            break;
+          case 'loop':
+            break;
+          case 'mode':
+            break;
+          case 'src':
+            src = attributes[j].nodeValue;
+            break;
+          case 'style':
+            break;
+          case 'id':
+            elementId = attributes[j].nodeValue;
+            break;
+        }
+      }
+      getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, true, true);
+    }
+  } else {
+    animationLoading += 1;
+    if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
+      const currentAnimation = animationCount;
+      animation[currentAnimation] = JSON.parse(JSONsrc);
+      animation[currentAnimation]._elementId = elementId;
+      buildGraph(elementId, currentAnimation, testElement, true, true);
+    } else {
+      var testElement = document.getElementById(lottieElement);
+      src = testElement.getAttribute('src');
+      elementId = testElement.getAttribute('id');
+      getJson(src, autoplay, controls, loop, mode, style, testElement, 0, elementId, true, true);
+    }
+  }
+
+  if (!playStarted) {
+    playStarted = true;
+    window.requestAnimationFrame(lottiemate);
+  }
+}
+*/
+
+/// ////////// CONTROL
+
+// var animationManager = (function () {
+const jlottie = {};
+
+function destroy(name) {
+  if (animationCount < 0) {
+    return;
+  }
+  if (name === undefined) {
+    const elements = [];
+    for (var i = 0; i <= animationCount; i++) {
+      elements.push(animation[i]._elementId);
+    }
+    animation = [];
+    for (var i = 0; i <= elements; i++) {
+      document.getElementById(elements[i]).innerHTML = '';
+      animationCount -= 1;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, '');
+    for (var i = 0; i <= animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation.splice(i, 1);
+        document.getElementById(name).innerHTML = '';
+        animationCount -= 1;
+        break;
+      }
+    }
+  }
+}
+
+function play(name) {
+  if (animationCount < 0) {
+    return;
+  }
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = false;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, '');
+    for (var i = 0; i <= animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation[i]._paused = false;
+        break;
+      }
+    }
+  }
+}
+
+function stop(name) {
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = true;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, '');
+    for (var i = 0; i < animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation[i]._paused = true;
+        break;
+      }
+    }
+  }
+}
+
+function goToAndStop(_frame, isFrame, name) {
+  if (animationCount < 0) {
+    return;
+  }
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = true;
+      loadFrame(i, _frame);
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, '');
+    for (var i = 0; i <= animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
+        animation[i]._paused = true;
+        loadFrame(i, _frame);
+        break;
+      }
+    }
+  }
+}
+
+function loadAnimation(obj) {
+  if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
+    return;
+  }
+  let autoplay = true;
+  let loop = true;
+  let debugAnimation = false;
+  let debugContainer;
+
+  if (!(obj.autoplay === undefined)) {
+    if (obj.autoplay === true || obj.autoplay === false) {
+      autoplay = obj.autoplay;
+    }
+  }
+
+  if (!(obj.loop === undefined)) {
+    if (obj.loop === true || obj.loop === false) {
+      loop = obj.loop;
+    }
+  }
+
+  if (!(obj.debug === undefined)) {
+    if (obj.debug === true) {
+      if (typeof obj.debugContainer != 'undefined') {
+        debugAnimation = true;
+        debugContainer = obj.debugContainer;
+      }
+    }
+  }
+
+  if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
+    animationCount += 1;
+    const currentAnimation = animationCount;
+    animation[currentAnimation] = JSON.parse(http.responseText);
+    animation[currentAnimation]._elementId = elementId;
+    buildGraph(elementId, currentAnimation, obj.container, true, true);
+  } else if (!(obj.path === undefined) && obj.path) {
+    getJson(
+      obj.path,
+      '',
+      '',
+      '',
+      '',
+      '',
+      obj.container,
+      0,
+      obj.container.id,
+      autoplay,
+      loop,
+      debugAnimation,
+      debugContainer,
+    );
+  }
+  if (!playStarted) {
+    playStarted = true;
+    window.requestAnimationFrame(lottiemate);
+  }
+}
+
+exports.addGroupPositionTransform = addGroupPositionTransform;
+exports.bezierCurve = bezierCurve;
+exports.buildGraph = buildGraph;
+exports.createGradientDef = createGradientDef;
+exports.destroy = destroy;
+exports.extrapolateOffsetKeyframe = extrapolateOffsetKeyframe;
+exports.extrapolatePathPosition = extrapolatePathPosition;
+exports.extrapolateValueKeyframe = extrapolateValueKeyframe;
+exports.findExistingTransform = findExistingTransform;
+exports.getColorString = getColorString;
+exports.getEmptyStageTransform = getEmptyStageTransform;
+exports.getEmptyTransform = getEmptyTransform;
+exports.getJson = getJson;
+exports.getLayers = getLayers;
+exports.getPosition = getPosition;
+exports.getShapes = getShapes;
+exports.getShapesGr = getShapesGr;
+exports.getStrokeString = getStrokeString;
+exports.goToAndStop = goToAndStop;
+exports.loadAnimation = loadAnimation;
+exports.loadFrame = loadFrame;
+exports.lottiemate = lottiemate;
+exports.play = play;
+exports.prepShape = prepShape;
+exports.prepShapeEl = prepShapeEl;
+exports.prepShapeElKeyframe = prepShapeElKeyframe;
+exports.prepShapeRc = prepShapeRc;
+exports.prepShapeRcKeyframe = prepShapeRcKeyframe;
+exports.prepShapeSh = prepShapeSh;
+exports.prepShapeShKeyframe = prepShapeShKeyframe;
+exports.prepShapeSr = prepShapeSr;
+exports.prepShapeSrKeyframe = prepShapeSrKeyframe;
+exports.resolveParents = resolveParents;
+exports.setShapeColors = setShapeColors;
+exports.setShapeStrokes = setShapeStrokes;
+exports.stageSequence = stageSequence;
+exports.stop = stop;
 //# sourceMappingURL=jlottie.cjs.js.map
