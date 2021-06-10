@@ -2046,7 +2046,7 @@ function loadAnimation(obj) {
   if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
     animationCount += 1;
     const currentAnimation = animationCount;
-    animation[currentAnimation] = JSON.parse(http.responseText);
+    animation[currentAnimation] = JSON.parse(obj.animationData);
     animation[currentAnimation]._elementId = elementId;
     buildGraph(elementId, currentAnimation, obj.container, true, true);
   } else if (!(obj.path === undefined) && obj.path) {
