@@ -12,6 +12,7 @@ let playStarted = false;
 
 /// ////////// BEZIER
 
+
 function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth) {
   const newNodes = [];
 
@@ -1769,15 +1770,16 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._debugContainer = '';
     //////
 
-    elementObj.style.width = animation[animationId].w;
-    elementObj.style.height = animation[animationId].h;
-    elementObj.setAttribute('width', animation[animationId].w);
-    elementObj.setAttribute('height', animation[animationId].h);
+    //elementObj.style.width = animation[animationId].w;
+    //elementObj.style.height = animation[animationId].h;
+    //elementObj.setAttribute('width', animation[animationId].w);
+    //elementObj.setAttribute('height', animation[animationId].h);
+
 
     const newSVG = document.createElementNS(xmlns, 'svg');
     newSVG.setAttribute('xmlns', xmlns);
-    newSVG.setAttributeNS(null, 'width', animation[animationId].w);
-    newSVG.setAttributeNS(null, 'height', animation[animationId].h);
+    // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
+    // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
     newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId].w} ${animation[animationId].h}`);
     newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
     newSVG.style.width = '100%';
@@ -1845,7 +1847,7 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
       const currentAnimation = animationCount;
       animation[currentAnimation] = JSON.parse(http.responseText);
       animation[currentAnimation]._elementId = elementId;
-      
+
       if (_debugAnimation && typeof _debugContainer === "object") {
         animation[currentAnimation]._debugAnimation = _debugAnimation;
         animation[currentAnimation]._debugContainer = _debugContainer;
@@ -1856,7 +1858,7 @@ function getJson(src, autoplay, controls, loop, mode, style, domElement, element
         animation[currentAnimation]._debugObj.style.display = 'block';
         _debugContainer.prepend(animation[currentAnimation]._debugObj);
       }
-    
+
       buildGraph(elementId, currentAnimation, domElement, _autoplay, _loop);
     }
   };
@@ -2086,4 +2088,3 @@ if (typeof exports === 'object') {
 
   //  return moduleIf;
   // })();
-  
