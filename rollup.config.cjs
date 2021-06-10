@@ -3,6 +3,8 @@ const server = require('rollup-plugin-serve');
 const { terser } = require('rollup-plugin-terser');
 const strip = require('@rollup/plugin-strip');
 const { babel } = require('@rollup/plugin-babel');
+const copy = require('rollup-plugin-copy');
+const livereload = require('rollup-plugin-livereload');
 const pkg = require('./package.json');
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -14,10 +16,32 @@ const banner = `/*!
  * ${pkg.name} v${pkg.version}
  */`;
 
+const devPlugins = (serve) => {
+  return !isProduction && serve
+    ? [
+        // Live reloading
+        livereload(),
+
+        // Copy source file to dist/src to reference during dev
+        copy({
+          targets: [
+            { src: 'src/jlottie.js', dest: 'dist/src' },
+          ],
+        }),
+
+        // Serve builds
+        server({
+          contentBase: ['public', 'dist'],
+          open: true,
+          host: 'localhost',
+          port: 8300,
+        }),
+      ]
+    : [];
+};
+
 const createConfig = (options) => {
-  const {
-    fileExt, format, minify = true, serve = false, transpile = true,
-  } = options;
+  const { fileExt, format, minify = false, serve = false, transpile = false } = options;
 
   return {
     input: 'src/jlottie.js',
@@ -30,15 +54,13 @@ const createConfig = (options) => {
       file: `dist/${pkgName}${fileExt}`,
       banner,
       sourcemap: true,
-
-      // TODO: Remove this after strict-mode complaincy is achieved
-      strict: true,
     },
 
     plugins: [
-      transpile && babel({
-        babelHelpers: 'bundled',
-      }),
+      transpile &&
+        babel({
+          babelHelpers: 'bundled',
+        }),
 
       isProduction && strip(),
 
@@ -46,13 +68,7 @@ const createConfig = (options) => {
 
       filesize(),
 
-      serve
-        && server({
-          contentBase: ['src', 'dist', 'public'],
-          open: true,
-          host: 'localhost',
-          port: 8100,
-        }),
+      ...devPlugins(serve),
     ],
   };
 };
