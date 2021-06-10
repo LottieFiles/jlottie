@@ -1,7 +1,5 @@
 const path = require('path');
-const {
-  ChromiumEnv, FirefoxEnv, WebKitEnv, test,
-} = require('@playwright/test');
+const { ChromiumEnv, FirefoxEnv, WebKitEnv, test } = require('@playwright/test');
 
 const testsDir = path.resolve(__dirname, 'tests');
 

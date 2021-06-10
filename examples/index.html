@@ -1,33 +1,33 @@
 <html>
-    <head>
-        <script src="../src/jlottie.js" type="application/javascript"></script>
-    </head>
+  <head>
+    <script src="../src/jlottie.js" type="application/javascript"></script>
+  </head>
 
-    <body>
-		<div style="display:block; width: 600px; min-height: 200px; border: 1px solid #000000;" id='debug'></div>
-        <lottie-player
-            id="soto"
-            autoplay
-            controls
-            loop
-            mode="normal"
-            src="https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json"
-            style="display: block; border: 1px #000000 solid"
-        >
-        </lottie-player>
+  <body>
+    <div style="display: block; width: 600px; min-height: 200px; border: 1px solid #000000" id="debug"></div>
+    <lottie-player
+      id="soto"
+      autoplay
+      controls
+      loop
+      mode="normal"
+      src="https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json"
+      style="display: block; border: 1px #000000 solid"
+    >
+    </lottie-player>
 
-        <script >
-            jlottie.loadAnimation({
-                container: document.getElementById('soto'), // the dom element that will contain the animation
-                loop: true,
-                autoplay: true,
-                path: 'https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json', // the path to the animation json
-				debug: true,
-				debugContainer: document.getElementById('debug'),
-            });
-        </script>
+    <script>
+      jlottie.loadAnimation({
+        container: document.getElementById('soto'), // the dom element that will contain the animation
+        loop: true,
+        autoplay: true,
+        path: 'https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json', // the path to the animation json
+        debug: true,
+        debugContainer: document.getElementById('debug'),
+      });
+    </script>
 
-        <!--
+    <!--
 
 		<lottie-player 
 			id="soto0" 
@@ -67,7 +67,7 @@
 			style="display: block; float: left;">
 		</lottie-player>
 -->
-    </body>
+  </body>
 </html>
 <!--
 	src="https://assets10.lottiefiles.com/packages/lf20_90ZmDV.json"

@@ -21,7 +21,7 @@ module.exports = {
     {
       files: ['*.html'],
       options: {
-        tabWidth: 4,
+        tabWidth: 2,
       },
     },
   ],
