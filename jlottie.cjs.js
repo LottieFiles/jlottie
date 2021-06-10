@@ -1378,6 +1378,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
 function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
   let newGroup;
   let newTranslateGroup;
+  let newLayer;
 
   for (let j = 0; j < passedObj[passedKey].length; j++) {
     if (passedObj[passedKey][j].ind == passedObj[passedKey][layerId].parent) {

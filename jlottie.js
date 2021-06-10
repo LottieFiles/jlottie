@@ -2812,6 +2812,7 @@
   function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
     var newGroup;
     var newTranslateGroup;
+    var newLayer;
 
     for (var j = 0; j < passedObj[passedKey].length; j++) {
       if (passedObj[passedKey][j].ind == passedObj[passedKey][layerId].parent) {
