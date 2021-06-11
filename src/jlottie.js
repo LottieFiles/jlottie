@@ -1739,7 +1739,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
 
 export function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
   var currentObj;
-  alert(animation[animationId].currScale);
+  //alert(animation[animationId].currScale);
   for (var i = 0; i < passedObj[passedKey].length; i++) {
     if (passedObj[passedKey][i].parent > 0) {
     } else {
