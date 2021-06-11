@@ -1241,14 +1241,17 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
                 .getElementById(refGroup)
                 .setAttribute(
                   'transform',
-                  `matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
+                  `translate(${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
                     layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
+                  //`matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
+                  //  layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
                   })`,
                 );
             } else {
               document
                 .getElementById(refGroup)
-                .setAttribute('transform', `matrix(1,0,0,1,${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
+                .setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
+                //.setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
             }
           }
         }
@@ -1325,7 +1328,8 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
           if (layerObj.shapes[i].p.k > 1) {
             document
               .getElementById(`${animationId}_${depth}_layerGroup${layerObj._layer}`)
-              .setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
+              .setAttribute('transform', `translate(${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
+              //.setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
           }
         }
       }
@@ -1437,6 +1441,12 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
   let posY;
   let lastMaskId = '';
   for (var i = 0; i < passedObj[passedKey].length; i++) {
+    if (passedObj[passedKey][i].w > animation[animationId].w) {
+      animation[animationId]._maxWidth = passedObj[passedKey][i].w;
+    }
+    if (passedObj[passedKey][i].h > animation[animationId].h) {
+      animation[animationId]._maxHeight = passedObj[passedKey][i].h;
+    }
     passedObj.layerCount++;
     passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
     passedObj[passedKey][i]._child = [];
@@ -1656,11 +1666,13 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
               if (passedObj[passedKey][i].td > 0) {
                 document
                   .getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`)
-                  .setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                  .setAttribute('transform', `translate(${posX},${posY})`);
+                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
               } else {
                 document
                   .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
-                  .setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                  .setAttribute('transform', `translate(${posX},${posY})`);
+                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
               }
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;
@@ -1722,6 +1734,26 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
   return passedObj;
 }
 
+function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
+  var currentObj;
+  alert(animation[animationId].currScale);
+  for (var i = 0; i < passedObj[passedKey].length; i++) {
+    if (passedObj[passedKey][i].parent > 0) {
+    } else {
+      if (passedObj[passedKey][i].td > 0) {
+      } else {
+        if (passedObj[passedKey][i].hasOwnProperty("parent")) {
+        } else {
+          //alert(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
+          currentObj = document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
+          //currentObj.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
+          currentObj.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+        }
+      }
+    }
+  }
+}
+
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   //try {
@@ -1737,6 +1769,11 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
   animation[animationId]._loop = loop;
   animation[animationId]._customName = customName;
   animation[animationId]._paused = false;
+  animation[animationId]._maxWidth = 0;
+  animation[animationId]._maxHeight = 0;
+  animation[animationId]._skewW = 0;
+  animation[animationId]._skewH = 0;
+  animation[animationId]._currScale = 1;
 
   //for debugging
   animation[animationId]._debugTimeElapsed = 0;
@@ -1781,8 +1818,6 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
   animation[animationId]._refObj = [];
   animation[animationId]._objSize = {};
 
-  animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 0);
-
   const clipPath = document.createElementNS(xmlns, 'clipPath');
   clipPath.setAttributeNS(null, 'id', `_clip${animationId}`);
   animation[animationId].defs.prepend(clipPath);
@@ -1792,6 +1827,22 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
   clipPathRect.setAttribute('width', animation[animationId].w);
   clipPathRect.setAttribute('height', animation[animationId].h);
   clipPath.append(clipPathRect);
+
+  animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 0);
+
+  if (animation[animationId]._maxWidth > 0 || animation[animationId]._maxHeight > 0) {
+    var scaleW = animation[animationId].w / animation[animationId]._maxWidth;
+    var scaleH = animation[animationId].h / animation[animationId]._maxHeight;
+    //animation[animationId]._skewW = animation[animationId]
+
+    if (scaleW > scaleH) {
+      animation[animationId]._currScale = scaleW;
+    } else {
+      animation[animationId]._currScale = scaleH;
+    }
+
+    scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
+  }
 
   newLayer.setAttributeNS(null, 'clip-path', `url(#_clip${animationId})`);
   animation[animationId]._buildDone = true;
@@ -2072,5 +2123,5 @@ function loadAnimation(obj) {
   }
 }
 
-export { addGroupPositionTransform, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findExistingTransform, getColorString, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, play, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, setShapeColors, setShapeStrokes, stageSequence, stop };
+export { addGroupPositionTransform, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findExistingTransform, getColorString, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, play, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };
 //# sourceMappingURL=jlottie.esm.js.map
