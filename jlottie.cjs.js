@@ -198,32 +198,43 @@ function lottiemate() {
 
       setTimeout(function () {
         for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
-            currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-            currentObjOther = document.getElementById(
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
-            );
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-              currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+          } else {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
+              currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+              currentObjOther = document.getElementById(
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+              );
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+              }
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+                currentObj.setAttribute(
+                  'transform',
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
+                );
+              }
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+                currentObj.setAttribute(
+                  'fill',
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
+                );
+              }
+              currentObjOther.setAttribute(
+                'opacity',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+              );
             }
-            currentObj.setAttribute(
-              'transform',
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
-            );
-            currentObjOther.setAttribute(
-              'opacity',
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
-            );
-          }
-          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
-            document.getElementById(
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-            ).style.display = 'none';
-          }
-          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
-            document.getElementById(
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-            ).style.display = 'block';
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+              document.getElementById(
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+              ).style.display = 'none';
+            }
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+              document.getElementById(
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+              ).style.display = 'block';
+            }
           }
         }
       }, 0);
@@ -264,6 +275,8 @@ function getEmptyTransform() {
   transforms.paddingAnchorY = 0;
   transforms.isTranslate = false;
 
+  transforms.fillSet = false;
+
   transforms.dataString = '';
   transforms.isTween = false;
   transforms.tweenShape = '';
@@ -284,8 +297,19 @@ function getEmptyTransform() {
   return transforms;
 }
 
+function getEmptyFillTransform() {
+  const transforms = {};
+  transforms.fillSet = true;
+  transforms.isGradient = false;
+  transforms.fill = '';
+  transforms.gradientFill = [];
+  transforms.fillObj = '';
+  return transforms;
+}
+
 function getEmptyStageTransform() {
   const transforms = {};
+  transforms.fillSet = false;
   transforms.stageObj = '';
   transforms.refObj = '';
   transforms.hide = false;
@@ -293,16 +317,23 @@ function getEmptyStageTransform() {
   return transforms;
 }
 
-function findExistingTransform(transforms, animationId, frame) {
+function findExistingTransform(transforms, animationId, frame, forFill) {
   let found = 0;
   if (animation[animationId]._scene[parseInt(frame)] === undefined) {
     return transforms;
   }
   for (let i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
-    if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == transforms.refObj) {
-      transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
-      found = 1;
-      break;
+    if (forFill) {
+      if (animation[animationId]._scene[parseInt(frame)]._transform[i].fillObj == transforms.fillObj) {
+        found = 1;
+        break;
+      }
+    } else {
+      if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == transforms.refObj) {
+        transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
+        found = 1;
+        break;
+      }
     }
   }
   return transforms;
@@ -913,7 +944,10 @@ function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTra
 
 function prepShapeEl(shapeObj, referrer, animationId, addTransformation, depth) {
   const newShape = document.createElementNS(xmlns, 'ellipse');
-  newShape.setAttribute('d', dataString);
+  newShape.setAttribute('cx', shapeObj.p.k[0]);
+  newShape.setAttribute('cy', shapeObj.p.k[1]);
+  newShape.setAttribute('rx', shapeObj.s.k[0]);
+  newShape.setAttribute('ry', shapeObj.s.k[1]);
   newShape.setAttribute('fill', 'transparent');
   newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
   newShape.classList.add('ellipse');
@@ -1097,10 +1131,17 @@ function prepShape(shapeObj, referrer, animationId, isMasked, depth) {
     shapeObj = prepShapeRc(shapeObj, referrer, animationId, depth);
   }
 
+  if (shapeObj.ty == 'el') {
+    if (shapeObj.hasOwnProperty('ks') && shapeObj.ks.k.length > 1) {
+      shapeObj = prepShapeRcKeyframe(shapeObj, referrer, animationId, depth);
+    }
+    shapeObj = prepShapeEl(shapeObj, referrer, animationId, depth);
+  }
+
   return shapeObj;
 }
 
-function createGradientDef(start, end, opacity, gradient, animationId) {
+function createGradientDef(start, end, opacity, gradient, animationId, depth) {
   animation[animationId].gradientCount++;
   const newDefId = `${animationId}_gradient${animation[animationId].gradientCount}`;
   const newDef = document.createElementNS(xmlns, 'linearGradient');
@@ -1113,28 +1154,71 @@ function createGradientDef(start, end, opacity, gradient, animationId) {
   newDef.setAttribute('y2', end.k[1]);
   animation[animationId].defs.prepend(newDef);
 
-  const offsets = [];
-  const styles = [];
-  const opacities = [];
-  for (var i = 0; i < gradient.p; i++) {
-    offsets.push(`${gradient.k.k[i * 4 + 0] * 100}%`);
-    styles.push(
-      `stop-color:rgb(${parseInt(gradient.k.k[i * 4 + 1] * 255)},${parseInt(gradient.k.k[i * 4 + 2] * 255)},${parseInt(
-        gradient.k.k[i * 4 + 3] * 255,
-      )});`,
-    );
-    opacities.push('stop-opacity:1;');
-  }
-  if (gradient.k.k.length > gradient.p * 4) {
-    for (var i = 0; i < gradient.p; i++) {
-      opacities[i] = `stop-opacity:${gradient.k.k[i * 2 + gradient.p * 4 + 1]};`;
+  if (gradient.k.k[0].hasOwnProperty('s')) {
+    var firstRun = true;
+    gradient = extrapolateOffsetKeyframe(gradient, 'k', false, animationId, -1, gradient, depth);
+    for (var j = 0; j < gradient.k.k.length; j++) {
+      const offsets = [];
+      const styles = [];
+      const opacities = [];
+      var transforms = getEmptyFillTransform();
+      transforms.gradientFill.push({"offsets":[], "styles":[]});
+      if (gradient.k.k[j].hasOwnProperty('s')) {
+        for (var i = 0; i < gradient.p; i++) {
+          offsets.push(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
+          styles.push(
+            `stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
+              gradient.k.k[j].s[i * 4 + 3] * 255,
+            )});`,
+          );
+          opacities.push('stop-opacity:1;');
+        }
+        if (gradient.k.k[j].s.length > gradient.p * 4) {
+          for (var i = 0; i < gradient.p; i++) {
+            opacities[i] = `stop-opacity:${gradient.k.k[j].s[i * 2 + gradient.p * 4 + 1]};`;
+          }
+        }
+        transforms.fillObj = newDefId;
+        for (var i = 0; i < gradient.p; i++) {
+          transforms.gradientFill.offsets = offsets[i];
+          transforms.gradientFill.styles = styles[i] + opacities[i];
+        }
+        animation[animationId]._scene[parseInt(gradient.k.k[j].t)]._transform.push(transforms);
+        if (firstRun) {
+          for (var i = 0; i < gradient.p; i++) {
+            const newStop = document.createElementNS(xmlns, 'stop');
+            newStop.setAttribute('offset', offsets[i]);
+            newStop.setAttribute('style', styles[i] + opacities[i]);
+            newDef.append(newStop);
+          }
+          firstRun = false;
+        }
+      }
     }
-  }
-  for (var i = 0; i < gradient.p; i++) {
-    const newStop = document.createElementNS(xmlns, 'stop');
-    newStop.setAttribute('offset', offsets[i]);
-    newStop.setAttribute('style', styles[i] + opacities[i]);
-    newDef.append(newStop);
+  } else {
+    const offsets = [];
+    const styles = [];
+    const opacities = [];
+    for (var i = 0; i < gradient.p; i++) {
+      offsets.push(`${gradient.k.k[i * 4 + 0] * 100}%`);
+      styles.push(
+        `stop-color:rgb(${parseInt(gradient.k.k[i * 4 + 1] * 255)},${parseInt(gradient.k.k[i * 4 + 2] * 255)},${parseInt(
+          gradient.k.k[i * 4 + 3] * 255,
+        )});`,
+      );
+      opacities.push('stop-opacity:1;');
+    }
+    if (gradient.k.k.length > gradient.p * 4) {
+      for (var i = 0; i < gradient.p; i++) {
+        opacities[i] = `stop-opacity:${gradient.k.k[i * 2 + gradient.p * 4 + 1]};`;
+      }
+    }
+    for (var i = 0; i < gradient.p; i++) {
+      const newStop = document.createElementNS(xmlns, 'stop');
+      newStop.setAttribute('offset', offsets[i]);
+      newStop.setAttribute('style', styles[i] + opacities[i]);
+      newDef.append(newStop);
+    }
   }
 
   return `url(#${newDefId})`;
@@ -1286,6 +1370,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
           layerObj.it[i].o,
           layerObj.it[i].g,
           animationId,
+          depth,
         );
       }
     }
@@ -1367,6 +1452,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
           layerObj.shapes[i].o,
           layerObj.shapes[i].g,
           animationId,
+          depth,
         );
       }
     }
@@ -2137,6 +2223,7 @@ exports.extrapolatePathPosition = extrapolatePathPosition;
 exports.extrapolateValueKeyframe = extrapolateValueKeyframe;
 exports.findExistingTransform = findExistingTransform;
 exports.getColorString = getColorString;
+exports.getEmptyFillTransform = getEmptyFillTransform;
 exports.getEmptyStageTransform = getEmptyStageTransform;
 exports.getEmptyTransform = getEmptyTransform;
 exports.getJson = getJson;
