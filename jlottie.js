@@ -1674,7 +1674,8 @@
   var animationLength = 0;
   var animationLoading = 0;
   var frozen = false;
-  var playStarted = false; /// ////////// BEZIER
+  var playStarted = false;
+  var panda = console; /// ////////// BEZIER
 
   function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth) {
     var newNodes = [];
@@ -1725,11 +1726,21 @@
       newNodes[newNodes.length - 1].s = [];
 
       if (refKey != 'ks') {
-        newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[0] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0]) + Math.pow(timeTick, 3) * p2[0]);
+        if (p1.length > 3) {
+          for (var m = 0; m < p1.length / 4; m++) {
+            newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[m * 4]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[m * 4]) + Math.pow(timeTick, 3) * p2[m * 4]);
 
-        if (refKey != 'x' && refKey != 'y') {
-          if (refKey == 'p' || refKey == 's') {
-            newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[1] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1]) + Math.pow(timeTick, 3) * p2[1]);
+            for (var n = 1; n < 4; n++) {
+              newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4 + n] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[m * 4 + n]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[m * 4 + n]) + Math.pow(timeTick, 3) * p2[m * 4 + n]);
+            }
+          }
+        } else {
+          newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[0] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0]) + Math.pow(timeTick, 3) * p2[0]);
+
+          if (refKey != 'x' && refKey != 'y') {
+            if (refKey == 'p' || refKey == 's') {
+              newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[1] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[1]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[1]) + Math.pow(timeTick, 3) * p2[1]);
+            }
           }
         }
       } else {
@@ -1747,7 +1758,7 @@
         }
       }
 
-      if (addTransformation && refKey != 'ks') {
+      if (addTransformation > -1 && refKey != 'ks') {
         addGroupPositionTransform(currentFrame, newNodes[newNodes.length - 1].s, isLayer, animationId, refKey, addTransformation, objectId, depth);
       }
     }
@@ -1816,7 +1827,16 @@
 
         setTimeout(function () {
           for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {} else {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
+                var stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
+
+                for (var m = 0; m < stops.length; m++) {
+                  stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
+                  stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
+                }
+              } else {}
+            } else {
               if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
                 currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
                 currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
@@ -2260,12 +2280,12 @@
           p2 = offsetKeyframeObj[refKey].k[i + 1].s;
         }
 
-        if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && refKey != 'ks') {
+        if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && refKey != 'ks' && addTransformation > -1) {
           if (offsetKeyframeObj[refKey].k[i + 1].i.x < 1) offsetKeyframeObj[refKey].k[i + 1].i.x = 0.0;
           if (offsetKeyframeObj[refKey].k[i + 1].i.y < 1) offsetKeyframeObj[refKey].k[i + 1].i.y = 0.0;
         }
 
-        if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && refKey != 'ks') {
+        if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && refKey != 'ks' && addTransformation > -1) {
           if (offsetKeyframeObj[refKey].k[i].o.x < 1) offsetKeyframeObj[refKey].k[i].o.x = 0.0;
           if (offsetKeyframeObj[refKey].k[i].o.y < 1) offsetKeyframeObj[refKey].k[i].o.y = 0.0;
         }
@@ -2623,37 +2643,56 @@
 
     return shapeObj;
   }
-  function createGradientDef(start, end, opacity, gradient, animationId, depth) {
+  function createGradientDef(start, end, opacity, gradient, radial, animationId, depth) {
     animation[animationId].gradientCount++;
     var newDefId = "".concat(animationId, "_gradient").concat(animation[animationId].gradientCount);
-    var newDef = document.createElementNS(xmlns, 'linearGradient');
+    var newDef;
+
+    if (radial == 2) {
+      newDef = document.createElementNS(xmlns, 'radialGradient');
+      newDef.setAttribute('x1', start.k[0]);
+      newDef.setAttribute('x2', end.k[0]);
+      newDef.setAttribute('y1', start.k[1]);
+      newDef.setAttribute('y2', end.k[1]);
+    } else {
+      newDef = document.createElementNS(xmlns, 'linearGradient');
+      newDef.setAttribute('spreadMethod', 'pad');
+      newDef.setAttribute('gradientUnits', 'userSpaceOnUse');
+      newDef.setAttribute('x1', start.k[0]);
+      newDef.setAttribute('x2', end.k[0]);
+      newDef.setAttribute('y1', start.k[1]);
+      newDef.setAttribute('y2', end.k[1]);
+    }
+
     newDef.setAttribute('id', newDefId);
-    newDef.setAttribute('spreadMethod', 'pad');
-    newDef.setAttribute('gradientUnits', 'userSpaceOnUse');
-    newDef.setAttribute('x1', start.k[0]);
-    newDef.setAttribute('x2', end.k[0]);
-    newDef.setAttribute('y1', start.k[1]);
-    newDef.setAttribute('y2', end.k[1]);
-    animation[animationId].defs.prepend(newDef);
+    animation[animationId].defs.prepend(newDef); //panda.log('---------------------------------------');
 
     if (gradient.k.k[0].hasOwnProperty('s')) {
       var firstRun = true;
       gradient = extrapolateOffsetKeyframe(gradient, 'k', false, animationId, -1, gradient, depth);
 
-      for (var j = 0; j < gradient.k.k.length; j++) {
+      for (var j = 0; j < gradient.k.k.length - 1; j++) {
         var offsets = [];
         var styles = [];
         var opacities = [];
         var transforms = getEmptyFillTransform();
-        transforms.gradientFill.push({
-          "offsets": [],
-          "styles": []
-        });
+        transforms.offsets = [];
+        transforms.styles = [];
 
         if (gradient.k.k[j].hasOwnProperty('s')) {
           for (var i = 0; i < gradient.p; i++) {
-            offsets.push("".concat(gradient.k.k[j].s[i * 4 + 0] * 100, "%"));
+            //panda.log(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
+            if (gradient.k.k[j].s[i * 4 + 0] == 0 || isNaN(gradient.k.k[j].s[i * 4 + 0])) {
+              offsets.push("0%");
+            } else {
+              offsets.push("".concat(gradient.k.k[j].s[i * 4 + 0] * 100, "%"));
+            }
+
             styles.push("stop-color:rgb(".concat(parseInt(gradient.k.k[j].s[i * 4 + 1] * 255), ",").concat(parseInt(gradient.k.k[j].s[i * 4 + 2] * 255), ",").concat(parseInt(gradient.k.k[j].s[i * 4 + 3] * 255), ");"));
+            /*panda.log(`stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
+              gradient.k.k[j].s[i * 4 + 3] * 255,
+            )});`);*/
+
             opacities.push('stop-opacity:1;');
           }
 
@@ -2666,9 +2705,11 @@
           transforms.fillObj = newDefId;
 
           for (var i = 0; i < gradient.p; i++) {
-            transforms.gradientFill.offsets = offsets[i];
-            transforms.gradientFill.styles = styles[i] + opacities[i];
+            transforms.offsets.push(offsets[i]);
+            transforms.styles.push(styles[i] + opacities[i]);
           }
+
+          transforms.isGradient = true;
 
           animation[animationId]._scene[parseInt(gradient.k.k[j].t)]._transform.push(transforms);
 
@@ -2690,7 +2731,11 @@
       var _opacities = [];
 
       for (var i = 0; i < gradient.p; i++) {
-        _offsets.push("".concat(gradient.k.k[i * 4 + 0] * 100, "%"));
+        if (gradient.k.k[i * 4 + 0] > 0) {
+          _offsets.push("".concat(gradient.k.k[i * 4 + 0] * 100, "%"));
+        } else {
+          _offsets.push("0");
+        }
 
         _styles.push("stop-color:rgb(".concat(parseInt(gradient.k.k[i * 4 + 1] * 255), ",").concat(parseInt(gradient.k.k[i * 4 + 2] * 255), ",").concat(parseInt(gradient.k.k[i * 4 + 3] * 255), ");"));
 
@@ -2828,7 +2873,7 @@
 
         if (layerObj.it[i].ty == 'gf') {
           layerObj._isGradient = true;
-          currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, animationId, depth);
+          currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, layerObj.it[i].r, animationId, depth);
         }
       }
     }
@@ -2891,7 +2936,7 @@
 
         if (layerObj.shapes[i].ty == 'gf') {
           layerObj._isGradient = true;
-          currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, animationId, depth);
+          currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, layerObj.shapes[i].r, animationId, depth);
         }
       } // console.log("leastY " + layerObj._leastY);
 
