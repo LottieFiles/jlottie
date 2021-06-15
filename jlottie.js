@@ -1726,12 +1726,12 @@
       newNodes[newNodes.length - 1].s = [];
 
       if (refKey != 'ks') {
-        if (p1.length > 3) {
+        if (p1.length > 4) {
           for (var m = 0; m < p1.length / 4; m++) {
-            newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[m * 4]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[m * 4]) + Math.pow(timeTick, 3) * p2[m * 4]);
+            newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[m * 4]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[m * 4]) + Math.pow(timeTick, 3) * p2[m * 4]);
 
             for (var n = 1; n < 4; n++) {
-              newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4 + n] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[m * 4 + n]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[m * 4 + n]) + Math.pow(timeTick, 3) * p2[m * 4 + n]);
+              newNodes[newNodes.length - 1].s.push(Math.pow(oneMinusT, 3) * p1[m * 4 + n] + 3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[m * 4 + n]) + 3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[m * 4 + n]) + Math.pow(timeTick, 3) * p2[m * 4 + n]);
             }
           }
         } else {
@@ -2734,7 +2734,7 @@
         if (gradient.k.k[i * 4 + 0] > 0) {
           _offsets.push("".concat(gradient.k.k[i * 4 + 0] * 100, "%"));
         } else {
-          _offsets.push("0");
+          _offsets.push("0%");
         }
 
         _styles.push("stop-color:rgb(".concat(parseInt(gradient.k.k[i * 4 + 1] * 255), ",").concat(parseInt(gradient.k.k[i * 4 + 2] * 255), ",").concat(parseInt(gradient.k.k[i * 4 + 3] * 255), ");"));
@@ -3169,18 +3169,18 @@
       passedObj._currentLayer._inPoint = passedObj[passedKey][i]._inPoint;
       passedObj._currentLayer._outPoint = passedObj[passedKey][i]._outPoint;
 
-      if (passedObj[passedKey][i].hasOwnProperty('refId') && passedObj.hasOwnProperty('assets')) {
+      if (passedObj[passedKey][i].hasOwnProperty('refId')) {
         var tempRef = -1;
 
-        for (var m = 0; m < passedObj.assets.length; m++) {
-          if (passedObj.assets[m].id == passedObj[passedKey][i].refId) {
+        for (var m = 0; m < animation[animationId].assets.length; m++) {
+          if (animation[animationId].assets[m].id == passedObj[passedKey][i].refId) {
             tempRef = m;
             break;
           }
         }
 
         if (tempRef >= 0) {
-          passedObj.assets[tempRef] = getLayers(elementId, animationId, newGroup, passedObj.assets[tempRef], 'layers', depth);
+          animation[animationId].assets[tempRef] = getLayers(elementId, animationId, newGroup, animation[animationId].assets[tempRef], 'layers', depth);
         }
       }
 
