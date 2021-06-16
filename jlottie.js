@@ -1801,10 +1801,10 @@
     var currentObj;
     var currentObjOther;
 
-    var _loop2 = function _loop2(i) {
+    for (var i = 0; i <= animationCount; i++) {
       if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
         if (animation[i]._removed || animation[i]._paused) {
-          return "continue";
+          continue;
         }
 
         if (animation[i]._debugAnimation) {
@@ -1821,56 +1821,56 @@
           if (!animation[i]._loop) {
             animation[i]._paused = true;
             jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
-            return "continue";
+            continue;
           }
-        }
+        } //setTimeout(function () {
 
-        setTimeout(function () {
-          for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
-                var stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
 
-                for (var m = 0; m < stops.length; m++) {
-                  stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
-                  stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
-                }
-              } else {}
-            } else {
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
-                currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-                currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
+        for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
+              var stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
 
-                if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                  currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-                }
+              for (var m = 0; m < stops.length; m++) {
+                stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
+                stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
+              }
+            } else {}
+          } else {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
+              currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+              currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
 
-                if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                  currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
-                }
-
-                if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                  currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
-                }
-
-                currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
               }
 
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
-                document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'none';
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+                currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
               }
 
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
-                document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'block';
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+                currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
               }
+
+              currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+            }
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+              document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'none';
+            }
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+              document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'block';
             }
           }
-        }, 0);
+        } //}, 0);
+
       }
 
       if (animation[i]._debugAnimation) {
         // DEBUG
-        debugDate = Date.now();
+        var debugDate = Date.now();
         animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate); //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
 
         if (animation[i]._timeElapsed >= 2000) {
@@ -1879,14 +1879,6 @@
           animation[i]._timeElapsed = 0;
         }
       }
-    };
-
-    for (var i = 0; i <= animationCount; i++) {
-      var debugDate;
-
-      var _ret = _loop2(i);
-
-      if (_ret === "continue") continue;
     }
 
     window.requestAnimationFrame(lottiemate);
@@ -1972,6 +1964,14 @@
   function stageSequence(animationId, stageObj, inPoint, outPoint) {
     if (outPoint > animation[animationId]._totalFrames) {
       outPoint = animation[animationId]._totalFrames;
+    }
+
+    if (inPoint < 0) {
+      inPoint = 0;
+    }
+
+    if (inPoint > animation[animationId]._totalFrames) {
+      inPoint = animation[animationId]._totalFrames;
     }
 
     var transforms = getEmptyStageTransform();
@@ -3361,12 +3361,18 @@
     if (animation[animationId]._maxWidth > 0 || animation[animationId]._maxHeight > 0) {
       var scaleW = animation[animationId].w / animation[animationId]._maxWidth;
       var scaleH = animation[animationId].h / animation[animationId]._maxHeight; //animation[animationId]._skewW = animation[animationId]
+      //clipPathRect.setAttribute('x', 0);
+      //clipPathRect.setAttribute('y', 0);
+      //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
+      //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
 
       if (scaleW > scaleH) {
         animation[animationId]._currScale = scaleW;
       } else {
         animation[animationId]._currScale = scaleH;
-      }
+      } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
+      //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+
 
       scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
     }
@@ -3419,77 +3425,7 @@
     };
 
     http.send();
-  }
-  /*
-  export function processLottie(lottieElement, JSONsrc) {
-    let autoplay = '';
-    let controls = '';
-    let loop = '';
-    let mode = '';
-    let src = '';
-    let style = '';
-    let elementId = '';
-
-    if (lottieElement === undefined) {
-      const lottieElements = document.getElementsByTagName('lottie-player');
-      let i;
-      for (i = 0; i < lottieElements.length; i++) {
-        animationLoading += 1;
-
-        const attributes = lottieElements[i].attributes;
-        var j;
-
-        autoplay = '';
-        controls = '';
-        loop = '';
-        mode = '';
-        src = '';
-        style = '';
-        elementId = '';
-        for (j = 0; j < attributes.length; j++) {
-          switch (attributes[j].nodeName) {
-            case 'autoplay':
-              break;
-            case 'controls':
-              break;
-            case 'loop':
-              break;
-            case 'mode':
-              break;
-            case 'src':
-              src = attributes[j].nodeValue;
-              break;
-            case 'style':
-              break;
-            case 'id':
-              elementId = attributes[j].nodeValue;
-              break;
-          }
-        }
-        getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, true, true);
-      }
-    } else {
-      animationLoading += 1;
-      if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
-        const currentAnimation = animationCount;
-        animation[currentAnimation] = JSON.parse(JSONsrc);
-        animation[currentAnimation]._elementId = elementId;
-        buildGraph(elementId, currentAnimation, testElement, true, true);
-      } else {
-        var testElement = document.getElementById(lottieElement);
-        src = testElement.getAttribute('src');
-        elementId = testElement.getAttribute('id');
-        getJson(src, autoplay, controls, loop, mode, style, testElement, 0, elementId, true, true);
-      }
-    }
-
-    if (!playStarted) {
-      playStarted = true;
-      window.requestAnimationFrame(lottiemate);
-    }
-  }
-  */
-  /// ////////// CONTROL
+  } /// ////////// CONTROL
   // var animationManager = (function () {
 
   var jlottie = {};
