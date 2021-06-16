@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script src="/dist/jlottie.js" type="application/javascript"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.9/lottie_svg.min.js"
+      integrity="sha512-u1VfZfptvsnaARZGlc9LDazh3ZhH30yjcA75NxOEj5nwZ1O0LEOuck2QMwZpVpuQGVTOIhXTYHFYB+ggEBjhLw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+  <body>
+    <div
+      id="jlottie-container"
+      style="border: 1px #000000 solid; height: 300px; width: 300px; margin-bottom: 10px"
+    ></div>
+    <div id="lottieweb-container" style="border: 1px #000000 solid; height: 300px; width: 300px"></div>
+  </body>
+  <script>
+    // get lottie source for a single test file from url param
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    //const src = urlParams.get('src');
+
+    // Init the jlottie player
+    /*jlottie.loadAnimation({
+      container: document.getElementById('jlottie-container'),
+      loop: true,
+      autoplay: true,
+      path: '/' + src, // the path to the animation json
+    });*/
+
+    // stop the player at a specific frame
+    /*setTimeout(function () {
+      jlottie.goToAndStop(2, "", "lottiefiles_player");
+      // jlottie.play("lottiefiles_player");
+    }, 1000);*/
+
+    // Load lottie web player
+    lottie.loadAnimation({
+      container: document.getElementById('lottieweb-container'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json',
+    });
+
+    // Stop lottie web player at frame 2
+    //lottie.goToAndStop(2, true);
+  </script>
+</html>

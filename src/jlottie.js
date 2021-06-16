@@ -209,7 +209,7 @@ export function lottiemate() {
         }
       }
 
-      setTimeout(function () {
+      //setTimeout(function () {
         for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
           if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
@@ -259,7 +259,7 @@ export function lottiemate() {
             }
           }
         }
-      }, 0);
+      //}, 0);
     }
     if (animation[i]._debugAnimation) {
       // DEBUG
@@ -365,6 +365,12 @@ export function findExistingTransform(transforms, animationId, frame, forFill) {
 export function stageSequence(animationId, stageObj, inPoint, outPoint) {
   if (outPoint > animation[animationId]._totalFrames) {
     outPoint = animation[animationId]._totalFrames;
+  }
+  if (inPoint < 0) {
+    inPoint = 0;
+  }
+  if (inPoint > animation[animationId]._totalFrames) {
+    inPoint = animation[animationId]._totalFrames;
   }
   let transforms = getEmptyStageTransform();
   let found = 0;
@@ -1978,11 +1984,20 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     var scaleH = animation[animationId].h / animation[animationId]._maxHeight;
     //animation[animationId]._skewW = animation[animationId]
 
+    //clipPathRect.setAttribute('x', 0);
+    //clipPathRect.setAttribute('y', 0);
+    //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
+    //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
+  
     if (scaleW > scaleH) {
       animation[animationId]._currScale = scaleW;
     } else {
       animation[animationId]._currScale = scaleH;
     }
+
+    //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
+
+    //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
 
     scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
   }
@@ -2044,76 +2059,6 @@ export function getJson(
   };
   http.send();
 }
-
-/*
-export function processLottie(lottieElement, JSONsrc) {
-  let autoplay = '';
-  let controls = '';
-  let loop = '';
-  let mode = '';
-  let src = '';
-  let style = '';
-  let elementId = '';
-
-  if (lottieElement === undefined) {
-    const lottieElements = document.getElementsByTagName('lottie-player');
-    let i;
-    for (i = 0; i < lottieElements.length; i++) {
-      animationLoading += 1;
-
-      const attributes = lottieElements[i].attributes;
-      var j;
-
-      autoplay = '';
-      controls = '';
-      loop = '';
-      mode = '';
-      src = '';
-      style = '';
-      elementId = '';
-      for (j = 0; j < attributes.length; j++) {
-        switch (attributes[j].nodeName) {
-          case 'autoplay':
-            break;
-          case 'controls':
-            break;
-          case 'loop':
-            break;
-          case 'mode':
-            break;
-          case 'src':
-            src = attributes[j].nodeValue;
-            break;
-          case 'style':
-            break;
-          case 'id':
-            elementId = attributes[j].nodeValue;
-            break;
-        }
-      }
-      getJson(src, autoplay, controls, loop, mode, style, lottieElements[i], i, elementId, true, true);
-    }
-  } else {
-    animationLoading += 1;
-    if (!(JSONsrc === undefined) && JSONsrc.length > 0) {
-      const currentAnimation = animationCount;
-      animation[currentAnimation] = JSON.parse(JSONsrc);
-      animation[currentAnimation]._elementId = elementId;
-      buildGraph(elementId, currentAnimation, testElement, true, true);
-    } else {
-      var testElement = document.getElementById(lottieElement);
-      src = testElement.getAttribute('src');
-      elementId = testElement.getAttribute('id');
-      getJson(src, autoplay, controls, loop, mode, style, testElement, 0, elementId, true, true);
-    }
-  }
-
-  if (!playStarted) {
-    playStarted = true;
-    window.requestAnimationFrame(lottiemate);
-  }
-}
-*/
 
 /// ////////// CONTROL
 
