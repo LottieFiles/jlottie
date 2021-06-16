@@ -1675,7 +1675,8 @@
   var animationLoading = 0;
   var frozen = false;
   var playStarted = false;
-  var panda = console; /// ////////// BEZIER
+  var panda = console;
+  var smallestFrameTime = 0; /// ////////// BEZIER
 
   function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth) {
     var newNodes = [];
@@ -1798,19 +1799,17 @@
   }
   function lottiemate() {
     var currentDate = Date.now();
-    var currentObj;
-    var currentObjOther;
 
     for (var i = 0; i <= animationCount; i++) {
       if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
         if (animation[i]._removed || animation[i]._paused) {
-          continue;
+          continue; //return;
         }
-
-        if (animation[i]._debugAnimation) {
+        /*if (animation[i]._debugAnimation) {
           // DEBUG
           animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
-        }
+        }*/
+
 
         animation[i]._lastTime = currentDate;
         animation[i]._currentFrame++;
@@ -1821,7 +1820,7 @@
           if (!animation[i]._loop) {
             animation[i]._paused = true;
             jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
-            continue;
+            continue; //return;
           }
         } //setTimeout(function () {
 
@@ -1837,23 +1836,24 @@
               }
             } else {}
           } else {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
-              currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-              currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+              var _currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+
+              var _currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
 
               if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-              }
+                _currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+              } //if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
 
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
-              }
+
+              _currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined); //}
+
 
               if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
+                _currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
               }
 
-              currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+              _currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
             }
 
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
@@ -1867,21 +1867,28 @@
         } //}, 0);
 
       }
-
+      /*
+      var postRender = Date.now();
       if (animation[i]._debugAnimation) {
         // DEBUG
         var debugDate = Date.now();
-        animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate); //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
-
+        animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
+        //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
         if (animation[i]._timeElapsed >= 2000) {
-          animation[i]._curFPS = animation[i]._timeElapsed / 2 * animation[i].fr;
-          animation[i]._debugObj.innerHTML = "required fps: ".concat(animation[i].fr, ", current fps: ").concat(animation[i]._curFPS / 1000);
+          animation[i]._curFPS = (animation[i]._timeElapsed / 2) * animation[i].fr;
+          animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
+            animation[i]._curFPS / 1000
+          }`;
           animation[i]._timeElapsed = 0;
         }
       }
+      */
+
     }
 
-    window.requestAnimationFrame(lottiemate);
+    setTimeout(function () {
+      window.requestAnimationFrame(lottiemate);
+    }, smallestFrameTime);
   } /// ////////// BUILD SCENE GRAPH
 
   var lastRefObj;
@@ -1906,6 +1913,8 @@
     transforms.tweenShape = '';
     transforms.refObj = '';
     transforms.combined = '';
+    transforms.refObjOther = '';
+    transforms.refObjSet = false;
     transforms.translate = '';
     transforms.rotate = '';
     transforms.scale = '';
@@ -2174,6 +2183,7 @@
     if (objectId._layer == 3) {
     }
 
+    transforms.refObjSet = true;
     var posY = 0;
 
     if (refKey == 'r') {
@@ -2524,6 +2534,7 @@
           transforms.isTween = true;
           transforms.refObj = "".concat(animationId, "_shape").concat(shapeObj._shape);
           transforms.refObjOther = "".concat(animationId, "_shape").concat(shapeObj._shape);
+          transforms.refObjSet = true;
           transforms = findExistingTransform(transforms, animationId, shapeObj.ks.k[kCount].t);
           var dataString = "M".concat(shapeObj.ks.k[kCount].s[0].v[0][0], ",").concat(shapeObj.ks.k[kCount].s[0].v[0][1]);
 
@@ -3308,7 +3319,13 @@
     animation[animationId]._maxHeight = 0;
     animation[animationId]._skewW = 0;
     animation[animationId]._skewH = 0;
-    animation[animationId]._currScale = 1; //for debugging
+    animation[animationId]._currScale = 1; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
+    //animation[animationId]._timeout = 0;
+
+    if (smallestFrameTime > animation[animationId]._frameTime) {
+      smallestFrameTime = animation[animationId]._frameTime;
+    } //for debugging
+
 
     animation[animationId]._debugTimeElapsed = 0;
     animation[animationId]._debugContainer = ''; //////

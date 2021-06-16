@@ -15,6 +15,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var panda = console;
+var smallestFrameTime = 0;
 
 /// ////////// BEZIER
 
@@ -194,95 +195,98 @@ function loadFrame(i, _currentFrame) {
 
 function lottiemate() {
   const currentDate = Date.now();
-  let currentObj;
-  let currentObjOther;
   for (let i = 0; i <= animationCount; i++) {
-    if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
-      if (animation[i]._removed || animation[i]._paused) {
-        continue;
-      }
-      if (animation[i]._debugAnimation) {
-        // DEBUG
-        animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
-      }
-      animation[i]._lastTime = currentDate;
-      animation[i]._currentFrame++;
-      if (animation[i]._currentFrame >= animation[i]._totalFrames) {
-        animation[i]._currentFrame = 0;
-        if (!animation[i]._loop) {
-          animation[i]._paused = true;
-          jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
+      if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
+        if (animation[i]._removed || animation[i]._paused) {
           continue;
+          //return;
         }
-      }
-
-      //setTimeout(function () {
-        for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
-              var stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
-              for (var m = 0; m < stops.length; m++) {
-                stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
-                stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
-              }
-            } else {
-
-            }
-          } else {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj.length > 0) {
-              currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-              currentObjOther = document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
-              );
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                currentObj.setAttribute(
-                  'transform',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
-                );
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                currentObj.setAttribute(
-                  'fill',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
-                );
-              }
-              currentObjOther.setAttribute(
-                'opacity',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
-              );
-            }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'none';
-            }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'block';
-            }
+        /*if (animation[i]._debugAnimation) {
+          // DEBUG
+          animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
+        }*/
+        animation[i]._lastTime = currentDate;
+        animation[i]._currentFrame++;
+        if (animation[i]._currentFrame >= animation[i]._totalFrames) {
+          animation[i]._currentFrame = 0;
+          if (!animation[i]._loop) {
+            animation[i]._paused = true;
+            jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
+            continue;
+            //return;
           }
         }
-      //}, 0);
-    }
-    if (animation[i]._debugAnimation) {
-      // DEBUG
-      var debugDate = Date.now();
-      animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
-      //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
-      if (animation[i]._timeElapsed >= 2000) {
-        animation[i]._curFPS = (animation[i]._timeElapsed / 2) * animation[i].fr;
-        animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
-          animation[i]._curFPS / 1000
-        }`;
-        animation[i]._timeElapsed = 0;
+
+        //setTimeout(function () {
+          for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
+                const stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
+                for (var m = 0; m < stops.length; m++) {
+                  stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
+                  stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
+                }
+              } else {
+
+              }
+            } else {
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+                const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+                const currentObjOther = document.getElementById(
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+                );
+                if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+                  currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+                }
+                //if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+                  currentObj.setAttribute(
+                    'transform',
+                    animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
+                  );
+                //}
+                if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+                  currentObj.setAttribute(
+                    'fill',
+                    animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
+                  );
+                }
+                currentObjOther.setAttribute(
+                  'opacity',
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+                );
+              }
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+                document.getElementById(
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+                ).style.display = 'none';
+              }
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+                document.getElementById(
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+                ).style.display = 'block';
+              }
+            }
+          }
+        //}, 0);
       }
-    }
+      /*
+      var postRender = Date.now();
+      if (animation[i]._debugAnimation) {
+        // DEBUG
+        var debugDate = Date.now();
+        animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
+        //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
+        if (animation[i]._timeElapsed >= 2000) {
+          animation[i]._curFPS = (animation[i]._timeElapsed / 2) * animation[i].fr;
+          animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
+            animation[i]._curFPS / 1000
+          }`;
+          animation[i]._timeElapsed = 0;
+        }
+      }
+      */
   }
-  window.requestAnimationFrame(lottiemate);
+  setTimeout(function() {window.requestAnimationFrame(lottiemate);}, smallestFrameTime);
 }
 
 /// ////////// BUILD SCENE GRAPH
@@ -311,6 +315,8 @@ function getEmptyTransform() {
   transforms.tweenShape = '';
   transforms.refObj = '';
   transforms.combined = '';
+  transforms.refObjOther = '';
+  transforms.refObjSet = false;
 
   transforms.translate = '';
   transforms.rotate = '';
@@ -569,6 +575,7 @@ function addGroupPositionTransform(
   }
   if (objectId._layer == 3) {
   }
+  transforms.refObjSet = true;
 
   let posY = 0;
 
@@ -1049,6 +1056,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) 
         transforms.isTween = true;
         transforms.refObj = `${animationId}_shape${shapeObj._shape}`;
         transforms.refObjOther = `${animationId}_shape${shapeObj._shape}`;
+        transforms.refObjSet = true;
         transforms = findExistingTransform(transforms, animationId, shapeObj.ks.k[kCount].t);
         var dataString = `M${shapeObj.ks.k[kCount].s[0].v[0][0]},${shapeObj.ks.k[kCount].s[0].v[0][1]}`;
         for (var i = 1; i < shapeObj.ks.k[kCount].s[0].v.length; i++) {
@@ -1924,6 +1932,12 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
   animation[animationId]._skewW = 0;
   animation[animationId]._skewH = 0;
   animation[animationId]._currScale = 1;
+  //animation[animationId]._nextInterval = animation[animationId]._frameTime;
+  //animation[animationId]._timeout = 0;
+
+  if (smallestFrameTime > animation[animationId]._frameTime) {
+    smallestFrameTime = animation[animationId]._frameTime;
+  }
 
   //for debugging
   animation[animationId]._debugTimeElapsed = 0;
