@@ -202,6 +202,7 @@ function lottiemate() {
         animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
       }
       animation[i]._lastTime = currentDate;
+      //animation[i]._lastFrame = animation[i]._currentFrame;
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._currentFrame = 0;
@@ -251,12 +252,12 @@ function lottiemate() {
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
               );
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide) {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
               document.getElementById(
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
               ).style.display = 'none';
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show) {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
               document.getElementById(
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
               ).style.display = 'block';
@@ -282,7 +283,7 @@ function lottiemate() {
     }
       
   }
-  setTimeout(function() {window.requestAnimationFrame(lottiemate);}, smallestFrameTime);
+  setTimeout(lottiemate, smallestFrameTime - (postRender - currentDate));
 }
 
 /// ////////// BUILD SCENE GRAPH
@@ -314,12 +315,14 @@ function getEmptyTransform() {
   transforms.refObjOther = '';
   transforms.refObjSet = false;
 
+  transforms.hide = false;
+  transforms.show = false;
+  transforms.stageEvent = false;
+
   transforms.translate = '';
   transforms.rotate = '';
   transforms.scale = '';
   transforms.opacity = 1;
-  transforms.hide = false;
-  transforms.show = false;
   transforms.inPoint = -1;
   transforms.outPoint = -1;
   transforms.isLayer = true;
@@ -393,6 +396,7 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
     }
     transforms.stageObj = stageObj;
     transforms.show = true;
+    transforms.stageEvent = true;
     animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
   }
 
@@ -409,6 +413,7 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
     }
     transforms.stageObj = stageObj;
     transforms.hide = true;
+    transforms.stageEvent = true;
     animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
   } else {
     frame = 0;
@@ -427,11 +432,12 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
     }
     transforms.stageObj = stageObj;
     transforms.hide = true;
+    transforms.stageEvent = true;
     animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
   }
 
   let lastState = 0;
-  if (frame > 1) {
+  if (frame > 0) {
     for (let j = 0; j <= animation[animationId]._totalFrames; j++) {
       for (var i = 0; i < animation[animationId]._scene[j]._transform.length; i++) {
         if (animation[animationId]._scene[j]._transform[i].stageObj == stageObj) {
@@ -443,6 +449,8 @@ function stageSequence(animationId, stageObj, inPoint, outPoint) {
           }
           if (lastState == 1) {
             animation[animationId]._scene[j]._transform[i].show = true;
+          } else {
+            animation[animationId]._scene[j]._transform[i].hide = true;
           }
         }
       }
@@ -1910,7 +1918,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
 
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -1928,6 +1936,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._skewW = 0;
     animation[animationId]._skewH = 0;
     animation[animationId]._currScale = 1;
+    animation[animationId]._lastFrame = 0;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
@@ -2020,14 +2029,14 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     if (!animation[animationId]._autoplay) {
       jlottie.goToAndStop(1, '', animation[animationId]._elementId);
     }
-  } 
-  catch (e) {
+  /*} catch (e) {
+		console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 function getJson(
