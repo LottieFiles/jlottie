@@ -24,14 +24,12 @@ const devPlugins = (serve) => {
 
         // Copy source file to dist/src to reference during dev
         copy({
-          targets: [
-            { src: 'src/jlottie.js', dest: 'dist/src' },
-          ],
+          targets: [{ src: 'src/jlottie.js', dest: 'dist/src' }],
         }),
 
         // Serve builds
         server({
-          contentBase: ['public', 'dist'],
+          contentBase: ['public', 'dist', 'tests/public/test_files'],
           open: true,
           host: 'localhost',
           port: 8300,

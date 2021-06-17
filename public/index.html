@@ -1,99 +1,207 @@
 <html>
-  <head>
-    <script src="../dist/jlottie.min.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
+    <head>
+        <script src="/jlottie.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="./style.css" />
+    </head>
 
-  <body>
-    <div class="container lf-padding mx-auto py-16 md:py-18">
-      <div class="md:w-full w-full mx-auto px-6 text-center">
-        <a href="https://github.com/LottieFiles/jlottie" target="_blank">
-          <button class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
-            <img src="https://lottiefiles.com/images/svg/github.svg" class="mx-auto" />
-          </button>
-        </a>
+    <body>
+        <div class="container lf-padding mx-auto py-16 md:py-18">
+            <div class="md:w-full w-full mx-auto px-6 text-center">
+                <a href="https://github.com/LottieFiles/jlottie" target="_blank">
+                    <button class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
+                        <img src="https://lottiefiles.com/images/svg/github.svg" class="mx-auto" />
+                    </button>
+                </a>
 
-        <h1 class="font-lf-bold text-6xl text-center">jlottie Player</h1>
-        <h2 class="font-normal font-lf-regular md:text-2xl text-center py-4 leading-normal text-lf-grey">
-          High performance, lightweight Lottie player
-        </h2>
-        <div>
-          <h2
-          class="
-            font-normal font-lf-regular
-            md:text-xl
-            text-left
-            w-1/2
-            pt-4
-            pb-10
-            leading-normal
-            text-lf-grey-darkest
-            mx-auto
-          "
-        >
-          This is a demo of the jlottie player. This player has a smaller bundled file size compared to other
-          Lottie Players and has been written for better performance using a smaller memory footprint. Paste
-          a valid Lottie JSON Url in the input to preview and test an animation on the jlottie Player.
-        </h2>
-        </div>
-
-      </div>
-
-      <div class="text-center w-1/2 mx-auto">
-        <div class="flex flex-col text-left">
-          <label class="font-lf-bold text-grey-darkest py-3">Lottie Json Url: </label>
-          <input
-            id="lottieSrc"
-            placeholder="Load animation"
-            class="
-              search_field
-              trans trans-slow
-              outline-none
-              text-sm
-              transition
-              hover:bg-grey-light
-              focus:bg-lf-teal
-              focus:text-white
-              focus:font-bold
-              bg-purple-white
-              rounded-lg
-              shadow-lg
-              w-full
-              border-0
-              p-3
-              pl-10
-              mx-auto
-            "
-            value="https://assets6.lottiefiles.com/packages/lf20_hyrafe6j.json"
-          />
-          <label style="margin-top: 100px" class="font-lf-bold text-grey-darkest py-3">Lottie Animation: </label>
-          <div class="rounded-lg shadow-lg mx-auto w-full">
-            <div class="w-full">
-              <div id="jlottie-container" style="height: 600px; width: 600px"></div>
+                <h1 class="font-lf-bold text-6xl text-center">jlottie Player</h1>
+                <h2 class="font-normal font-lf-regular md:text-2xl text-center py-4 leading-normal text-lf-grey">
+                    High performance, lightweight Lottie player
+                </h2>
+                <div>
+                    <h2
+                        class="
+                            font-normal font-lf-regular
+                            md:text-xl
+                            text-left
+                            w-1/2
+                            pt-4
+                            pb-10
+                            leading-normal
+                            text-lf-grey-darkest
+                            mx-auto
+                        "
+                    >
+                        This is a demo of the jlottie player. This player has a smaller bundled file size compared to
+                        other Lottie Players and has been written for better performance using a smaller memory
+                        footprint. Paste a valid Lottie JSON Url in the input to preview and test an animation on the
+                        jlottie Player.
+                    </h2>
+                </div>
             </div>
-          </div>
+
+            <div class="text-center w-1/2 mx-auto">
+                <div class="flex flex-col text-left">
+                    <label class="font-lf-bold text-grey-darkest py-3">Lottie Json Url: </label>
+                    <input
+                        id="lottieSrc"
+                        placeholder="Load animation"
+                        class="
+                            search_field
+                            trans trans-slow
+                            outline-none
+                            text-sm
+                            transition
+                            hover:bg-grey-light
+                            focus:bg-lf-teal
+                            focus:text-white
+                            focus:font-bold
+                            bg-purple-white
+                            rounded-lg
+                            shadow-lg
+                            w-full
+                            border-0
+                            p-3
+                            pl-10
+                            mx-auto
+                        "
+                        value="https://assets6.lottiefiles.com/packages/lf20_hyrafe6j.json"
+                    />
+                    <label style="margin-top: 100px" class="font-lf-bold text-grey-darkest py-3"
+                        >Lottie Animation:
+                    </label>
+                    <div class="rounded-lg shadow-lg mx-auto w-full">
+                        <div class="w-full">
+                            <div id="jlottie-container" style="height: 600px; width: 600px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+        <div class="container lf-padding py-16 md:py-18 mx-auto">
+            <div class="text-center mb-10">
+                <label class="font-lf-bold text-grey-darkest text-xl">Performance & stress test demo</label>
+            </div>
 
-    <script>
-      function loadLottie() {
-        jlottie.loadAnimation({
-          container: document.getElementById('jlottie-container'),
-          loop: true,
-          autoplay: true,
-          path: document.getElementById('lottieSrc').value,
-        });
-      }
+            <div class="flex flex-wrap justify-center mb-6">
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="3.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="4.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="7.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="8.json" style="height: 200px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap justify-center mb-6">
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="9.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="11.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="12.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="14.json" style="height: 200px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap justify-center mb-6">
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="15.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="16.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="17.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="18.json" style="height: 200px"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="flex flex-wrap justify-center">
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="19.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="20.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="23.json" style="height: 200px"></div>
+                    </div>
+                </div>
+                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                    <div class="w-full">
+                        <div class="jlottie-list-item" data-url="22.json" style="height: 200px"></div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <script>
+            function loadLottie() {
+                jlottie.loadAnimation({
+                    container: document.getElementById('jlottie-container'),
+                    loop: true,
+                    autoplay: true,
+                    path: document.getElementById('lottieSrc').value,
+                });
+            }
 
-      // Load an initial animation
-      loadLottie();
+            // Load an initial animation
+            loadLottie();
 
-      var input = document.getElementById('lottieSrc');
-      input.addEventListener('change', (event) => {
-        jlottie.destroy('jlottie-container');
-        loadLottie();
-      });
-    </script>
-  </body>
+            var input = document.getElementById('lottieSrc');
+            input.addEventListener('change', (event) => {
+                jlottie.destroy('jlottie-container');
+                loadLottie();
+            });
+
+            var list_items = document.getElementsByClassName('jlottie-list-item');
+
+            for (var i = 0; i <= list_items.length; i++) {
+                if (list_items[i].dataset.url !== undefined) {
+                    jlottie.loadAnimation({
+                        container: list_items[i],
+                        loop: true,
+                        autoplay: true,
+                        path: list_items[i].dataset.url,
+                    });
+                }
+            }
+        </script>
+    </body>
 </html>
