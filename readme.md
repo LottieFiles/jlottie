@@ -20,6 +20,9 @@ web. This reduction is achieved primarily through the use of polymorphic functio
 that are used for various purposes. Even when jlottie reaches 90+% of feature parity with the current Lottie web player,
 its size is expected to be less than half that of its alternatives.
 
+**The minified size of jlottie is 36KB, and its gzipped version is 9KB. The web Lottie player is 210KB when minified and
+54KB gzipped.**
+
 One of the problems with the current Lottie web player is that it skips frames when the host computer or device cannot
 meet the processing throughput. Animations playing on this player starts visibly tearing when 20 or more averagely
 complex Lottie animations are loaded simultaneously. Conversely, jlottie never drops a frame during playback, no matter
