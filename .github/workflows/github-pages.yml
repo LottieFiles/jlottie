@@ -31,7 +31,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Copy the js files
         run: |
-          cp dist/* public/
+          cp dist/* public/ tests/public/test_files/*
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
