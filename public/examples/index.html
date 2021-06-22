@@ -53,9 +53,24 @@
                             mx-auto
                         "
                     >
-                        jlottie's performance is achieved through compiling the Lottie source into a scene graph, which is then used 
-                        to play the animation. This eliminates any need to perform any real-time computations during playback. The 
-                        interpretation process optimizes the sequencing of all the transformations that make up a Lottie animation.
+                        jlottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used 
+                        to play the animation. This forgoes any need to perform real-time computations during playback. The 
+                        compilation process also optimizes the sequencing of all the transformations that make up a Lottie animation.
+                    </h2>
+
+                    <h2
+                        class="
+                            font-normal font-lf-regular
+                            md:text-xl
+                            text-left
+                            w-1/2
+                            pt-4
+                            pb-6
+                            leading-normal
+                            text-lf-grey-darkest
+                            mx-auto
+                        "
+                    >
 
                         For animations of average complexity, jlottie consumes as little as half the CPU resources as the current Lottie 
                         web player. As complexity increases, this efficiency also increases.
@@ -79,7 +94,7 @@
                         "
                     >
                         The most recent version of jlottie is over 80% smaller than 
-                        the vanilla version of the current Lottie player for the web. This reduction is primarily achieved through the use of 
+                        the vanilla version of the current Lottie player for the web. This reduction is achieved primarily through the use of 
                         polymorphic functions applied across congruent data sets that are used for various purposes. Even when jlottie 
                         reaches 90+% of feature parity with the current Lottie web player, its size is expected to be less than half that
                         of its alternatives.
@@ -105,7 +120,7 @@
                     >
                         One of the problems with the current Lottie web player is that it skips frames when the host computer 
                         or device cannot meet the processing throughput. Animations playing on this player starts visibly tearing 
-                        when 20 more averagely complex Lottie animations are loaded at the same time. 
+                        when 20 or more averagely complex Lottie animations are loaded simultaneously. 
                     </h2>
                     <h2
                         class="
@@ -174,10 +189,24 @@
                         "
                     >
                         You can use the input box below to enter URLs pointing to Lottie JSON files. The 
-                        animation will start playing when the input box changes to a valid JSON file URL. 
-                        Please note that not all features of the current Lottie format is currently supported 
-                        by jlottie. Hence, a lot of animations may not play properly or break the player, in 
-                        which case reload the page to try other animations.
+                        animation will start playing as soon as the input box changes to a valid JSON file URL. 
+                    </h2>
+                    <h2
+                        class="
+                            font-normal font-lf-regular
+                            md:text-xl
+                            text-left
+                            w-1/2
+                            pt-4
+                            pb-4
+                            leading-normal
+                            text-lf-grey-darkest
+                            mx-auto
+                        "
+                    >
+                        <i>Please note that not all features of the full Lottie format is currently supported 
+                        by jlottie. Hence, a lot of animations may not play properly or may break the player, in 
+                        which case reload the page to try other animations.</i>
                     </h2>                
                 </div>
             </div>
