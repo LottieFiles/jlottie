@@ -193,15 +193,27 @@
 
             var list_items = document.getElementsByClassName('jlottie-list-item');
 
+            var sources = [];
+            sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
+            sources.push('https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json');
+            sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_fwykef3x.json');
+            sources.push('https://assets2.lottiefiles.com/packages/lf20_ogsbbjhs.json');
+            sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
+            sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
+            sources.push('https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_hewaysm0.json');
+            sources.push('https://assets7.lottiefiles.com/packages/lf20_90ZmDV.json');
+            sources.push('https://assets8.lottiefiles.com/packages/lf20_RKwt3u.json');
+
             for (var i = 0; i <= list_items.length; i++) {
-                if (list_items[i].dataset.url !== undefined) {
-                    jlottie.loadAnimation({
-                        container: list_items[i],
-                        loop: true,
-                        autoplay: true,
-                        path: list_items[i].dataset.url,
-                    });
-                }
+                jlottie.loadAnimation({
+                    container: list_items[i],
+                    loop: true,
+                    autoplay: true,
+                    path: sources[i],
+                });
             }
         </script>
     </body>

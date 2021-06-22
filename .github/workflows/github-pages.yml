@@ -33,10 +33,6 @@ jobs:
         run: |
           cp dist/* public/
 
-      - name: Copy the demo lottie files
-        run: |
-          cp tests/public/test_files/* public/
-
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
