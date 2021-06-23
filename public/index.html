@@ -65,7 +65,7 @@
                             pl-10
                             mx-auto
                         "
-                        value="https://assets6.lottiefiles.com/packages/lf20_hyrafe6j.json"
+                        value="https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json"
                     />
                     <label style="margin-top: 100px" class="font-lf-bold text-grey-darkest py-3"
                         >Lottie Animation:
@@ -177,13 +177,21 @@
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
-                    autoplay: true,
+                    autoplay: false,
                     path: document.getElementById('lottieSrc').value,
                 });
             }
 
             // Load an initial animation
             loadLottie();
+            setTimeout(function () {
+                console.log('stop at');
+                jlottie.goToAndStop(15, false, 'jlottie-container');
+            }, 3000);
+            setTimeout(function () {
+                console.log('go n play');
+                jlottie.play();
+            }, 8000);
 
             var input = document.getElementById('lottieSrc');
             input.addEventListener('change', (event) => {

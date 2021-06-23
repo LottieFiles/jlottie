@@ -66,7 +66,7 @@ export function bezierCurve(
     newNodes[newNodes.length - 1].s = [];
     if (refKey != 'ks') {
       if (p1.length > 4) {
-        for (var m = 0; m < (p1.length / 4); m++) {
+        for (var m = 0; m < p1.length / 4; m++) {
           newNodes[newNodes.length - 1].s.push(
             Math.pow(oneMinusT, 3) * p1[m * 4] +
               3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[m * 4]) +
@@ -75,19 +75,19 @@ export function bezierCurve(
           );
           for (var n = 1; n < 4; n++) {
             newNodes[newNodes.length - 1].s.push(
-              Math.pow(oneMinusT, 3) * p1[(m * 4) + n] +
-                3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[(m * 4) + n]) +
-                3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[(m * 4) + n]) +
-                Math.pow(timeTick, 3) * p2[(m * 4) + n],
-            )
+              Math.pow(oneMinusT, 3) * p1[m * 4 + n] +
+                3 * Math.pow(oneMinusT, 2) * timeTick * (c1.y + p1[m * 4 + n]) +
+                3 * oneMinusT * Math.pow(timeTick, 2) * (c2.y + p2[m * 4 + n]) +
+                Math.pow(timeTick, 3) * p2[m * 4 + n],
+            );
           }
         }
       } else {
         newNodes[newNodes.length - 1].s.push(
-        Math.pow(oneMinusT, 3) * p1[0] +
-          3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0]) +
-          3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0]) +
-          Math.pow(timeTick, 3) * p2[0],
+          Math.pow(oneMinusT, 3) * p1[0] +
+            3 * Math.pow(oneMinusT, 2) * timeTick * (c1.x + p1[0]) +
+            3 * oneMinusT * Math.pow(timeTick, 2) * (c2.x + p2[0]) +
+            Math.pow(timeTick, 3) * p2[0],
         );
         if (refKey != 'x' && refKey != 'y') {
           if (refKey == 'p' || refKey == 's') {
@@ -184,52 +184,38 @@ export function loadFrame(i, _currentFrame) {
         if (animation[i]._scene[m]._transform[n].refObj == refObj) {
           if (animation[i]._scene[m]._transform[n].fillSet) {
             if (animation[i]._scene[m]._transform[n].isGradient) {
-              const stops = document.getElementById(animation[i]._scene[m]._transform[n].fillObj).querySelectorAll("stop");
+              const stops = document
+                .getElementById(animation[i]._scene[m]._transform[n].fillObj)
+                .querySelectorAll('stop');
               for (var o = 0; o < stops.length; o++) {
-                stops[o].setAttribute("offset", animation[i]._scene[m]._transform[n].offsets[m]);
-                stops[o].setAttribute("style", animation[i]._scene[m]._transform[n].styles[m]);
+                stops[o].setAttribute('offset', animation[i]._scene[m]._transform[n].offsets[m]);
+                stops[o].setAttribute('style', animation[i]._scene[m]._transform[n].styles[m]);
               }
             } else {
-
             }
           } else {
             if (animation[i]._scene[m]._transform[n].refObjSet) {
               const currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
-              const currentObjOther = document.getElementById(
-                animation[i]._scene[m]._transform[n].refObjOther,
-              );
+              const currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
               if (animation[i]._scene[m]._transform[n].isTween) {
                 currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
               }
               //if (animation[i]._scene[m]._transform[n].combined.length > 0) {
-                currentObj.setAttribute(
-                  'transform',
-                  animation[i]._scene[m]._transform[n].combined,
-                );
+              currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
               //}
               if (animation[i]._scene[m]._transform[n].fillSet) {
-                currentObj.setAttribute(
-                  'fill',
-                  animation[i]._scene[m]._transform[n].fill,
-                );
+                currentObj.setAttribute('fill', animation[i]._scene[m]._transform[n].fill);
               }
-              currentObjOther.setAttribute(
-                'opacity',
-                animation[i]._scene[m]._transform[n].opacity,
-              );
+              currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
               nextObj = true;
               break;
             }
             if (animation[i]._scene[m]._transform[n].hide && animation[i]._scene[m]._transform[n].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[m]._transform[n].stageObj,
-              ).style.display = 'none';
+              document.getElementById(animation[i]._scene[m]._transform[n].stageObj).style.display = 'none';
             }
             if (animation[i]._scene[m]._transform[n].show && animation[i]._scene[m]._transform[n].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[m]._transform[n].stageObj,
-              ).style.display = 'block';
-            }            
+              document.getElementById(animation[i]._scene[m]._transform[n].stageObj).style.display = 'block';
+            }
           }
         }
 
@@ -268,58 +254,64 @@ export function lottiemate() {
       }
 
       //setTimeout(function () {
-        for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
-          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
-              const stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
-              for (var m = 0; m < stops.length; m++) {
-                stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
-                stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
-              }
-            } else {
-
+      for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+        if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
+            const stops = document
+              .getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj)
+              .querySelectorAll('stop');
+            for (var m = 0; m < stops.length; m++) {
+              stops[m].setAttribute('offset', animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
+              stops[m].setAttribute('style', animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
             }
           } else {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
-              const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-              const currentObjOther = document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
-              );
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-              }
-              //if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                currentObj.setAttribute(
-                  'transform',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
-                );
-              //}
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                currentObj.setAttribute(
-                  'fill',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
-                );
-              }
-              currentObjOther.setAttribute(
-                'opacity',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
-              );
+          }
+        } else {
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+            const currentObj = document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj,
+            );
+            const currentObjOther = document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+            );
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+              currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'none';
+            //if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+            currentObj.setAttribute(
+              'transform',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
+            );
+            //}
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+              currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'block';
-            }
+            currentObjOther.setAttribute(
+              'opacity',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+            );
+          }
+          if (
+            animation[i]._scene[animation[i]._currentFrame]._transform[j].hide &&
+            animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent
+          ) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'none';
+          }
+          if (
+            animation[i]._scene[animation[i]._currentFrame]._transform[j].show &&
+            animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent
+          ) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'block';
           }
         }
+      }
       //}, 0);
     }
-    
+
     var postRender = Date.now();
     if (animation[i]._debugAnimation) {
       // DEBUG
@@ -334,7 +326,6 @@ export function lottiemate() {
         animation[i]._timeElapsed = 0;
       }
     }
-      
   }
   setTimeout(lottiemate, smallestFrameTime - (postRender - currentDate));
 }
@@ -1303,14 +1294,14 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
         for (var i = 0; i < gradient.p; i++) {
           //panda.log(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
           if (gradient.k.k[j].s[i * 4 + 0] == 0 || isNaN(gradient.k.k[j].s[i * 4 + 0])) {
-            offsets.push("0%");
+            offsets.push('0%');
           } else {
             offsets.push(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
           }
           styles.push(
-            `stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
-              gradient.k.k[j].s[i * 4 + 3] * 255,
-            )});`,
+            `stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(
+              gradient.k.k[j].s[i * 4 + 2] * 255,
+            )},${parseInt(gradient.k.k[j].s[i * 4 + 3] * 255)});`,
           );
           /*panda.log(`stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
             gradient.k.k[j].s[i * 4 + 3] * 255,
@@ -1348,12 +1339,12 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
       if (gradient.k.k[i * 4 + 0] > 0) {
         offsets.push(`${gradient.k.k[i * 4 + 0] * 100}%`);
       } else {
-        offsets.push("0%");
+        offsets.push('0%');
       }
       styles.push(
-        `stop-color:rgb(${parseInt(gradient.k.k[i * 4 + 1] * 255)},${parseInt(gradient.k.k[i * 4 + 2] * 255)},${parseInt(
-          gradient.k.k[i * 4 + 3] * 255,
-        )});`,
+        `stop-color:rgb(${parseInt(gradient.k.k[i * 4 + 1] * 255)},${parseInt(
+          gradient.k.k[i * 4 + 2] * 255,
+        )},${parseInt(gradient.k.k[i * 4 + 3] * 255)});`,
       );
       opacities.push('stop-opacity:1;');
     }
@@ -1474,21 +1465,19 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
         if (layerObj.it[i].p.hasOwnProperty('k')) {
           if (layerObj.it[i].p.k.length > 1) {
             if (layerObj.it[i].hasOwnProperty('a')) {
-              document
-                .getElementById(refGroup)
-                .setAttribute(
-                  'transform',
-                  `translate(${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
-                    layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
+              document.getElementById(refGroup).setAttribute(
+                'transform',
+                `translate(${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
+                  layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
                   //`matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
                   //  layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
-                  })`,
-                );
+                })`,
+              );
             } else {
               document
                 .getElementById(refGroup)
                 .setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
-                //.setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
+              //.setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
             }
           }
         }
@@ -1568,7 +1557,7 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
             document
               .getElementById(`${animationId}_${depth}_layerGroup${layerObj._layer}`)
               .setAttribute('transform', `translate(${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
-              //.setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
+            //.setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
           }
         }
       }
@@ -1908,12 +1897,12 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
                 document
                   .getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`)
                   .setAttribute('transform', `translate(${posX},${posY})`);
-                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
               } else {
                 document
                   .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
                   .setAttribute('transform', `translate(${posX},${posY})`);
-                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
               }
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;
@@ -1983,12 +1972,12 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
     } else {
       if (passedObj[passedKey][i].td > 0) {
       } else {
-        if (passedObj[passedKey][i].hasOwnProperty("parent")) {
+        if (passedObj[passedKey][i].hasOwnProperty('parent')) {
         } else {
           //alert(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
-          currentObj = document.getElementById(animationId + "_" + depth + "_layer" + passedObj[passedKey][i]._layer);
+          currentObj = document.getElementById(animationId + '_' + depth + '_layer' + passedObj[passedKey][i]._layer);
           //currentObj.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
-          currentObj.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+          currentObj.setAttribute('transform', 'scale(' + animation[animationId]._currScale + ')');
         }
       }
     }
@@ -2087,7 +2076,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
       //clipPathRect.setAttribute('y', 0);
       //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
       //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
-    
+
       if (scaleW > scaleH) {
         animation[animationId]._currScale = scaleW;
       } else {
@@ -2111,13 +2100,13 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
       loadFrame(animationId, 1);
     }
   } catch (e) {
-		console.error(`Failed to load animation.${e}`);
-		animationCount = animationCount - 1;
-		elementObj.style.height = 0;
-		elementObj.style.width = 0;
-		elementObj.innerHTML = "";
-		animation.splice(animationId, 1);
-	}
+    console.error(`Failed to load animation.${e}`);
+    animationCount = animationCount - 1;
+    elementObj.style.height = 0;
+    elementObj.style.width = 0;
+    elementObj.innerHTML = '';
+    animation.splice(animationId, 1);
+  }
 }
 
 export function getJson(
@@ -2224,6 +2213,23 @@ export function stop(name) {
     name = name.replace(/#/g, '');
     for (var i = 0; i < animationCount; i++) {
       if (animation[i]._elementId == name || animation[i]._customName == name) {
+        goToAndStop(1, '', animation[i]._elementId);
+        break;
+      }
+    }
+  }
+}
+
+export function pause(name) {
+  if (name === undefined) {
+    for (var i = 0; i <= animationCount; i++) {
+      animation[i]._paused = true;
+    }
+  } else {
+    name.toString();
+    name = name.replace(/#/g, '');
+    for (var i = 0; i < animationCount; i++) {
+      if (animation[i]._elementId == name || animation[i]._customName == name) {
         animation[i]._paused = true;
         break;
       }
@@ -2255,7 +2261,7 @@ export function goToAndStop(_frame, isFrame, name) {
   }
 }
 
-/*  
+/*
     Function: loadAnimation
 
     Loads a Lottie animation with some default parameters
@@ -2272,7 +2278,6 @@ export function loadAnimation(obj) {
   let loop = true;
   let debugAnimation = false;
   let debugContainer;
-
 
   if (!(obj.autoplay === undefined)) {
     if (obj.autoplay === true || obj.autoplay === false) {
