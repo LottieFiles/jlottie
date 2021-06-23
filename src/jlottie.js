@@ -1921,7 +1921,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
 
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2032,14 +2032,14 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     if (!animation[animationId]._autoplay) {
       jlottie.goToAndStop(1, '', animation[animationId]._elementId);
     }
-  /*} catch (e) {
+  } catch (e) {
 		console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}*/
+	}
 }
 
 export function getJson(
@@ -2177,6 +2177,15 @@ export function goToAndStop(_frame, isFrame, name) {
   }
 }
 
+/*  
+    Function: loadAnimation
+
+    Loads a Lottie animation with some default parameters
+
+    Parameters:
+
+
+*/
 export function loadAnimation(obj) {
   if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
     return;
@@ -2185,6 +2194,7 @@ export function loadAnimation(obj) {
   let loop = true;
   let debugAnimation = false;
   let debugContainer;
+
 
   if (!(obj.autoplay === undefined)) {
     if (obj.autoplay === true || obj.autoplay === false) {
