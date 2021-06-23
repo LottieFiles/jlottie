@@ -1865,9 +1865,9 @@
             animation[i]._paused = true;
             goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
             continue; //return;
+          } else {
+            animation[i]._currentFrame = 0;
           }
-
-          animation[i]._currentFrame = 0;
         } //setTimeout(function () {
 
 
