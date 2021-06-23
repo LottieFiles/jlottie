@@ -2211,7 +2211,7 @@ function play(name) {
   }
 }
 
-function stop(name) {
+function pause(name) {
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
@@ -2226,6 +2226,10 @@ function stop(name) {
       }
     }
   }
+}
+
+function stop(name) {
+  goToAndStop(1, '', name);
 }
 
 function goToAndStop(_frame, isFrame, name) {
@@ -2319,5 +2323,5 @@ function loadAnimation(obj) {
   }
 }
 
-export { addGroupPositionTransform, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findExistingTransform, getColorString, getEmptyFillTransform, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, play, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };
+export { addGroupPositionTransform, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findExistingTransform, getColorString, getEmptyFillTransform, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, pause, play, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };
 //# sourceMappingURL=jlottie.esm.js.map

@@ -2215,7 +2215,7 @@ function play(name) {
   }
 }
 
-function stop(name) {
+function pause(name) {
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
@@ -2230,6 +2230,10 @@ function stop(name) {
       }
     }
   }
+}
+
+function stop(name) {
+  goToAndStop(1, '', name);
 }
 
 function goToAndStop(_frame, isFrame, name) {
@@ -2346,6 +2350,7 @@ exports.goToAndStop = goToAndStop;
 exports.loadAnimation = loadAnimation;
 exports.loadFrame = loadFrame;
 exports.lottiemate = lottiemate;
+exports.pause = pause;
 exports.play = play;
 exports.prepShape = prepShape;
 exports.prepShapeEl = prepShapeEl;
