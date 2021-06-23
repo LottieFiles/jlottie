@@ -163,6 +163,7 @@ export function loadFrame(i, _currentFrame) {
     let nextObj = false;
     for (let m = _currentFrame - 1; m >= 0; m--) {
       for (let n = 0; n < animation[i]._scene[m]._transform.length; n++) {
+        /*
         if (animation[i]._scene[m]._transform[n].refObj == refObj) {
           currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
           currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
@@ -179,10 +180,64 @@ export function loadFrame(i, _currentFrame) {
             break;
           }
         }
+        */
+        if (animation[i]._scene[m]._transform[n].refObj == refObj) {
+          if (animation[i]._scene[m]._transform[n].fillSet) {
+            if (animation[i]._scene[m]._transform[n].isGradient) {
+              const stops = document.getElementById(animation[i]._scene[m]._transform[n].fillObj).querySelectorAll("stop");
+              for (var o = 0; o < stops.length; o++) {
+                stops[o].setAttribute("offset", animation[i]._scene[m]._transform[n].offsets[m]);
+                stops[o].setAttribute("style", animation[i]._scene[m]._transform[n].styles[m]);
+              }
+            } else {
+
+            }
+          } else {
+            if (animation[i]._scene[m]._transform[n].refObjSet) {
+              const currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
+              const currentObjOther = document.getElementById(
+                animation[i]._scene[m]._transform[n].refObjOther,
+              );
+              if (animation[i]._scene[m]._transform[n].isTween) {
+                currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
+              }
+              //if (animation[i]._scene[m]._transform[n].combined.length > 0) {
+                currentObj.setAttribute(
+                  'transform',
+                  animation[i]._scene[m]._transform[n].combined,
+                );
+              //}
+              if (animation[i]._scene[m]._transform[n].fillSet) {
+                currentObj.setAttribute(
+                  'fill',
+                  animation[i]._scene[m]._transform[n].fill,
+                );
+              }
+              currentObjOther.setAttribute(
+                'opacity',
+                animation[i]._scene[m]._transform[n].opacity,
+              );
+              nextObj = true;
+              break;
+            }
+            if (animation[i]._scene[m]._transform[n].hide && animation[i]._scene[m]._transform[n].stageEvent) {
+              document.getElementById(
+                animation[i]._scene[m]._transform[n].stageObj,
+              ).style.display = 'none';
+            }
+            if (animation[i]._scene[m]._transform[n].show && animation[i]._scene[m]._transform[n].stageEvent) {
+              document.getElementById(
+                animation[i]._scene[m]._transform[n].stageObj,
+              ).style.display = 'block';
+            }            
+          }
+        }
+
         if (nextObj) break;
       }
-      if (nextObj) continue;
+      if (nextObj) break;
     }
+    //if (nextObj) continue;
   }
 }
 
@@ -202,13 +257,14 @@ export function lottiemate() {
       //animation[i]._lastFrame = animation[i]._currentFrame;
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
-        animation[i]._currentFrame = 0;
         if (!animation[i]._loop) {
+          animation[i]._currentFrame--;
           animation[i]._paused = true;
-          jlottie.goToAndStop(animation[i]._totalFrames - 1, '', animation[i]._elementId);
+          goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
           continue;
           //return;
         }
+        animation[i]._currentFrame = 0;
       }
 
       //setTimeout(function () {
@@ -1197,18 +1253,38 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
   var newDef;
   if (radial == 2) {
     newDef = document.createElementNS(xmlns, 'radialGradient');
-    newDef.setAttribute('x1', start.k[0]);
-    newDef.setAttribute('x2', end.k[0]);
-    newDef.setAttribute('y1', start.k[1]);
-    newDef.setAttribute('y2', end.k[1]);
+    if (gradient.k.k[0].hasOwnProperty('s')) {
+      if (!Number.isNaN(start.k[0] != NaN)) {
+        newDef.setAttribute('x1', start.k[0]);
+      }
+      if (!Number.isNaN(end.k[0])) {
+        newDef.setAttribute('x2', end.k[0]);
+      }
+      if (!Number.isNaN(start.k[1])) {
+        newDef.setAttribute('y1', start.k[1]);
+      }
+      if (!Number.isNaN(end.k[1])) {
+        newDef.setAttribute('y2', end.k[1]);
+      }
+    }
   } else {
     newDef = document.createElementNS(xmlns, 'linearGradient');
-    newDef.setAttribute('spreadMethod', 'pad');
-    newDef.setAttribute('gradientUnits', 'userSpaceOnUse');
-    newDef.setAttribute('x1', start.k[0]);
-    newDef.setAttribute('x2', end.k[0]);
-    newDef.setAttribute('y1', start.k[1]);
-    newDef.setAttribute('y2', end.k[1]);
+    if (gradient.k.k[0].hasOwnProperty('s')) {
+      newDef.setAttribute('spreadMethod', 'pad');
+      newDef.setAttribute('gradientUnits', 'userSpaceOnUse');
+      if (!Number.isNaN(start.k[0])) {
+        newDef.setAttribute('x1', start.k[0]);
+      }
+      if (!Number.isNaN(end.k[0])) {
+        newDef.setAttribute('x2', end.k[0]);
+      }
+      if (!Number.isNaN(start.k[1])) {
+        newDef.setAttribute('y1', start.k[1]);
+      }
+      if (!Number.isNaN(end.k[1])) {
+        newDef.setAttribute('y2', end.k[1]);
+      }
+    }
   }
   newDef.setAttribute('id', newDefId);
   animation[animationId].defs.prepend(newDef);
@@ -2030,7 +2106,9 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     animationLoading -= 1;
     animation[animationId]._loaded = true;
     if (!animation[animationId]._autoplay) {
-      jlottie.goToAndStop(1, '', animation[animationId]._elementId);
+      goToAndStop(1, '', animation[animationId]._elementId);
+    } else {
+      loadFrame(animationId, 1);
     }
   } catch (e) {
 		console.error(`Failed to load animation.${e}`);
@@ -2222,7 +2300,7 @@ export function loadAnimation(obj) {
     const currentAnimation = animationCount;
     animation[currentAnimation] = JSON.parse(obj.animationData);
     animation[currentAnimation]._elementId = elementId;
-    buildGraph(elementId, currentAnimation, obj.container, true, true);
+    buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
   } else if (!(obj.path === undefined) && obj.path) {
     getJson(
       obj.path,
