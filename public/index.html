@@ -177,21 +177,13 @@
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
-                    autoplay: false,
+                    autoplay: true,
                     path: document.getElementById('lottieSrc').value,
                 });
             }
 
             // Load an initial animation
             loadLottie();
-            setTimeout(function () {
-                console.log('stop at');
-                jlottie.goToAndStop(15, false, 'jlottie-container');
-            }, 3000);
-            setTimeout(function () {
-                console.log('go n play');
-                jlottie.play();
-            }, 8000);
 
             var input = document.getElementById('lottieSrc');
             input.addEventListener('change', (event) => {
