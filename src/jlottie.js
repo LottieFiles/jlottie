@@ -2215,7 +2215,7 @@ export function play(name) {
   }
 }
 
-export function stop(name) {
+export function pause(name) {
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
@@ -2230,6 +2230,10 @@ export function stop(name) {
       }
     }
   }
+}
+
+export function stop(name) {
+  goToAndStop(1, '', name);
 }
 
 export function goToAndStop(_frame, isFrame, name) {
