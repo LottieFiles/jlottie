@@ -7,7 +7,7 @@
 
     <body>
         <div class="container lf-padding mx-auto py-16 md:py-18">
-            <div class="md:w-full w-full mx-auto px-6 text-center">
+            <div class="w-full mx-auto text-center">
                 <a href="https://github.com/LottieFiles/jlottie" target="_blank">
                     <button class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
                         <img src="https://lottiefiles.com/images/svg/github.svg" class="mx-auto" />
@@ -15,7 +15,7 @@
                 </a>
 
                 <h1 class="font-lf-bold text-6xl text-center">jlottie Player</h1>
-                <h2 class="font-normal font-lf-regular md:text-2xl text-center py-4 leading-normal text-lf-grey">
+                <h2 class="font-normal font-lf-regular md:text-2xl text-center py-4 pb-10 leading-normal text-lf-grey">
                     High performance, lightweight Lottie player
                 </h2>
                 <div>
@@ -24,23 +24,64 @@
                             font-normal font-lf-regular
                             md:text-xl
                             text-left
-                            w-1/2
+                            w-full
+                            lg:w-2/3
                             pt-4
-                            pb-10
+                            pb-6
                             leading-normal
                             text-lf-grey-darkest
                             mx-auto
                         "
                     >
-                        This is a demo of the jlottie player. This player has a smaller bundled file size compared to
-                        other Lottie Players and has been written for better performance whilst using a smaller memory
-                        footprint. Paste a valid Lottie JSON Url in the input to preview and test an animation on the
-                        jlottie Player.
+                        jlottie has been engineered to address the performance and bulkiness issues of existing Lottie
+                        players for the web. jlottie also guarantees that no frames are dropped in a Lottie animation
+                        during playback, no matter how old the host hardware is.
+                    </h2>
+
+                    <h2 class="font-bold font-lf-regular md:text-2xl text-center py-4 pb-2 leading-normal text-lf-grey">
+                        Play a Lottie with jlottie:
+                    </h2>
+                    <h2
+                        class="
+                            font-normal font-lf-regular
+                            md:text-xl
+                            text-left
+                            w-full
+                            lg:w-2/3
+                            pt-4
+                            pb-4
+                            leading-normal
+                            text-lf-grey-darkest
+                            mx-auto
+                        "
+                    >
+                        You can use the input box below to enter URLs pointing to Lottie JSON files. The animation will
+                        start playing as soon as the input box changes to a valid JSON file URL.
+                    </h2>
+                    <h2
+                        class="
+                            font-normal font-lf-regular
+                            md:text-xl
+                            text-left
+                            w-full
+                            lg:w-2/3
+                            pt-4
+                            pb-4
+                            leading-normal
+                            text-lf-grey-darkest
+                            mx-auto
+                        "
+                    >
+                        <i
+                            >Please note that not all features of the full Lottie format is currently supported by
+                            jlottie. Hence, a lot of animations may not play properly or may break the player, in which
+                            case reload the page to try other animations.</i
+                        >
                     </h2>
                 </div>
             </div>
 
-            <div class="text-center w-1/2 mx-auto">
+            <div class="text-center w-full lg:w-2/3 mx-auto">
                 <div class="flex flex-col text-left">
                     <label class="font-lf-bold text-grey-darkest py-3">Lottie Json Url: </label>
                     <input
@@ -65,14 +106,63 @@
                             pl-10
                             mx-auto
                         "
-                        value="https://assets6.lottiefiles.com/packages/lf20_hyrafe6j.json"
+                        value="https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json"
                     />
-                    <label style="margin-top: 100px" class="font-lf-bold text-grey-darkest py-3"
+                    <label style="margin-top: 20px" class="font-lf-bold text-grey-darkest py-3"
                         >Lottie Animation:
                     </label>
                     <div class="rounded-lg shadow-lg mx-auto w-full">
                         <div class="w-full">
-                            <div id="jlottie-container" style="height: 600px; width: 600px"></div>
+                            <div id="jlottie-container" class="h-110"></div>
+                        </div>
+                        <div class="flex justify-center mb-4">
+                            <div
+                                class="flex items-center justify-center w-8 h-8 cursor-pointer mx-3"
+                                onClick="jcontrol('jlottie-container', 1)"
+                            >
+                                <svg
+                                    width="25"
+                                    height="28"
+                                    viewBox="0 0 25 28"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M0.337646 2.1919C0.337646 0.77695 1.87254 -0.104646 3.09474 0.608306L23.3372 12.4164C24.55 13.1238 24.55 14.8762 23.3372 15.5836L3.09474 27.3917C1.87254 28.1046 0.337646 27.223 0.337646 25.8081V2.1919Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div
+                                class="trans-fast flex items-center justify-center w-8 h-8 cursor-pointer mx-3"
+                                onClick="jcontrol('jlottie-container', 2)"
+                            >
+                                <svg
+                                    width="20"
+                                    height="24"
+                                    viewBox="0 0 20 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <rect x="12" y="0.545471" width="7.63636" height="22.9091" rx="1.90909" />
+                                    <rect y="0.545471" width="7.63636" height="22.9091" rx="1.90909" />
+                                </svg>
+                            </div>
+                            <div
+                                class="trans-fast flex items-center cursor-pointer w-8 h-8 mx-3"
+                                onClick="jcontrol('jlottie-container', 3)"
+                            >
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M0.49939 2.16654C0.49939 1.24607 1.24558 0.499878 2.16606 0.499878H13.8327C14.7532 0.499878 15.4994 1.24607 15.4994 2.16654V13.8332C15.4994 14.7537 14.7532 15.4999 13.8327 15.4999H2.16606C1.24558 15.4999 0.49939 14.7537 0.49939 13.8332V2.16654Z"
+                                    />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -84,93 +174,67 @@
             </div>
 
             <div class="flex flex-wrap justify-center mb-6">
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="3.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="4.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="7.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="8.json" style="height: 200px"></div>
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-wrap justify-center mb-6">
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="9.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="11.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="12.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="14.json" style="height: 200px"></div>
                     </div>
                 </div>
-            </div>
-            <div class="flex flex-wrap justify-center mb-6">
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="15.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="16.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="17.json" style="height: 200px"></div>
                     </div>
                 </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
+                <div class="rounded-lg shadow-md w-full lg:w-1/5 m-4">
                     <div class="w-full">
                         <div class="jlottie-list-item" data-url="18.json" style="height: 200px"></div>
                     </div>
                 </div>
             </div>
-            <!-- <div class="flex flex-wrap justify-center">
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
-                    <div class="w-full">
-                        <div class="jlottie-list-item" data-url="19.json" style="height: 200px"></div>
-                    </div>
-                </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
-                    <div class="w-full">
-                        <div class="jlottie-list-item" data-url="20.json" style="height: 200px"></div>
-                    </div>
-                </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
-                    <div class="w-full">
-                        <div class="jlottie-list-item" data-url="23.json" style="height: 200px"></div>
-                    </div>
-                </div>
-                <div class="rounded-lg shadow-md w-1/5 mx-2">
-                    <div class="w-full">
-                        <div class="jlottie-list-item" data-url="22.json" style="height: 200px"></div>
-                    </div>
-                </div>
-            </div> -->
         </div>
         <script>
             function loadLottie() {
@@ -214,6 +278,21 @@
                     autoplay: false,
                     path: sources[i],
                 });
+            }
+
+            function jcontrol(element, todo) {
+                switch (todo) {
+                    case 1:
+                        jlottie.play(element);
+                        break;
+                    case 2:
+                        jlottie.pause(element);
+                        break;
+                    case 3:
+                        jlottie.goToAndStop(1, '', element);
+                        break;
+                    default:
+                }
             }
         </script>
     </body>
