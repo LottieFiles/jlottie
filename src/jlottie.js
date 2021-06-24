@@ -2244,6 +2244,7 @@ export function goToAndStop(_frame, isFrame, name) {
     console.log(animationCount);
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
+      animation[i]._currentFrame = _frame;
       loadFrame(i, _frame);
     }
   } else {
