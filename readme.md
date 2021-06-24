@@ -98,6 +98,14 @@ Takes in an object with format as follows as parameter
 
 Type: `Null`
 
+### `jlottie.pause(elementId)`
+
+Pause animation. Takes in the Dom element Id as parameter.
+
+#### Returns
+
+Type: `Null`
+
 ### `jlottie.play(elementId)`
 
 Play animation. Takes in the Dom element Id as parameter.
