@@ -77,6 +77,10 @@
                     </div>
                 </div>
             </div>
+            <div onClick="jcontrol('jlottie-container', 1)">Play</div>
+            <div onClick="jcontrol('jlottie-container', 2)">Pause</div>
+            <div onClick="jcontrol('jlottie-container', 3)">Stop</div>
+
         </div>
         <div class="container lf-padding py-16 md:py-18 mx-auto">
             <div class="text-center mb-10">
@@ -171,9 +175,6 @@
                     </div>
                 </div>
             </div> -->
-            <div onClick="jcontrol('jlottie-container', 1)">Play</div>
-            <div onClick="jcontrol('jlottie-container', 2)">Pause</div>
-            <div onClick="jcontrol('jlottie-container', 3)">Stop</div>
         </div>
         <script>
             function loadLottie() {
@@ -228,7 +229,7 @@
                         jlottie.pause(element);
                         break;
                     case 3:
-                        jlottie.goToAndStop(1, '', element));
+                        jlottie.goToAndStop(1, '', element);
                         break;
                     default:
                 }

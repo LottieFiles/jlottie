@@ -2251,6 +2251,7 @@ function goToAndStop(_frame, isFrame, name) {
     for (var i = 0; i <= animationCount; i++) {
       if (animation[i]._elementId == name || animation[i]._customName == name) {
         animation[i]._paused = true;
+        animation[i]._currentFrame = _frame;
         loadFrame(i, _frame);
         break;
       }
