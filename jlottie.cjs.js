@@ -2243,6 +2243,7 @@ function goToAndStop(_frame, isFrame, name) {
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
+      animation[i]._currentFrame = _frame;
       loadFrame(i, _frame);
     }
   } else {
