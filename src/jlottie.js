@@ -2121,13 +2121,24 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 	}
 }
 
+/**
+ * 
+ * @param {string} src 
+ * @param {boolean} autoplay 
+ * @param {*} controls 
+ * @param {*} loop 
+ * @param {*} mode 
+ * @param {*} style 
+ * @param {*} domElement 
+ * @param {*} elementNo 
+ * @param {*} elementId 
+ * @param {boolean} _autoplay 
+ * @param {boolean} _loop 
+ * @param {*} _debugAnimation 
+ * @param {*} _debugContainer 
+ */
 export function getJson(
   src,
-  autoplay,
-  controls,
-  loop,
-  mode,
-  style,
   domElement,
   elementNo,
   elementId,
@@ -2167,6 +2178,11 @@ export function getJson(
 // var animationManager = (function () {
 const jlottie = {};
 
+/**
+ * Destroys and unloads the animation indicated by 'name'.
+ * 
+ * @param {string} name The 'id' value of the container of this Lottie animation.
+ */
 export function destroy(name) {
   if (animationCount < 0) {
     return;
@@ -2195,6 +2211,11 @@ export function destroy(name) {
   }
 }
 
+/**
+ * Plays the animation indicated by 'name'.
+ * 
+ * @param {string} name The 'id' value of the container of this Lottie animation.
+ */
 export function play(name) {
   if (animationCount < 0) {
     return;
@@ -2215,7 +2236,12 @@ export function play(name) {
   }
 }
 
-export function pause(name) {
+/**
+ * Pauses the animation indicated by 'name'.
+ * 
+ * @param {string} name The 'id' value of the container of this Lottie animation.
+ */
+ export function pause(name) {
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
       animation[i]._paused = true;
@@ -2232,10 +2258,23 @@ export function pause(name) {
   }
 }
 
+/**
+ * Stops the animation indicated by 'name'.
+ * 
+ * @param {string} name The 'id' value of the container of this Lottie animation.
+ */
 export function stop(name) {
   goToAndStop(1, '', name);
 }
 
+/**
+ * Stops the animation, goes to the specified frame and freezes there.
+ * 
+ * @param {integer} _frame The frame number.
+ * @param {boolean} isFrame Indicates whether '_frame' represents time in number of frames (true) or milliseconds (false) - this is currently not implemented.
+ * @param {string} name The 'id' value of the container of this Lottie animation.
+ * 
+ */
 export function goToAndStop(_frame, isFrame, name) {
   if (animationCount < 0) {
     return;
@@ -2262,15 +2301,17 @@ export function goToAndStop(_frame, isFrame, name) {
   }
 }
 
-/*  
-    Function: loadAnimation
-
-    Loads a Lottie animation with some default parameters
-
-    Parameters:
-
-
-*/
+/** 
+  * Lottie animation loader for jlottie.
+  *
+  * @param {JSON} obj Includes parameters that dictate how a Lottie is loaded.
+  * @param {object} obj.container A DOMElement object that will be used as the container for the Lottie animation.
+  * @param {boolean} obj.autoplay Instructs jlottie to immediately play the Lottie after it is loaded.
+  * @param {boolean} obj.loop Instructs jlottie to keep looping this animation.
+  * @param {boolean} obj.debugAnimation Instructs jlottie to display debug information (currently limited to just FPS data).
+  * @param {boolean} obj.debugContainer A DOMElement in which the debug data will be displayed.
+  *
+  */
 export function loadAnimation(obj) {
   if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
     return;
@@ -2311,11 +2352,6 @@ export function loadAnimation(obj) {
   } else if (!(obj.path === undefined) && obj.path) {
     getJson(
       obj.path,
-      '',
-      '',
-      '',
-      '',
-      '',
       obj.container,
       0,
       obj.container.id,
