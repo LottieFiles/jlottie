@@ -3488,7 +3488,24 @@
       animation.splice(animationId, 1);
     }
   }
-  function getJson(src, autoplay, controls, loop, mode, style, domElement, elementNo, elementId, _autoplay, _loop, _debugAnimation, _debugContainer) {
+  /**
+   * 
+   * @param {string} src 
+   * @param {boolean} autoplay 
+   * @param {*} controls 
+   * @param {*} loop 
+   * @param {*} mode 
+   * @param {*} style 
+   * @param {*} domElement 
+   * @param {*} elementNo 
+   * @param {*} elementId 
+   * @param {boolean} _autoplay 
+   * @param {boolean} _loop 
+   * @param {*} _debugAnimation 
+   * @param {*} _debugContainer 
+   */
+
+  function getJson(src, domElement, elementNo, elementId, _autoplay, _loop, _debugAnimation, _debugContainer) {
     var http = new XMLHttpRequest();
     http.open('GET', src, true);
 
@@ -3522,6 +3539,12 @@
   // var animationManager = (function () {
 
   var jlottie = {};
+  /**
+   * Destroys and unloads the animation indicated by 'name'.
+   * 
+   * @param {string} name The 'id' value of the container of this Lottie animation.
+   */
+
   function destroy(name) {
     if (animationCount < 0) {
       return;
@@ -3554,6 +3577,12 @@
       }
     }
   }
+  /**
+   * Plays the animation indicated by 'name'.
+   * 
+   * @param {string} name The 'id' value of the container of this Lottie animation.
+   */
+
   function play(name) {
     if (animationCount < 0) {
       return;
@@ -3575,6 +3604,12 @@
       }
     }
   }
+  /**
+   * Pauses the animation indicated by 'name'.
+   * 
+   * @param {string} name The 'id' value of the container of this Lottie animation.
+   */
+
   function pause(name) {
     if (name === undefined) {
       for (var i = 0; i <= animationCount; i++) {
@@ -3592,9 +3627,24 @@
       }
     }
   }
+  /**
+   * Stops the animation indicated by 'name'.
+   * 
+   * @param {string} name The 'id' value of the container of this Lottie animation.
+   */
+
   function stop(name) {
     goToAndStop(1, '', name);
   }
+  /**
+   * Stops the animation, goes to the specified frame and freezes there.
+   * 
+   * @param {integer} _frame The frame number.
+   * @param {boolean} isFrame Indicates whether '_frame' represents time in number of frames (true) or milliseconds (false) - this is currently not implemented.
+   * @param {string} name The 'id' value of the container of this Lottie animation.
+   * 
+   */
+
   function goToAndStop(_frame, isFrame, name) {
     if (animationCount < 0) {
       return;
@@ -3621,15 +3671,17 @@
       }
     }
   }
-  /*  
-      Function: loadAnimation
-
-      Loads a Lottie animation with some default parameters
-
-      Parameters:
-
-
-  */
+  /** 
+    * Lottie animation loader for jlottie.
+    *
+    * @param {JSON} obj Includes parameters that dictate how a Lottie is loaded.
+    * @param {object} obj.container A DOMElement object that will be used as the container for the Lottie animation.
+    * @param {boolean} obj.autoplay Instructs jlottie to immediately play the Lottie after it is loaded.
+    * @param {boolean} obj.loop Instructs jlottie to keep looping this animation.
+    * @param {boolean} obj.debugAnimation Instructs jlottie to display debug information (currently limited to just FPS data).
+    * @param {boolean} obj.debugContainer A DOMElement in which the debug data will be displayed.
+    *
+    */
 
   function loadAnimation(obj) {
     if (obj.container === undefined && obj.path === undefined && obj.animationData === undefined) {
@@ -3669,7 +3721,7 @@
       animation[currentAnimation]._elementId = elementId;
       buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
     } else if (!(obj.path === undefined) && obj.path) {
-      getJson(obj.path, '', '', '', '', '', obj.container, 0, obj.container.id, autoplay, loop, debugAnimation, debugContainer);
+      getJson(obj.path, obj.container, 0, obj.container.id, autoplay, loop, debugAnimation, debugContainer);
     }
 
     if (!playStarted) {
