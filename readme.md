@@ -2,33 +2,11 @@
 
 ![screencast](https://i.imgur.com/miLzIkJ.gif)
 
-**jlottie** is a Lottie player written in javascript with an emphasis on minimizing the overall memory footprint,
-processor demand, and file size of the player.
+**jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is suitable as a general purpose lottie player, though implements a subset of the features in the core player - this approach leads to a tiny footprint and great performance.
 
-jlottie has been engineered to address the performance and bulkiness issues of existing Lottie players for the web.
-jlottie also guarantees that no frames are dropped in a Lottie animation during playback, no matter how old the host
-hardware is. Performance
+jlottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play the animation. This forgoes any need to perform real-time computations during playback. jlottie is suitable for use when there are many animations playing on a single page.
 
-jlottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play
-the animation. This forgoes any need to perform real-time computations during playback. The compilation process also
-optimizes the sequencing of all the transformations that make up a Lottie animation. For animations of average
-complexity, jlottie consumes as little as half the CPU resources as the current Lottie web player. As complexity
-increases, this efficiency also increases.
-
-The most recent version of jlottie is over 80% smaller than the vanilla version of the current Lottie player for the
-web. This reduction is achieved primarily through the use of polymorphic functions applied across congruent data sets
-that are used for various purposes. Even when jlottie reaches 90+% of feature parity with the current Lottie web player,
-its size is expected to be less than half that of its alternatives.
-
-**The minified size of jlottie is 36KB, and its gzipped version is 9KB. The web Lottie player is 210KB when minified and
-54KB gzipped.**
-
-One of the problems with the current Lottie web player is that it skips frames when the host computer or device cannot
-meet the processing throughput. Animations playing on this player starts visibly tearing when 20 or more averagely
-complex Lottie animations are loaded simultaneously. Conversely, jlottie never drops a frame during playback, no matter
-how many Lottie animations are loaded. This means that the CPU demand is proportionate to the number Lottie animations
-playing simultaneously. Even so, with 20 concurrent Lottie animations loaded on an average computer, jlottie manages to
-outperform the current web Lottie player whilst maintaining frame rates and avoiding jitter.
+At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues are necessary - common use cases include animated icons and micro animations. A list of all of the playback features is available [here](docs/features.html), and there's a test page available [here](https://lottiefiles.github.io/jlottie).
 
 ## Installation
 
