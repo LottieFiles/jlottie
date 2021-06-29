@@ -1,16 +1,26 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <title>jlottie demo</title>
         <script src="/dist/jlottie.min.js" type="text/javascript"></script>
         <script src="jlottie.min.js" type="text/javascript"></script>
         <link rel="stylesheet" href="./style.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Demo page for the jlottie player" />
     </head>
 
     <body>
         <div class="container lf-padding mx-auto py-16 md:py-18">
             <div class="w-full mx-auto text-center">
-                <a href="https://github.com/LottieFiles/jlottie" target="_blank">
-                    <button class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
-                        <img src="https://lottiefiles.com/images/svg/github.svg" class="mx-auto" />
+                <a href="https://github.com/LottieFiles/jlottie" target="_blank" rel="noopener">
+                    <button aria-label="github-link" class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
+                        <img
+                            alt="Github link"
+                            src="https://lottiefiles.com/images/svg/github.svg"
+                            width="97px"
+                            height="22px"
+                            class="mx-auto"
+                        />
                     </button>
                 </a>
 
@@ -168,7 +178,7 @@
                 </div>
             </div>
         </div>
-        <div class="container lf-padding py-16 md:py-18 mx-auto">
+        <!-- <div class="container lf-padding py-16 md:py-18 mx-auto">
             <div class="text-center mb-10">
                 <label class="font-lf-bold text-grey-darkest text-xl">Performance & stress test demo</label>
             </div>
@@ -235,7 +245,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <script>
             function loadLottie() {
                 jlottie.loadAnimation({
@@ -255,30 +265,30 @@
                 loadLottie();
             });
 
-            var list_items = document.getElementsByClassName('jlottie-list-item');
+            // var list_items = document.getElementsByClassName('jlottie-list-item');
 
-            var sources = [];
-            sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
-            sources.push('https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json');
-            sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
-            sources.push('https://assets10.lottiefiles.com/packages/lf20_fwykef3x.json');
-            sources.push('https://assets2.lottiefiles.com/packages/lf20_ogsbbjhs.json');
-            sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
-            sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
-            sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
-            sources.push('https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json');
-            sources.push('https://assets10.lottiefiles.com/packages/lf20_hewaysm0.json');
-            sources.push('https://assets7.lottiefiles.com/packages/lf20_90ZmDV.json');
-            sources.push('https://assets8.lottiefiles.com/packages/lf20_RKwt3u.json');
+            // var sources = [];
+            // sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
+            // sources.push('https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json');
+            // sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
+            // sources.push('https://assets10.lottiefiles.com/packages/lf20_fwykef3x.json');
+            // sources.push('https://assets2.lottiefiles.com/packages/lf20_ogsbbjhs.json');
+            // sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
+            // sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
+            // sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
+            // sources.push('https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json');
+            // sources.push('https://assets10.lottiefiles.com/packages/lf20_hewaysm0.json');
+            // sources.push('https://assets7.lottiefiles.com/packages/lf20_90ZmDV.json');
+            // sources.push('https://assets8.lottiefiles.com/packages/lf20_RKwt3u.json');
 
-            for (var i = 0; i <= list_items.length; i++) {
-                jlottie.loadAnimation({
-                    container: list_items[i],
-                    loop: true,
-                    autoplay: false,
-                    path: sources[i],
-                });
-            }
+            // for (var i = 0; i <= list_items.length; i++) {
+            //     jlottie.loadAnimation({
+            //         container: list_items[i],
+            //         loop: true,
+            //         autoplay: false,
+            //         path: sources[i],
+            //     });
+            // }
 
             function jcontrol(element, todo) {
                 switch (todo) {
