@@ -564,31 +564,6 @@ function addGroupPositionTransform(
   } else {
   }
 
-  /*
-  if (isLayer) {
-    if (animation[animationId].hasOwnProperty('_currentLayerGroup')) {
-    //if (animation[animationId]._currentLayerGroup._layer > 0) {
-        //console.log('inpoint');
-        if (animation[animationId]._currentLayerGroup._inPoint >= 0) {
-        //console.log('inpoint');
-        transforms.inPoint = parseInt(animation[animationId]._currentLayerGroup._inPoint);
-      }
-      if (animation[animationId]._currentLayerGroup._outPoint > 0) {
-        transforms.outPoint = parseInt(animation[animationId]._currentLayerGroup._outPoint);
-      }
-    } else {
-      if (animation[animationId]._currentLayer._inPoint >= 0) {
-        //console.log('inpoint');
-        transforms.inPoint = parseInt(animation[animationId]._currentLayer._inPoint);
-      }
-      if (animation[animationId]._currentLayer._outPoint > 0) {
-        transforms.outPoint = parseInt(animation[animationId]._currentLayer._outPoint);
-      }
-    }
-  } else {
-  }
-  */
-
   if (transforms.inPoint < 0 && transforms.outPoint < 0) {
     if (frame != transforms.inPoint && frame != transforms.outPoint) {
       if (Array.isArray(position)) {
@@ -2123,24 +2098,17 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 
 /**
  * 
- * @param {string} src 
- * @param {boolean} autoplay 
- * @param {*} controls 
- * @param {*} loop 
- * @param {*} mode 
- * @param {*} style 
- * @param {*} domElement 
- * @param {*} elementNo 
- * @param {*} elementId 
- * @param {boolean} _autoplay 
+ * @param {string} src A URL that points to a Lottie JSON file.
+ * @param {DOMElement} domElement The DOMElement object in which the Lottie animation will be animated.
+ * @param {string} elementId The 'id' of the DOMElement pointed to by 'domElement'.
+ * @param {boolean} _autoplay Indicates whether the 
  * @param {boolean} _loop 
- * @param {*} _debugAnimation 
- * @param {*} _debugContainer 
+ * @param {boolean} _debugAnimation 
+ * @param {DOMElement} _debugContainer 
  */
 function getJson(
   src,
   domElement,
-  elementNo,
   elementId,
   _autoplay,
   _loop,
@@ -2303,7 +2271,7 @@ function goToAndStop(_frame, isFrame, name) {
   * Lottie animation loader for jlottie.
   *
   * @param {JSON} obj Includes parameters that dictate how a Lottie is loaded.
-  * @param {object} obj.container A DOMElement object that will be used as the container for the Lottie animation.
+  * @param {DOMElement} obj.container A DOMElement object that will be used as the container for the Lottie animation.
   * @param {boolean} obj.autoplay Instructs jlottie to immediately play the Lottie after it is loaded.
   * @param {boolean} obj.loop Instructs jlottie to keep looping this animation.
   * @param {boolean} obj.debugAnimation Instructs jlottie to display debug information (currently limited to just FPS data).
@@ -2351,7 +2319,6 @@ function loadAnimation(obj) {
     getJson(
       obj.path,
       obj.container,
-      0,
       obj.container.id,
       autoplay,
       loop,
