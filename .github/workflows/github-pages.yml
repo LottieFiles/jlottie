@@ -32,7 +32,11 @@ jobs:
       - name: Copy the js files
         run: |
           cp dist/* public/
-
+      
+      - name: Copy the feature docs
+        run: |
+          cp docs/* public/
+          
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
