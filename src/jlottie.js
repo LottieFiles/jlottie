@@ -1349,12 +1349,14 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
   return `url(#${newDefId})`;
 }
 
+// Enum for line cap types.
 const lcEnum = {
   1: 'butt',
   2: 'round',
   3: 'square',
 };
 
+// Enum for line join options.
 const ljEnum = {
   1: 'miter',
   2: 'round',
@@ -1362,6 +1364,7 @@ const ljEnum = {
 };
 
 /**
+ * Create all the parameters for stroking a shape.
  * 
  * @param {JSON} color An object that holds the parameters for the color definition.
  * @param {JSON} opacity An object that holds the opacity parameter.
@@ -1393,6 +1396,7 @@ export function getStrokeString(color, opacity, width, lineCap, lineJoin, miterL
 
 /**
  * Generate a color string that conforms to the format for 'color' property defined by SVG 1.1.
+ * 
  * @param {float} redVal The weight of red color as a fraction of 1.
  * @param {float} greenVal The weight of green color as a fraction of 1.
  * @param {float} blueVal The weight of blue color as a fraction of 1.
