@@ -43,9 +43,26 @@
                             mx-auto
                         "
                     >
-                        jlottie has been engineered to address the performance and bulkiness issues of existing Lottie
-                        players for the web. jlottie also guarantees that no frames are dropped in a Lottie animation
-                        during playback, no matter how old the host hardware is.
+                        <p>
+                            jlottie is a Lottie player written in javascript with an aim to have the smallest possible
+                            file size. jlottie is suitable as a general purpose lottie player, though implements a
+                            subset of the features in the core player - this approach leads to a tiny footprint and
+                            great performance.
+                        </p>
+                        <br />
+                        <p>
+                            jlottie's performance is achieved by compiling the Lottie source into a scene graph, which
+                            is subsequently used to play the animation. This forgoes any need to perform real-time
+                            computations during playback. jlottie is suitable for use when there are many animations
+                            playing on a single page.
+                        </p>
+                        <br />
+                        <p>
+                            At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where
+                            not all of the lottie featues are necessary - common use cases include animated icons and
+                            micro animations. A list of all of the playback features is available
+                            <a href="docs/features.html">here</a>.
+                        </p>
                     </h2>
 
                     <h2 class="font-bold font-lf-regular md:text-2xl text-center py-4 pb-2 leading-normal text-lf-grey">
@@ -93,35 +110,56 @@
 
             <div class="text-center w-full lg:w-2/3 mx-auto">
                 <div class="flex flex-col text-left">
-                    <label class="font-lf-bold text-grey-darkest py-3">Lottie Json Url: </label>
-                    <input
-                        id="lottieSrc"
-                        placeholder="Load animation"
-                        class="
-                            search_field
-                            trans trans-slow
-                            outline-none
-                            text-sm
-                            transition
-                            hover:bg-grey-light
-                            focus:bg-lf-teal
-                            focus:text-white
-                            focus:font-bold
-                            bg-purple-white
-                            rounded-lg
-                            shadow-lg
-                            w-full
-                            border-0
-                            p-3
-                            pl-10
-                            mx-auto
-                        "
-                        value="https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json"
-                    />
+                    <label class="font-lf-bold text-grey-darkest py-3">Lottie JSON Url: </label>
+                    <div class="flex">
+                        <input
+                            id="lottieSrc"
+                            placeholder="Load animation"
+                            class="
+                                search_field
+                                trans trans-slow
+                                outline-none
+                                text-sm
+                                transition
+                                hover:bg-grey-light
+                                focus:bg-lf-teal
+                                focus:text-white
+                                focus:font-bold
+                                bg-purple-white
+                                rounded-lg
+                                shadow-md
+                                p-3
+                                pl-10
+                                mx-auto
+                                w-full
+                            "
+                            value="https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json"
+                        />
+                        <button
+                            id="loadanim"
+                            class="
+                                bg-lf-teal
+                                text-white
+                                rounded-md
+                                trans
+                                hover:bg-lf-teal-dark-3
+                                hover:shadow-lg-teal
+                                py-4
+                                px-3
+                                font-lf-semi-bold
+                                w-48
+                                ml-2
+                                shadow-md
+                            "
+                        >
+                            Load animation
+                        </button>
+                    </div>
+
                     <label style="margin-top: 20px" class="font-lf-bold text-grey-darkest py-3"
                         >Lottie Animation:
                     </label>
-                    <div class="rounded-lg shadow-lg mx-auto w-full">
+                    <div class="rounded-lg shadow-md mx-auto w-full">
                         <div class="w-full">
                             <div id="jlottie-container" class="h-110"></div>
                         </div>
@@ -259,8 +297,8 @@
             // Load an initial animation
             loadLottie();
 
-            var input = document.getElementById('lottieSrc');
-            input.addEventListener('change', (event) => {
+            var btn = document.getElementById('loadanim');
+            btn.addEventListener('click', (event) => {
                 jlottie.destroy('jlottie-container');
                 loadLottie();
             });
