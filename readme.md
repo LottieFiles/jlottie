@@ -106,7 +106,7 @@ In this test a total of 35 Lottie animations, whose features are fully supported
 
 The test pages used for this test are [here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and [here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
 
-During this test, it was discovered that during the 5-6 seconds of Chrome's performance testing all 35 animations noticeably skipped frames when lottie-player was rendering them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the animations even during the Chrome performance analysis.
+During this test, it was discovered that all 35 animations noticeably skipped frames when lottie-player was rendering them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the animations even during the Chrome performance analysis.
 
 *All figures other than memory is in milliseconds.*
 <table>
