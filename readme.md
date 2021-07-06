@@ -310,7 +310,7 @@ needed. You can submit your feed back here. [Click here](https://lottiefiles.can
 
 What features/effects of After Effects does this player support?
 
-Please have a look at this documentation [Click here](https://lottiefiles.github.io/jlottie/features.html)
+Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features.html).
 
 Where can i raise issues?
 
