@@ -102,7 +102,7 @@ In this test 11 Lottie animations were selected from the Lottiefiles public anim
 
 ### Stress test
 
-In this test a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and performance and memory utilization analyzed using Chrome tools.
+In this test, a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and performance and memory utilization analyzed using Chrome tools.
 
 The test pages used for this test are [here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and [here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
 
