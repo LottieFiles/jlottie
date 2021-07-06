@@ -124,20 +124,20 @@ During this test, it was discovered that during the 5-6 seconds of Chrome's perf
   <tbody>
     <tr>
       <td>jlottie</td>
-      <td>52</td>
-      <td>27</td>
-      <td>4</td>
-      <td>6</td>
-      <td>12</td>
+      <td>515</td>
+      <td>269</td>
+      <td>36</td>
+      <td>62</td>
+      <td>115</td>
       <td>73.7</td>
     </tr>
     <tr>
       <td>lottie-player</td>
-      <td>57</td>
-      <td>20</td>
-      <td>2</td>
-      <td>6</td>
-      <td>15</td>
+      <td>564</td>
+      <td>205</td>
+      <td>19</td>
+      <td>45</td>
+      <td>166</td>
       <td>183</td>
     </tr>
   </tbody>
