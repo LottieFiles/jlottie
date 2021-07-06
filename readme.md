@@ -17,6 +17,132 @@ there are many animations playing on a single page.
 - **jlottie player is suitable for use if there are many animations playing on a single page**
 - **jlottie player is highly performant**
 
+## Performance
+
+Below are results of some performance tests comparing jlottie with [lottie-player](https://github.com/airbnb/lottie-web/blob/master/build/player/lottie.js).
+
+### Single animation
+In this test 11 Lottie animations were selected from the Lottiefiles public animations repository, and their runtime performance and memory utilization was recorded using Chrome's analysis tools. The performance figures were prorated to 1 second durations, which allows for direct comparison, as per the table below.
+
+*All figures other than memory is in milliseconds.*
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Scripting</th>
+      <th>Rendering</th>
+      <th>Painting</th>
+      <th>System</th>
+      <th>Idle</th>
+      <th>Memory (MB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan=2>Best</td>
+      <td>jlottie</td>
+      <td>41</td>
+      <td>11</td>
+      <td>5</td>
+      <td>14</td>
+      <td>928</td>
+      <td>1.9</td>
+    </tr>
+    <tr>
+      <td>lottie-player</td>
+      <td>122</td>
+      <td>28</td>
+      <td>10</td>
+      <td>37</td>
+      <td>801</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td rowspan=2>Average</td>
+      <td>jlottie</td>
+      <td>70</td>
+      <td>29</td>
+      <td>8</td>
+      <td>23</td>
+      <td>872</td>
+      <td>3.4</td>
+    </tr>
+    <tr>
+      <td>lottie-player</td>
+      <td>91</td>
+      <td>36</td>
+      <td>11</td>
+      <td>31</td>
+      <td>831</td>
+      <td>6.2</td>
+    </tr>
+    <tr>
+      <td rowspan=2>Worst</td>
+      <td>jlottie</td>
+      <td>124</td>
+      <td>35</td>
+      <td>11</td>
+      <td>24</td>
+      <td>805</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>lottie-player</td>
+      <td>84</td>
+      <td>41</td>
+      <td>9</td>
+      <td>25</td>
+      <td>840</td>
+      <td>4.7</td>
+    </tr>
+
+  </tbody>
+</table>
+
+### Stress test
+
+In this test a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and performance and memory utilization analyzed using Chrome tools.
+
+The test pages used for this test are [here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and [here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
+
+During this test, it was discovered that during the 5-6 seconds of Chrome's performance testing all 35 animations noticeably skipped frames when lottie-player was rendering them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the animations even during the Chrome performance analysis.
+
+*All figures other than memory is in milliseconds.*
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Scripting</th>
+      <th>Rendering</th>
+      <th>Painting</th>
+      <th>System</th>
+      <th>Idle</th>
+      <th>Memory (MB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>jlottie</td>
+      <td>52</td>
+      <td>27</td>
+      <td>4</td>
+      <td>6</td>
+      <td>12</td>
+      <td>73.7</td>
+    </tr>
+    <tr>
+      <td>lottie-player</td>
+      <td>57</td>
+      <td>20</td>
+      <td>2</td>
+      <td>6</td>
+      <td>15</td>
+      <td>183</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Installation
 
 #### In HTML:
