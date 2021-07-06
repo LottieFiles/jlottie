@@ -2820,17 +2820,31 @@
     }
 
     return "url(#".concat(newDefId, ")");
-  }
+  } // Enum for line cap types.
+
   var lcEnum = {
     1: 'butt',
     2: 'round',
     3: 'square'
-  };
+  }; // Enum for line join options.
+
   var ljEnum = {
     1: 'miter',
     2: 'round',
     3: 'bevel'
   };
+  /**
+   * Create all the parameters for stroking a shape.
+   * 
+   * @param {JSON} color An object that holds the parameters for the color definition.
+   * @param {JSON} opacity An object that holds the opacity parameter.
+   * @param {JSON} width An object that describes the width of the stroke.
+   * @param {integer} lineCap Enum key that describes the line cap type.
+   * @param {integer} lineJoin Enum key that describes the line join type.
+   * @param {integer} miterLimit The miter limit parameter.
+   * @returns {JSON} strokeString An object that lists all the parameters needed for stroking.
+   */
+
   function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
     var strokeString = {
       color: '',
@@ -2852,10 +2866,28 @@
 
     return strokeString;
   }
+  /**
+   * Generate a color string that conforms to the format for 'color' property defined by SVG 1.1.
+   * 
+   * @param {float} redVal The weight of red color as a fraction of 1.
+   * @param {float} greenVal The weight of green color as a fraction of 1.
+   * @param {float} blueVal The weight of blue color as a fraction of 1.
+   * @returns {string} color A valid color value for the 'color' property defined by SVG 1.1.
+   */
+
   function getColorString(redVal, greenVal, blueVal) {
     var color = "rgb(".concat(redVal * 255, ",").concat(greenVal * 255, ",").concat(blueVal * 255, ")");
     return color;
   }
+  /**
+   * Set the stroke for a group of shapes.
+   * 
+   * @param {JSON} shapesGroup An array of shapes.
+   * @param {JSON} strokeToSet An object that has the parameters that describe styling for the stroke.
+   * @param {integer} animationId The serial number of the current animation.
+   * @param {boolean} isGradient If 'true', then this stroke has a gradient shading.
+   */
+
   function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
     for (var i = 0; i < shapesGroup.length; i++) {
       if (shapesGroup[i]._isShape) {
@@ -2870,6 +2902,16 @@
       }
     }
   }
+  /**
+   * Set the color for a group of shapes.
+   * 
+   * @param {JSON} shapesGroup An array of shapes.
+   * @param {string} colorToSet A valid color value for the 'color' property defined by SVG 1.1.
+   * @param {integer} animationId The serial number of the current animation.
+   * @param {boolean} isGradient If 'true', then the color defintion is for a gradient.
+   * @param {boolean} isMasked If 'true', then the color attribute is for a mask.
+   */
+
   function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMasked) {
     for (var i = 0; i < shapesGroup.length; i++) {
       if (shapesGroup[i]._isShape && typeof colorToSet !== 'undefined') {
@@ -2878,6 +2920,19 @@
       }
     }
   }
+  /**
+   * Iterate through the shapes in a shape group ('gr') object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
+   * 
+   * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+   * @param {integer} animationId The serial number of this animation.
+   * @param {JSON} layerObj The JSON object whose root to be scoured for shape items.
+   * @param {JSON} referrer The JSON object that contained the 'layerObj' passed in here.
+   * @param {string} refGroup The 'id' of the <g> that corresponds to the calling JSON object (pointed to by the 'referrer').
+   * @param {boolean} isMasked If 'true', then this group of shapes are masked.
+   * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
+   * @returns 
+   */
+
   function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
     var currentColor;
     var currentStroke;
@@ -2892,39 +2947,41 @@
       }
 
       if (layerObj.it[i].ty == 'gr') {
+        // Shape group
         layerObj.it[i]._group = animation[animationId].shapeCount;
         var newGroup = document.createElementNS(xmlns, 'g');
         newGroup.setAttribute('id', "".concat(animationId, "_group").concat(animation[animationId].shapeCount));
         animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
         referrer.prepend(newGroup);
-        layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), isMasked, depth);
+        layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth);
       } else {
         layerObj.it[i]._shape = animation[animationId].shapeCount;
         layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
 
         if (layerObj.it[i].ty == 'tr') {
+          // Transformations
           layerObj.it[i]._trIndex = i;
 
           if (layerObj.it[i].p.hasOwnProperty('k')) {
             if (layerObj.it[i].p.k.length > 1) {
               if (layerObj.it[i].hasOwnProperty('a')) {
-                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0], ",").concat(layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1] //`matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
-                //  layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
-                , ")"));
+                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0], ",").concat(layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1], ")"));
               } else {
-                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0], ",").concat(layerObj.it[i].p.k[1], ")")); //.setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
+                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0], ",").concat(layerObj.it[i].p.k[1], ")"));
               }
             }
           }
         }
 
         if (layerObj.it[i].ty == 'fl') {
+          // Fill shape
           if (layerObj.it[i].c.k.length > 1) {
             currentColor = getColorString(layerObj.it[i].c.k[0], layerObj.it[i].c.k[1], layerObj.it[i].c.k[2]);
           }
         }
 
         if (layerObj.it[i].ty == 'st') {
+          // Stroke shape
           if (layerObj.it[i].c.k.length > 1) {
             currentStroke = getStrokeString(layerObj.it[i].c, layerObj.it[i].o, layerObj.it[i].w, layerObj.it[i].lc, layerObj.it[i].lj, layerObj.it[i].ml);
             stroked = true;
@@ -2932,20 +2989,34 @@
         }
 
         if (layerObj.it[i].ty == 'gf') {
+          // Gradient fill shape
           layerObj._isGradient = true;
           currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, layerObj.it[i].r, animationId, depth);
         }
       }
     }
 
-    setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked);
+    setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
 
     if (stroked) {
-      setShapeStrokes(layerObj.it, currentStroke, animationId);
+      setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
     }
 
     return layerObj;
   }
+  /**
+   * Iterate through the shapes in a layer object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
+   * 
+   * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+   * @param {integer} animationId The serial number of this animation.
+   * @param {JSON} layerObj The JSON object whose root to be scoured for shape items.
+   * @param {JSON} referrer The JSON object that contained the 'layerObj' passed in here.
+   * @param {string} refGroup The 'id' of the <g> that corresponds to the calling JSON object (pointed to by the 'referrer').
+   * @param {boolean} isMasked If 'true', then this group of shapes are masked.
+   * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
+   * @returns 
+   */
+
   function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
     var currentColor;
     var currentStroke;
@@ -2960,34 +3031,38 @@
       }
 
       if (layerObj.shapes[i].ty == 'gr') {
+        // Shape group
         layerObj.shapes[i]._group = animation[animationId].shapeCount;
         var newGroup = document.createElementNS(xmlns, 'g');
         newGroup.setAttribute('id', "".concat(animationId, "_group").concat(animation[animationId].shapeCount));
         newGroup.setAttribute('opacity', 1);
         animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
         referrer.prepend(newGroup);
-        layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), isMasked, depth);
+        layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth);
       } else {
         layerObj.shapes[i]._shape = animation[animationId].shapeCount;
         layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
 
         if (layerObj.shapes[i].ty == 'tr') {
+          // Transformation
           layerObj.shapes[i]._trIndex = i;
 
           if (layerObj.shapes[i].p.hasOwnProperty('k')) {
             if (layerObj.shapes[i].p.k > 1) {
-              document.getElementById("".concat(animationId, "_").concat(depth, "_layerGroup").concat(layerObj._layer)).setAttribute('transform', "translate(".concat(layerObj.shapes[i].p.k[0], ",").concat(layerObj.shapes[i].p.k[1], ")")); //.setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
+              document.getElementById("".concat(animationId, "_").concat(depth, "_layerGroup").concat(layerObj._layer)).setAttribute('transform', "translate(".concat(layerObj.shapes[i].p.k[0], ",").concat(layerObj.shapes[i].p.k[1], ")"));
             }
           }
         }
 
         if (layerObj.shapes[i].ty == 'fl') {
+          // Fill shape
           if (layerObj.shapes[i].c.k.length > 1) {
             currentColor = getColorString(layerObj.shapes[i].c.k[0], layerObj.shapes[i].c.k[1], layerObj.shapes[i].c.k[2]);
           }
         }
 
         if (layerObj.shapes[i].ty == 'st') {
+          // Stroke shape
           if (layerObj.shapes[i].c.k.length > 1) {
             currentStroke = getStrokeString(layerObj.shapes[i].c, layerObj.shapes[i].o, layerObj.shapes[i].w, layerObj.shapes[i].lc, layerObj.shapes[i].lj, layerObj.shapes[i].ml);
             stroked = true;
@@ -2995,21 +3070,33 @@
         }
 
         if (layerObj.shapes[i].ty == 'gf') {
+          // Gradient fill shape
           layerObj._isGradient = true;
           currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, layerObj.shapes[i].r, animationId, depth);
         }
-      } // console.log("leastY " + layerObj._leastY);
-
+      }
     }
 
-    setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked);
+    setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
 
     if (stroked) {
-      setShapeStrokes(layerObj.shapes, currentStroke, animationId);
+      setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
     }
 
     return layerObj;
   }
+  /**
+   * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
+   * 
+   * @param {integer} animationId The serial number of the current animation.
+   * @param {integer} layerId The serial number of the current layer item to be processed.
+   * @param {integer} lastMaskId The serial number of the last mask layer that was discovered.
+   * @param {JSON} passedObj The JSON object that holds the group of layer items to peruse.
+   * @param {string} passedKey The key that describes the array in 'passedObj' that holds a group of layer items.
+   * @param {integer} depth An integer that describes the depth of the current layer group (1 for no iterations).
+   * @returns 
+   */
+
   function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
     var newGroup;
     var newTranslateGroup;
@@ -3054,7 +3141,7 @@
         newGroup = document.createElementNS(xmlns, 'g');
         newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][layerId]._layer));
         newGroup.setAttribute('opacity', 1);
-        newTranslateGroup.prepend(newGroup);
+        newTranslateGroup.prepend(newGroup); // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
 
         passedObj[passedKey][j]._child.push("_layerGroup".concat(passedObj[passedKey][layerId].parent));
 
@@ -3065,6 +3152,18 @@
       }
     }
   }
+  /**
+   * Iterate through the layers of the animation, prepare the scaffolding needed to process the items in each one, and then trigger the respective functions to do the processing.
+   * 
+   * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+   * @param {integer} animationId The serial number of this animation.
+   * @param {DOMElement} elementObj The DOMElement describing the first Lottie layer element in the animation.
+   * @param {JSON} passedObj The object that has 'layers', shapes group ('gr'), or 'assets'.
+   * @param {string} passedKey The name of the array, in 'passedObj', that lists the target layer objects.
+   * @param {integer} depth The depth of the current iteration of layer objects.
+   * @returns 
+   */
+
   function getLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
     animation[animationId].depth++;
     depth = animation[animationId].depth;
@@ -3333,6 +3432,17 @@
 
     return passedObj;
   }
+  /**
+   * Scale layer objects relative to the animation window size - needed because some layers have much bigger defined window dimensions.
+   * 
+   * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+   * @param {integer} animationId The serial number of this animation.
+   * @param {DOMElement} elementObj The DOMElement describing the first Lottie layer element in the animation.
+   * @param {JSON} passedObj The object that has 'layers', shapes group ('gr'), or 'assets'.
+   * @param {string} passedKey The name of the array, in 'passedObj', that lists the target layer objects.
+   * @param {integer} depth The depth of the current iteration of layer objects.
+   */
+
   function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
     var currentObj; //alert(animation[animationId].currScale);
 
@@ -3349,6 +3459,17 @@
       }
     }
   }
+  /**
+   * Initializes all the parameters for animation[animationId], which will contain the scene graph for this Lottie animation, before and after calling getLayers().
+   * 
+   * @param {*} elementId The 'id' attribute of the DOMElement 'elementObj'.
+   * @param {*} animationId The serial number of this animation.
+   * @param {*} elementObj The DOMElement in which the animation should be rendered.
+   * @param {*} autoplay If 'true', then start playing the animation upon being loaded.
+   * @param {*} loop If 'true', then the animation keeps looping.
+   * @param {*} customName A custom name given to this Lottie animation - for future use.
+   */
+
   function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
     animation[animationId]._loaded = false;
 
@@ -3464,14 +3585,15 @@
     }
   }
   /**
+   * Load a Lottie JSON file from a URL and then pass to buildGraph().
    * 
    * @param {string} src A URL that points to a Lottie JSON file.
    * @param {DOMElement} domElement The DOMElement object in which the Lottie animation will be animated.
    * @param {string} elementId The 'id' of the DOMElement pointed to by 'domElement'.
-   * @param {boolean} _autoplay Indicates whether the 
-   * @param {boolean} _loop 
-   * @param {boolean} _debugAnimation 
-   * @param {DOMElement} _debugContainer 
+   * @param {boolean} _autoplay If 'true', then start playing the animation upon being loaded.
+   * @param {boolean} _loop If 'true', then the animation keeps looping.
+   * @param {boolean} _debugAnimation If 'true', then display debug information.
+   * @param {DOMElement} _debugContainer The DOMElement in which debug information is to be displayed.
    */
 
   function getJson(src, domElement, elementId, _autoplay, _loop, _debugAnimation, _debugContainer) {

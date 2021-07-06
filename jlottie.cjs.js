@@ -1350,18 +1350,31 @@ function createGradientDef(start, end, opacity, gradient, radial, animationId, d
   return `url(#${newDefId})`;
 }
 
+// Enum for line cap types.
 const lcEnum = {
   1: 'butt',
   2: 'round',
   3: 'square',
 };
 
+// Enum for line join options.
 const ljEnum = {
   1: 'miter',
   2: 'round',
   3: 'bevel',
 };
 
+/**
+ * Create all the parameters for stroking a shape.
+ * 
+ * @param {JSON} color An object that holds the parameters for the color definition.
+ * @param {JSON} opacity An object that holds the opacity parameter.
+ * @param {JSON} width An object that describes the width of the stroke.
+ * @param {integer} lineCap Enum key that describes the line cap type.
+ * @param {integer} lineJoin Enum key that describes the line join type.
+ * @param {integer} miterLimit The miter limit parameter.
+ * @returns {JSON} strokeString An object that lists all the parameters needed for stroking.
+ */
 function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
   const strokeString = {
     color: '',
@@ -1382,11 +1395,27 @@ function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
   return strokeString;
 }
 
+/**
+ * Generate a color string that conforms to the format for 'color' property defined by SVG 1.1.
+ * 
+ * @param {float} redVal The weight of red color as a fraction of 1.
+ * @param {float} greenVal The weight of green color as a fraction of 1.
+ * @param {float} blueVal The weight of blue color as a fraction of 1.
+ * @returns {string} color A valid color value for the 'color' property defined by SVG 1.1.
+ */
 function getColorString(redVal, greenVal, blueVal) {
   const color = `rgb(${redVal * 255},${greenVal * 255},${blueVal * 255})`;
   return color;
 }
 
+/**
+ * Set the stroke for a group of shapes.
+ * 
+ * @param {JSON} shapesGroup An array of shapes.
+ * @param {JSON} strokeToSet An object that has the parameters that describe styling for the stroke.
+ * @param {integer} animationId The serial number of the current animation.
+ * @param {boolean} isGradient If 'true', then this stroke has a gradient shading.
+ */
 function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
   for (let i = 0; i < shapesGroup.length; i++) {
     if (shapesGroup[i]._isShape) {
@@ -1409,6 +1438,15 @@ function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradient) {
   }
 }
 
+/**
+ * Set the color for a group of shapes.
+ * 
+ * @param {JSON} shapesGroup An array of shapes.
+ * @param {string} colorToSet A valid color value for the 'color' property defined by SVG 1.1.
+ * @param {integer} animationId The serial number of the current animation.
+ * @param {boolean} isGradient If 'true', then the color defintion is for a gradient.
+ * @param {boolean} isMasked If 'true', then the color attribute is for a mask.
+ */
 function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMasked) {
   for (let i = 0; i < shapesGroup.length; i++) {
     if (shapesGroup[i]._isShape && typeof colorToSet !== 'undefined') {
@@ -1418,6 +1456,18 @@ function setShapeColors(shapesGroup, colorToSet, animationId, isGradient, isMask
   }
 }
 
+/**
+ * Iterate through the shapes in a shape group ('gr') object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
+ * 
+ * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+ * @param {integer} animationId The serial number of this animation.
+ * @param {JSON} layerObj The JSON object whose root to be scoured for shape items.
+ * @param {JSON} referrer The JSON object that contained the 'layerObj' passed in here.
+ * @param {string} refGroup The 'id' of the <g> that corresponds to the calling JSON object (pointed to by the 'referrer').
+ * @param {boolean} isMasked If 'true', then this group of shapes are masked.
+ * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
+ * @returns 
+ */
 function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
   let currentColor;
   let currentStroke;
@@ -1428,7 +1478,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
     if (layerObj.tt > 0) {
       isMasked = layerObj.td;
     }
-    if (layerObj.it[i].ty == 'gr') {
+    if (layerObj.it[i].ty == 'gr') { // Shape group
       layerObj.it[i]._group = animation[animationId].shapeCount;
       const newGroup = document.createElementNS(xmlns, 'g');
       newGroup.setAttribute('id', `${animationId}_group${animation[animationId].shapeCount}`);
@@ -1440,13 +1490,14 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
         layerObj.it[i],
         newGroup,
         `${animationId}_group${animation[animationId].shapeCount}`,
+        refGroup,
         isMasked,
         depth,
       );
     } else {
       layerObj.it[i]._shape = animation[animationId].shapeCount;
       layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
-      if (layerObj.it[i].ty == 'tr') {
+      if (layerObj.it[i].ty == 'tr') { // Transformations
         layerObj.it[i]._trIndex = i;
         if (layerObj.it[i].p.hasOwnProperty('k')) {
           if (layerObj.it[i].p.k.length > 1) {
@@ -1457,25 +1508,22 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
                   'transform',
                   `translate(${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
                     layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
-                  //`matrix(1,0,0,1,${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
-                  //  layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1]
                   })`,
                 );
             } else {
               document
                 .getElementById(refGroup)
                 .setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
-                //.setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
             }
           }
         }
       }
-      if (layerObj.it[i].ty == 'fl') {
+      if (layerObj.it[i].ty == 'fl') { // Fill shape
         if (layerObj.it[i].c.k.length > 1) {
           currentColor = getColorString(layerObj.it[i].c.k[0], layerObj.it[i].c.k[1], layerObj.it[i].c.k[2]);
         }
       }
-      if (layerObj.it[i].ty == 'st') {
+      if (layerObj.it[i].ty == 'st') { // Stroke shape
         if (layerObj.it[i].c.k.length > 1) {
           currentStroke = getStrokeString(
             layerObj.it[i].c,
@@ -1488,7 +1536,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
           stroked = true;
         }
       }
-      if (layerObj.it[i].ty == 'gf') {
+      if (layerObj.it[i].ty == 'gf') { // Gradient fill shape
         layerObj._isGradient = true;
         currentColor = createGradientDef(
           layerObj.it[i].s,
@@ -1502,13 +1550,25 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
       }
     }
   }
-  setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked);
+  setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
   if (stroked) {
-    setShapeStrokes(layerObj.it, currentStroke, animationId);
+    setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
   return layerObj;
 }
 
+/**
+ * Iterate through the shapes in a layer object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
+ * 
+ * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+ * @param {integer} animationId The serial number of this animation.
+ * @param {JSON} layerObj The JSON object whose root to be scoured for shape items.
+ * @param {JSON} referrer The JSON object that contained the 'layerObj' passed in here.
+ * @param {string} refGroup The 'id' of the <g> that corresponds to the calling JSON object (pointed to by the 'referrer').
+ * @param {boolean} isMasked If 'true', then this group of shapes are masked.
+ * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
+ * @returns 
+ */
 function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
   let currentColor;
   let currentStroke;
@@ -1519,7 +1579,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
     if (layerObj.tt > 0) {
       isMasked = layerObj.td;
     }
-    if (layerObj.shapes[i].ty == 'gr') {
+    if (layerObj.shapes[i].ty == 'gr') { // Shape group
       layerObj.shapes[i]._group = animation[animationId].shapeCount;
       const newGroup = document.createElementNS(xmlns, 'g');
       newGroup.setAttribute('id', `${animationId}_group${animation[animationId].shapeCount}`);
@@ -1532,24 +1592,25 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
         layerObj.shapes[i],
         newGroup,
         `${animationId}_group${animation[animationId].shapeCount}`,
+        refGroup,
         isMasked,
         depth,
       );
+
     } else {
       layerObj.shapes[i]._shape = animation[animationId].shapeCount;
       layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
-      if (layerObj.shapes[i].ty == 'tr') {
+      if (layerObj.shapes[i].ty == 'tr') { // Transformation
         layerObj.shapes[i]._trIndex = i;
         if (layerObj.shapes[i].p.hasOwnProperty('k')) {
           if (layerObj.shapes[i].p.k > 1) {
             document
               .getElementById(`${animationId}_${depth}_layerGroup${layerObj._layer}`)
               .setAttribute('transform', `translate(${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
-              //.setAttribute('transform', `matrix(1,0,0,1,${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
           }
         }
       }
-      if (layerObj.shapes[i].ty == 'fl') {
+      if (layerObj.shapes[i].ty == 'fl') { // Fill shape
         if (layerObj.shapes[i].c.k.length > 1) {
           currentColor = getColorString(
             layerObj.shapes[i].c.k[0],
@@ -1558,7 +1619,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
           );
         }
       }
-      if (layerObj.shapes[i].ty == 'st') {
+      if (layerObj.shapes[i].ty == 'st') { // Stroke shape
         if (layerObj.shapes[i].c.k.length > 1) {
           currentStroke = getStrokeString(
             layerObj.shapes[i].c,
@@ -1571,7 +1632,7 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
           stroked = true;
         }
       }
-      if (layerObj.shapes[i].ty == 'gf') {
+      if (layerObj.shapes[i].ty == 'gf') { // Gradient fill shape
         layerObj._isGradient = true;
         currentColor = createGradientDef(
           layerObj.shapes[i].s,
@@ -1584,15 +1645,25 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
         );
       }
     }
-    // console.log("leastY " + layerObj._leastY);
   }
-  setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked);
+  setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
   if (stroked) {
-    setShapeStrokes(layerObj.shapes, currentStroke, animationId);
+    setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
   return layerObj;
 }
 
+/**
+ * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
+ * 
+ * @param {integer} animationId The serial number of the current animation.
+ * @param {integer} layerId The serial number of the current layer item to be processed.
+ * @param {integer} lastMaskId The serial number of the last mask layer that was discovered.
+ * @param {JSON} passedObj The JSON object that holds the group of layer items to peruse.
+ * @param {string} passedKey The key that describes the array in 'passedObj' that holds a group of layer items.
+ * @param {integer} depth An integer that describes the depth of the current layer group (1 for no iterations).
+ * @returns 
+ */
 function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
   let newGroup;
   let newTranslateGroup;
@@ -1640,14 +1711,28 @@ function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, 
       newGroup.setAttribute('opacity', 1);
       newTranslateGroup.prepend(newGroup);
 
+      // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
       passedObj[passedKey][j]._child.push(`_layerGroup${passedObj[passedKey][layerId].parent}`);
       passedObj[passedKey][j]._childId.push(layerId);
+
       passedObj[passedKey][j]._addedToDom = true;
+
       return;
     }
   }
 }
 
+/**
+ * Iterate through the layers of the animation, prepare the scaffolding needed to process the items in each one, and then trigger the respective functions to do the processing.
+ * 
+ * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+ * @param {integer} animationId The serial number of this animation.
+ * @param {DOMElement} elementObj The DOMElement describing the first Lottie layer element in the animation.
+ * @param {JSON} passedObj The object that has 'layers', shapes group ('gr'), or 'assets'.
+ * @param {string} passedKey The name of the array, in 'passedObj', that lists the target layer objects.
+ * @param {integer} depth The depth of the current iteration of layer objects.
+ * @returns 
+ */
 function getLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
   animation[animationId].depth++;
   depth = animation[animationId].depth;
@@ -1952,6 +2037,16 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
   return passedObj;
 }
 
+/**
+ * Scale layer objects relative to the animation window size - needed because some layers have much bigger defined window dimensions.
+ * 
+ * @param {string} elementId The 'id' attribute of the DOMElement 'elementObj'.
+ * @param {integer} animationId The serial number of this animation.
+ * @param {DOMElement} elementObj The DOMElement describing the first Lottie layer element in the animation.
+ * @param {JSON} passedObj The object that has 'layers', shapes group ('gr'), or 'assets'.
+ * @param {string} passedKey The name of the array, in 'passedObj', that lists the target layer objects.
+ * @param {integer} depth The depth of the current iteration of layer objects.
+ */
 function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
   var currentObj;
   //alert(animation[animationId].currScale);
@@ -1972,6 +2067,16 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
   }
 }
 
+/**
+ * Initializes all the parameters for animation[animationId], which will contain the scene graph for this Lottie animation, before and after calling getLayers().
+ * 
+ * @param {*} elementId The 'id' attribute of the DOMElement 'elementObj'.
+ * @param {*} animationId The serial number of this animation.
+ * @param {*} elementObj The DOMElement in which the animation should be rendered.
+ * @param {*} autoplay If 'true', then start playing the animation upon being loaded.
+ * @param {*} loop If 'true', then the animation keeps looping.
+ * @param {*} customName A custom name given to this Lottie animation - for future use.
+ */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   try {
@@ -2097,14 +2202,15 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 }
 
 /**
+ * Load a Lottie JSON file from a URL and then pass to buildGraph().
  * 
  * @param {string} src A URL that points to a Lottie JSON file.
  * @param {DOMElement} domElement The DOMElement object in which the Lottie animation will be animated.
  * @param {string} elementId The 'id' of the DOMElement pointed to by 'domElement'.
- * @param {boolean} _autoplay Indicates whether the 
- * @param {boolean} _loop 
- * @param {boolean} _debugAnimation 
- * @param {DOMElement} _debugContainer 
+ * @param {boolean} _autoplay If 'true', then start playing the animation upon being loaded.
+ * @param {boolean} _loop If 'true', then the animation keeps looping.
+ * @param {boolean} _debugAnimation If 'true', then display debug information.
+ * @param {DOMElement} _debugContainer The DOMElement in which debug information is to be displayed.
  */
 function getJson(
   src,
