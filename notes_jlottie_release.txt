@@ -1,0 +1,14 @@
+comparisons - what is the difference
+
+test page - how to load the animation
+
+support
+
+what the use-case for jlottie is
+the limitations imposed to achieve this use-case
+
+add a note on the fact that this is the only other js player
+
+animations and micro interactions - a pre-intro blurb
+
+MSN messenger interface
