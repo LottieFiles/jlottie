@@ -1,6 +1,7 @@
 * text=auto
 * text eol=lf
 *.zip binary
+*.png binary
 
 # GitHub Linguist Override
 /.yarn/** linguist-vendored
