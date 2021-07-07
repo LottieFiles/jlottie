@@ -1,8 +1,9 @@
 # jlottie
 
 **jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is
-suitable as a general purpose lottie player, though implements a [subset of the features](https://lottiefiles.github.io/jlottie/features.html) in the core player - this
-approach leads to a tiny footprint and great performance.
+suitable as a general purpose lottie player, though implements a
+[subset of the features](https://lottiefiles.github.io/jlottie/features.html) in the core player - this approach leads
+to a tiny footprint and great performance.
 
 At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
 are necessary - common use cases include animated icons and micro animations. A list of all of the playback features is
@@ -13,18 +14,23 @@ the animation. This forgoes any need to perform real-time computations during pl
 there are many animations playing on a single page.
 
 - **jlottie player is best used for animated icons and micro animations**
-- **jlottie player is vastly smaller in size *(9kb)* compared to other Lottie players**
+- **jlottie player is vastly smaller in size _(9kb)_ compared to other Lottie players**
 - **jlottie player is suitable for use if there are many animations playing on a single page**
 - **jlottie player is highly performant**
 
 ## Performance
 
-Below are results of some performance tests comparing jlottie with [lottie-player](https://github.com/airbnb/lottie-web/blob/master/build/player/lottie.js).
+Below are results of some performance tests comparing jlottie with
+[lottie-player](https://github.com/airbnb/lottie-web/blob/master/build/player/lottie.js).
 
 ### Single animation
-In this test 11 Lottie animations were selected from the Lottiefiles public animations repository, and their runtime performance and memory utilization was recorded using Chrome's analysis tools. The performance figures were prorated to 1 second durations, which allows for direct comparison, as per the table below.
 
-*All figures other than memory is in milliseconds.*
+In this test 11 Lottie animations were selected from the Lottiefiles public animations repository, and their runtime
+performance and memory utilization was recorded using Chrome's analysis tools. The performance figures were prorated to
+1 second durations, which allows for direct comparison, as per the table below.
+
+_All figures other than memory is in milliseconds._
+
 <table>
   <thead>
     <tr>
@@ -102,13 +108,20 @@ In this test 11 Lottie animations were selected from the Lottiefiles public anim
 
 ### Stress test
 
-In this test, a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and performance and memory utilization analyzed using Chrome tools.
+In this test, a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from
+the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and
+performance and memory utilization analyzed using Chrome tools.
 
-The test pages used for this test are [here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and [here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
+The test pages used for this test are
+[here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and
+[here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
 
-During this test, it was discovered that all 35 animations noticeably skipped frames when lottie-player was rendering them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the animations even during the Chrome performance analysis.
+During this test, it was discovered that all 35 animations noticeably skipped frames when lottie-player was rendering
+them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the
+animations even during the Chrome performance analysis.
 
-*All figures other than memory is in milliseconds.*
+_All figures other than memory is in milliseconds._
+
 <table>
   <thead>
     <tr>
@@ -301,22 +314,22 @@ See [how to contribute](contributing.md) to this project.
 
 ## FAQ
 
-Why doesnt my Lottie animation work on the jlottie player?
+**Why doesnt my Lottie animation work on the jlottie player?**
 
 The jlottie player does not support as many features of Adobe After Effects as other players out there as it was built
 to be smaller in size and highly performant, and therefore might not support certain settings,effects or features that
 were used when creating the animation. please do drop feedback to us and by popular demand we may make accomdations as
 needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jlottie)
 
-What features/effects of After Effects does this player support?
+**What features/effects of After Effects does this player support?**
 
 Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features.html).
 
-Where can i raise issues?
+**Where can i raise issues?**
 
 Please use github issues to highlight any bugs.
 
-Where can i drop feedback?
+**Where can i drop feedback?**
 
 You may [Click here](https://lottiefiles.canny.io/jlottie) and submit your feedback
 
