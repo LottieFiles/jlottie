@@ -1,8 +1,6 @@
 # jlottie
 
-<p align="center">
-  <img src="https://lottiefiles.github.io/jlottie/logo.png" title="jlottie logo">
-</p>
+![logo](https://github.com/LottieFiles/jlottie/tree/main/public/jlottie_logo.png?raw=true)
 
 **jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is
 suitable as a general purpose lottie player, though implements a
