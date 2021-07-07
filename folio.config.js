@@ -1,4 +1,5 @@
 const path = require('path');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { ChromiumEnv, FirefoxEnv, WebKitEnv, test } = require('@playwright/test');
 
 const testsDir = path.resolve(__dirname, 'tests');

@@ -9,7 +9,11 @@ async function globalSetup() {
   });
 
   // Start server.
-  await fastify.listen();
+  await fastify.listen(8000, (err, address) => {
+    if (err) {
+      console.log('err on fastify');
+    }
+  });
 
   // Write port to temp file to share with test spec.
   fs.writeFileSync(path.resolve(os.tmpdir(), 'visual-comparison-test'), String(fastify.server.address().port), {
