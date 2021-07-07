@@ -6,8 +6,8 @@ suitable as a general purpose lottie player, though implements a
 tiny footprint and great performance.
 
 At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
-are necessary - common use cases include animated icons and micro animations. A list of all of the playback features is
-available [here](docs/features.html), and there's a test page available [here](https://lottiefiles.github.io/jlottie).
+are necessary - common use cases include animated icons and micro animations. A list of all of the playback features supported by jlottie is
+available [here](https://lottiefiles.github.io/jlottie/features.html), and there's a test page available [here](https://lottiefiles.github.io/jlottie).
 
 jlottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play
 the animation. This forgoes any need to perform real-time computations during playback. jlottie is suitable for use when
