@@ -13,7 +13,7 @@ the animation. This forgoes any need to perform real-time computations during pl
 there are many animations playing on a single page.
 
 - **jlottie player is best used for animated icons and micro animations**
-- **jlottie player is vastly smaller in size compared to other Lottie players (9kb)**
+- **jlottie player is vastly smaller in size *(9kb)* compared to other Lottie players**
 - **jlottie player is suitable for use if there are many animations playing on a single page**
 - **jlottie player is highly performant**
 
