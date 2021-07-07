@@ -316,22 +316,22 @@ See [how to contribute](contributing.md) to this project.
 
 - **Why doesnt my Lottie animation work on the jlottie player?**
 
-The jlottie player does not support as many features of Adobe After Effects as other players out there as it was built
-to be smaller in size and highly performant, and therefore might not support certain settings,effects or features that
-were used when creating the animation. please do drop feedback to us and by popular demand we may make accomdations as
-needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jlottie)
+- The jlottie player does not support as many features of Adobe After Effects as other players out there as it was built
+  to be smaller in size and highly performant, and therefore might not support certain settings,effects or features that
+  were used when creating the animation. please do drop feedback to us and by popular demand we may make accomdations as
+  needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jlottie)
 
 - **What features/effects of After Effects does this player support?**
 
-Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features.html).
+- Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features.html).
 
 - **Where can i raise issues?**
 
-Please use github issues to highlight any bugs.
+- Please use github issues to highlight any bugs.
 
 - **Where can i drop feedback?**
 
-You may [Click here](https://lottiefiles.canny.io/jlottie) and submit your feedback
+- You may [Click here](https://lottiefiles.canny.io/jlottie) and submit your feedback
 
 ## License
 
