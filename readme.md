@@ -156,6 +156,30 @@ _All figures other than memory is in milliseconds._
   </tbody>
 </table>
 
+## Features
+
+### Supported features
+
+* Shapes (except, ellipse, polystar, repeater, trim paths)
+* Fills (except radial gradient)
+* Strokes (without opacity and dashes)
+* Transforms
+* Interpolation (except roving across time)
+* Masks (limited to path, opacity and subtract)
+* Layer effects (limited to only fills)
+
+### Features not supported
+
+* Matts
+* Merge paths
+* Text
+* Expressions
+* Images
+* Precomps
+* Time stretch
+* Time remap
+* Markers
+
 ## Installation
 
 #### In HTML:
