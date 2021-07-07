@@ -4,6 +4,7 @@
         <title>jlottie demo</title>
         <script src="/dist/jlottie.min.js" type="text/javascript"></script>
         <script src="jlottie.min.js" type="text/javascript"></script>
+
         <link rel="stylesheet" href="./style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Demo page for the jlottie player" />
@@ -133,7 +134,7 @@
                                 mx-auto
                                 w-full
                             "
-                            value="https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json"
+                            value="https://assets9.lottiefiles.com/packages/lf20_ehiqu1jy.json"
                         />
                         <button
                             id="loadanim"
@@ -289,11 +290,14 @@
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
-                    autoplay: true,
+                    autoplay: false,
                     path: document.getElementById('lottieSrc').value,
                 });
             }
-
+            setTimeout(function () {
+                jlottie.goToAndStop(2, '', 'jlottie-container');
+                // jlottie.play("lottiefiles_player");
+            }, 1000);
             // Load an initial animation
             loadLottie();
 
