@@ -1,7 +1,7 @@
 # jlottie
 
 **jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is
-suitable as a general purpose lottie player, though implements a subset of the features in the core player - this
+suitable as a general purpose lottie player, though implements a [subset of the features](https://lottiefiles.github.io/jlottie/features.html) in the core player - this
 approach leads to a tiny footprint and great performance.
 
 At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
