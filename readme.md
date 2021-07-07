@@ -2,8 +2,8 @@
 
 **jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is
 suitable as a general purpose lottie player, though implements a
-[subset of the features](https://lottiefiles.github.io/jlottie/features.html) in the core player - this approach leads
-to a tiny footprint and great performance.
+[subset of the features](https://lottiefiles.github.io/jlottie/features) in the core player - this approach leads to a
+tiny footprint and great performance.
 
 At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
 are necessary - common use cases include animated icons and micro animations. A list of all of the playback features is
@@ -323,7 +323,7 @@ See [how to contribute](contributing.md) to this project.
 
 - **What features/effects of After Effects does this player support?**
 
-- Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features.html).
+- Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features).
 
 - **Where can i raise issues?**
 
