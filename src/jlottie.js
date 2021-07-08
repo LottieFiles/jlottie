@@ -1131,7 +1131,7 @@ export function prepShapeSh(shapeObj, referrer, animationId, addTransformation, 
           shapeObj._isShape = true;
         }
 
-        if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames) {
+        if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames || shapeObj.ks.k[kCount].t < 0) {
           break;
         }
         animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
@@ -1428,6 +1428,9 @@ export function setShapeStrokes(shapesGroup, strokeToSet, animationId, isGradien
       document
         .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
         .setAttribute('stroke-linejoin', strokeToSet.lineJoin);
+      document
+        .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
+        .setAttribute('stroke-opacity', strokeToSet.opacity);
       if (strokeToSet.lineJoin == 1) {
         document
           .getElementById(`${animationId}_shape${shapesGroup[i]._shape}`)
@@ -1652,6 +1655,10 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
   return layerObj;
 }
 
+export function findChildren(passedObj) {
+
+}
+
 /**
  * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
  * 
@@ -1663,7 +1670,7 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
  * @param {integer} depth An integer that describes the depth of the current layer group (1 for no iterations).
  * @returns 
  */
-export function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
+export function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray) {
   let newGroup;
   let newTranslateGroup;
   let newLayer;
@@ -1679,42 +1686,54 @@ export function resolveParents(animationId, layerId, lastMaskId, passedObj, pass
           }
         }
       }
+      addArray.push(layerId);
+
       if (!passedObj[passedKey][j]._addedToDom) {
-        resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
+        resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray);
       }
       animation[animationId].layerCount++;
       passedObj[passedKey][layerId]._parent = passedObj[passedKey][j]._layer;
-      newLayer = document.createElementNS(xmlns, 'g');
-      newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][layerId]._layer}`);
-      newLayer.setAttribute('mask', lastMaskId);
-      newLayer.setAttribute('opacity', 1);
+      passedObj[passedKey][layerId]._parentIdx = j;
+      //if (!passedObj[passedKey][j]._addedToDom) {
+        passedObj[passedKey][layerId].domObj = {}
+        
+        passedObj[passedKey][layerId].domObj.newLayer = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][layerId]._layer}`);
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('mask', lastMaskId);
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('opacity', 1);
 
-      document
-        .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._parent}`)
-        .prepend(newLayer);
-      newTranslateGroup = document.createElementNS(xmlns, 'g');
-      newTranslateGroup.setAttribute(
-        'id',
-        `${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._layer}`,
-      );
-      newTranslateGroup.setAttribute('opacity', 1);
-      newLayer.prepend(newTranslateGroup);
-      if (passedObj[passedKey][layerId].w > 0) {
-        newLayer.style.width = passedObj[passedKey][layerId].w;
-      }
-      if (passedObj[passedKey][layerId].h > 0) {
-        newLayer.style.height = passedObj[passedKey][layerId].h;
-      }
-      newGroup = document.createElementNS(xmlns, 'g');
-      newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][layerId]._layer}`);
-      newGroup.setAttribute('opacity', 1);
-      newTranslateGroup.prepend(newGroup);
+        //document
+        //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._parent}`)
+        //  .append(newLayer);
+        //passedObj[passedKey][j].domObj.newTranslateGroup.prepend(newLayer);
+        passedObj[passedKey][layerId].domObj.newTranslateGroup = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.setAttribute(
+          'id',
+          `${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._layer}`,
+        );
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.setAttribute('opacity', 1);
+        passedObj[passedKey][layerId].domObj.newLayer.prepend(newTranslateGroup);
 
-      // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
-      passedObj[passedKey][j]._child.push(`_layerGroup${passedObj[passedKey][layerId].parent}`);
-      passedObj[passedKey][j]._childId.push(layerId);
+        if (passedObj[passedKey][layerId].w > 0) {
+          passedObj[passedKey][layerId].domObj.newLayer.style.width = passedObj[passedKey][layerId].w;
+        }
+        if (passedObj[passedKey][layerId].h > 0) {
+          passedObj[passedKey][layerId].domObj.newLayer.style.height = passedObj[passedKey][layerId].h;
+        }
+        passedObj[passedKey][layerId].domObj.newGroup = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][layerId]._layer}`);
+        passedObj[passedKey][layerId].domObj.newGroup.setAttribute('opacity', 1);
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.prepend(newGroup);
 
-      passedObj[passedKey][j]._addedToDom = true;
+        passedObj[passedKey][layerId]._addedToDom = true;
+        passedObj[passedKey][layerId].domObj.level = level;
+        passedObj[passedKey][layerId].processed = false;
+
+        // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
+        passedObj[passedKey][j]._child.push(`_layerGroup${passedObj[passedKey][layerId].parent}`);
+        passedObj[passedKey][j]._childId.push(layerId);
+
+      //}
 
       return;
     }
@@ -1742,112 +1761,158 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
   let posX;
   let posY;
   let lastMaskId = '';
-  for (var i = 0; i < passedObj[passedKey].length; i++) {
-    if (passedObj[passedKey][i].w > animation[animationId].w) {
-      animation[animationId]._maxWidth = passedObj[passedKey][i].w;
-    }
-    if (passedObj[passedKey][i].h > animation[animationId].h) {
-      animation[animationId]._maxHeight = passedObj[passedKey][i].h;
-    }
-    passedObj.layerCount++;
-    passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
-    passedObj[passedKey][i]._child = [];
-    passedObj[passedKey][i]._childId = [];
-    if (passedObj[passedKey][i].parent > 0) {
-    } else {
-      if (passedObj[passedKey][i].td > 0) {
-        passedObj[passedKey][i]._isMask = true;
-        newMask = document.createElementNS(xmlns, 'mask');
-        lastMaskId = `_${animationId}_${depth}_layerMask${passedObj[passedKey][i].ind}`;
-        newMask.setAttribute('id', lastMaskId);
-        newMask.setAttribute('mask-type', 'alpha');
-        newMask.setAttribute('opacity', 1);
-        animation[animationId].defs.prepend(newMask);
 
-        newLayer = document.createElementNS(xmlns, 'g');
-        newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
-        newLayer.setAttribute('style', 'display: block;');
-        newLayer.setAttribute('opacity', 1);
-        newMask.prepend(newLayer);
+  //passedObj.myDepth = depth;
+  //if (depth < 1) {
+    for (var i = 0; i < passedObj[passedKey].length; i++) {
+      if (passedObj[passedKey][i].w > animation[animationId].w) {
+        animation[animationId]._maxWidth = passedObj[passedKey][i].w;
+      }
+      if (passedObj[passedKey][i].h > animation[animationId].h) {
+        animation[animationId]._maxHeight = passedObj[passedKey][i].h;
+      }
+      passedObj.layerCount++;
+      passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
+      passedObj[passedKey][i]._child = [];
+      passedObj[passedKey][i]._childId = [];
+      if (passedObj[passedKey][i].parent > 0) {
       } else {
-        newLayer = document.createElementNS(xmlns, 'g');
-        newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
-        newLayer.setAttribute('opacity', 1);
-        elementObj.prepend(newLayer);
-        if (passedObj[passedKey][i].tt > 0) {
-          passedObj[passedKey][i]._mask = lastMaskId;
-          passedObj[passedKey][i]._isMasked = true;
-        }
-      }
-      passedObj[passedKey][i]._addedToDom = true;
+        if (passedObj[passedKey][i].td > 0) {
+          passedObj[passedKey][i]._isMask = true;
+          newMask = document.createElementNS(xmlns, 'mask');
+          lastMaskId = `_${animationId}_${depth}_layerMask${passedObj[passedKey][i].ind}`;
+          newMask.setAttribute('id', lastMaskId);
+          newMask.setAttribute('mask-type', 'alpha');
+          newMask.setAttribute('opacity', 1);
+          animation[animationId].defs.prepend(newMask);
 
-      newTranslateGroup = document.createElementNS(xmlns, 'g');
-      newTranslateGroup.setAttribute('id', `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`);
-      newTranslateGroup.setAttribute('opacity', 1);
-      newLayer.prepend(newTranslateGroup);
-      if (passedObj[passedKey][i].w > 0) {
-        newLayer.style.width = passedObj[passedKey][i].w;
-      }
-      if (passedObj[passedKey][i].h > 0) {
-        newLayer.style.height = passedObj[passedKey][i].h;
-      }
-      newGroup = document.createElementNS(xmlns, 'g');
-      newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
-      newGroup.setAttribute('opacity', 1);
-      newTranslateGroup.prepend(newGroup);
-    }
-  }
-
-  for (var i = 0; i < passedObj.layers.length; i++) {
-    passedObj.layerCount = passedObj[passedKey][i]._layer;
-    if (passedObj[passedKey][i].parent > 0) {
-      for (let j = 0; j < passedObj.layers.length; j++) {
-        if (passedObj[passedKey][j].ind == passedObj[passedKey][i].parent) {
+          newLayer = document.createElementNS(xmlns, 'g');
+          newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
+          newLayer.setAttribute('style', 'display: block;');
+          newLayer.setAttribute('opacity', 1);
+          newMask.prepend(newLayer);
+        } else {
+          newLayer = document.createElementNS(xmlns, 'g');
+          newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i].ind}`);
+          newLayer.setAttribute('opacity', 1);
+          elementObj.prepend(newLayer);
           if (passedObj[passedKey][i].tt > 0) {
-            for (let k = i - 1; k >= 0; k--) {
-              if (passedObj[passedKey][k].td > 0) {
-                passedObj[passedKey][i]._mask = `_${animationId}_${depth}_layerMask${passedObj[passedKey][k].ind}`;
-                break;
+            passedObj[passedKey][i]._mask = lastMaskId;
+            passedObj[passedKey][i]._isMasked = true;
+          }
+        }
+        passedObj[passedKey][i]._addedToDom = true;
+
+        newTranslateGroup = document.createElementNS(xmlns, 'g');
+        newTranslateGroup.setAttribute('id', `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`);
+        newTranslateGroup.setAttribute('opacity', 1);
+        newLayer.prepend(newTranslateGroup);
+        if (passedObj[passedKey][i].w > 0) {
+          newLayer.style.width = passedObj[passedKey][i].w;
+        }
+        if (passedObj[passedKey][i].h > 0) {
+          newLayer.style.height = passedObj[passedKey][i].h;
+        }
+        newGroup = document.createElementNS(xmlns, 'g');
+        newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
+        newGroup.setAttribute('opacity', 1);
+        newTranslateGroup.prepend(newGroup);
+
+        passedObj[passedKey][i].processed = true;
+      }
+    }
+
+    let addArray = [];
+    for (var i = 0; i < passedObj[passedKey].length; i++) {
+      passedObj.layerCount = passedObj[passedKey][i]._layer;
+      if (passedObj[passedKey][i].parent > 0) {
+        for (let j = 0; j < passedObj.layers.length; j++) {
+          if (passedObj[passedKey][j].ind == passedObj[passedKey][i].parent) {
+            if (passedObj[passedKey][i].tt > 0) {
+              for (let k = i - 1; k >= 0; k--) {
+                if (passedObj[passedKey][k].td > 0) {
+                  passedObj[passedKey][i]._mask = `_${animationId}_${depth}_layerMask${passedObj[passedKey][k].ind}`;
+                  break;
+                }
               }
             }
-          }
-          passedObj.layerCount++;
-          if (!passedObj[passedKey][j]._addedToDom) {
-            resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
-          }
-          passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
-          newLayer = document.createElementNS(xmlns, 'g');
-          newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`);
-          newLayer.setAttribute('opacity', 1);
+            passedObj.layerCount++;
+            addArray.push(i);
 
-          document
-            .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
-            .prepend(newLayer);
-          newTranslateGroup = document.createElementNS(xmlns, 'g');
-          newTranslateGroup.setAttribute(
-            'id',
-            `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`,
-          );
-          newTranslateGroup.setAttribute('opacity', 1);
-          newLayer.prepend(newTranslateGroup);
-          if (passedObj[passedKey][i].w > 0) {
-            newLayer.style.width = passedObj[passedKey][i].w;
-          }
-          if (passedObj[passedKey][i].h > 0) {
-            newLayer.style.height = passedObj[passedKey][i].h;
-          }
-          newGroup = document.createElementNS(xmlns, 'g');
-          newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
-          newGroup.setAttribute('opacity', 1);
-          newTranslateGroup.prepend(newGroup);
+            if (!passedObj[passedKey][j]._addedToDom) {
+              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray);
+            }
+            passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
+            passedObj[passedKey][i]._parentIdx = j;
+            //if (passedObj[passedKey][i]._addedToDom != true) {
+              passedObj[passedKey][i].domObj = {};
+              passedObj[passedKey][i].domObj.newLayer = document.createElementNS(xmlns, 'g');
+              passedObj[passedKey][i].domObj.newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`);
+              passedObj[passedKey][i].domObj.newLayer.setAttribute('opacity', 1);
 
-          passedObj[passedKey][j]._child.push(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i].parent}`);
-          passedObj[passedKey][j]._childId.push(i);
-          passedObj[passedKey][j]._addedToDom = true;
+              //document
+              //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+              //  .prepend(newLayer);
+              passedObj[passedKey][i].domObj.newTranslateGroup = document.createElementNS(xmlns, 'g');
+              passedObj[passedKey][i].domObj.newTranslateGroup.setAttribute(
+                'id',
+                `${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._layer}`,
+              );
+              passedObj[passedKey][i].domObj.newTranslateGroup.setAttribute('opacity', 1);
+              //newLayer.prepend(newTranslateGroup);
+              if (passedObj[passedKey][i].w > 0) {
+                passedObj[passedKey][i].domObj.newLayer.style.width = passedObj[passedKey][i].w;
+              }
+              if (passedObj[passedKey][i].h > 0) {
+                passedObj[passedKey][i].domObj.newLayer.style.height = passedObj[passedKey][i].h;
+              }
+              passedObj[passedKey][i].domObj.newGroup = document.createElementNS(xmlns, 'g');
+              passedObj[passedKey][i].domObj.newGroup.setAttribute('id', `${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`);
+              passedObj[passedKey][i].domObj.newGroup.setAttribute('opacity', 1);
+              //newTranslateGroup.prepend(newGroup);
+
+              passedObj[passedKey][i].domObj.newLayer.prepend(passedObj[passedKey][i].domObj.newTranslateGroup);
+              passedObj[passedKey][i].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newGroup);
+              //document
+              //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+              //  .prepend(passedObj[passedKey][i].domObj.newLayer);
+
+              passedObj[passedKey][i]._addedToDom = true;
+              passedObj[passedKey][i].domObj.level = 1;
+              passedObj[passedKey][i].processed = false;
+
+              passedObj[passedKey][j]._child.push(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i].parent}`);
+              passedObj[passedKey][j]._childId.push(i);
+
+            //}
+          }
         }
       }
     }
-  }
+
+    let tempLevel = 1;
+    let remaining = 1;
+
+    addArray.forEach(i => {
+        if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
+          passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
+        } else {
+          document
+            .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+            .prepend(passedObj[passedKey][i].domObj.newLayer);
+        }
+      }
+    );
+
+    for (var i = 0; i < passedObj[passedKey].length; i++) {
+      if (passedObj[passedKey][i].hasOwnProperty('domObj')) {
+        delete passedObj[passedKey][i].domObj;
+      }
+    }
+
+  //}
+
+
   for (var i = 0; i < passedObj.layers.length; i++) {
     passedObj[passedKey][i]._inPoint = -1;
     passedObj[passedKey][i]._outPoint = -1;
@@ -1894,6 +1959,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
         }
       }
       if (tempRef >= 0) {
+        var tempDepth = depth;
         animation[animationId].assets[tempRef] = getLayers(
           elementId,
           animationId,
@@ -1902,6 +1968,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           'layers',
           depth,
         );
+        //animation[animationId].depth--;
+        depth = tempDepth;
       }
     }
 
@@ -2078,7 +2146,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
  */
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2140,7 +2208,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     newCompute.style.display = 'none';
     newLayer.prepend(newCompute);
 
-    animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1)
+    animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 10)
       .fill(null)
       .map(() => ({ _transform: [] }));
     animation[animationId]._instated = {};
@@ -2191,14 +2259,14 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     } else {
       loadFrame(animationId, 1);
     }
-  } catch (e) {
+  /*} catch (e) {
 		console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 /**
