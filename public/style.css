@@ -4759,7 +4759,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   background: #fff;
-  margin-top: 72px;
+  margin-top: 24px;
 }
 body.modal-active {
   position: fixed;
