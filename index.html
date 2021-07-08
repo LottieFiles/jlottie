@@ -11,7 +11,7 @@
     </head>
 
     <body>
-        <div class="container lf-padding mx-auto py-16 md:py-18">
+        <div class="container lf-padding mx-auto py-8 md:py-18">
             <div class="w-full mx-auto text-center">
                 <a href="https://github.com/LottieFiles/jlottie" target="_blank" rel="noopener">
                     <button aria-label="github-link" class="bg-black rounded-lg px-3 py-2 mx-auto mb-4">
@@ -25,15 +25,18 @@
                     </button>
                 </a>
 
-                <h1 class="font-lf-bold text-6xl text-center">jlottie Player</h1>
-                <h2 class="font-normal font-lf-regular md:text-2xl text-center py-4 pb-10 leading-normal text-lf-grey">
+                <h1 class="font-lf-bold text-4xl lg:text-6xl text-center">jlottie Player</h1>
+                <h2 class="font-normal font-lf-regular text-2xl text-center py-4 pb-6 md:pb-10 leading-normal text-lf-grey">
                     High performance, lightweight Lottie player
                 </h2>
                 <div>
                     <h2
                         class="
                             font-normal font-lf-regular
+                            text-base
                             md:text-xl
+                            text-justify
+                            lg:text-left
                             text-left
                             w-full
                             lg:w-2/3
@@ -66,12 +69,13 @@
                         </p>
                     </h2>
 
-                    <h2 class="font-bold font-lf-regular md:text-2xl text-center py-4 pb-2 leading-normal text-lf-grey">
+                    <h2 class="font-bold font-lf-regular text-xl md:text-2xl text-center py-4 pb-2 leading-normal text-grey-darkest">
                         Supported features
                     </h2>
-                    <h2
+                    <div
                         class="
                             font-normal font-lf-regular
+                            text-base
                             md:text-xl
                             text-left
                             w-full
@@ -91,14 +95,15 @@
                     <li>Interpolation (except roving across time)</li>
                     <li>Masks (limited to path, opacity and subtract)</li>
                     <li>Layer effects (limited to only fills)</li>
-                    </h2>
+                    </div>
 
-                    <h2 class="font-bold font-lf-regular md:text-2xl text-center py-4 pb-2 leading-normal text-lf-grey">
+                    <h2 class="font-bold font-lf-regular text-xl md:text-2xl text-center py-4 pb-2 leading-normal text-grey-darkest">
                         Features not supported
                     </h2>
                     <h2
                         class="
                             font-normal font-lf-regular
+                            text-base
                             md:text-xl
                             text-left
                             w-full
@@ -122,13 +127,15 @@
 
                     </h2>
 
-                    <h2 class="font-bold font-lf-regular md:text-2xl text-center py-4 pb-2 leading-normal text-lf-grey">
+                    <h2 class="font-bold font-lf-regular text-xl md:text-2xl text-center py-4 pb-2 leading-normal text-grey-darkest">
                         Play a Lottie with jlottie:
                     </h2>
                     <h2
                         class="
                             font-normal font-lf-regular
                             md:text-xl
+                            text-base
+                            text-justify
                             text-left
                             w-full
                             lg:w-2/3
@@ -140,12 +147,14 @@
                         "
                     >
                         You can use the input box below to enter URLs pointing to Lottie JSON files. The animation will
-                        start playing as soon as the input box changes to a valid JSON file URL.
+                        start playing as soon as the "Load animation" button is clicked.
                     </h2>
                     <h2
                         class="
                             font-normal font-lf-regular
                             md:text-xl
+                            text-base
+                            text-justify
                             text-left
                             w-full
                             lg:w-2/3
@@ -168,7 +177,7 @@
             <div class="text-center w-full lg:w-2/3 mx-auto">
                 <div class="flex flex-col text-left">
                     <label class="font-lf-bold text-grey-darkest py-3">Lottie JSON Url: </label>
-                    <div class="flex">
+                    <div class="md:flex">
                         <input
                             id="lottieSrc"
                             placeholder="Load animation"
@@ -189,6 +198,8 @@
                                 pl-10
                                 mx-auto
                                 w-full
+                                mb-3
+                                md:mb-0
                             "
                             value="https://assets3.lottiefiles.com/packages/lf20_fwykef3x.json"
                         />
@@ -201,12 +212,14 @@
                                 trans
                                 hover:bg-lf-teal-dark-3
                                 hover:shadow-lg-teal
-                                py-4
-                                px-3
+                                py-2
+                                px-2
                                 font-lf-semi-bold
-                                w-48
-                                ml-2
+                                md:w-48
+                                md:ml-2
                                 shadow-md
+                                w-full
+
                             "
                         >
                             Load animation
