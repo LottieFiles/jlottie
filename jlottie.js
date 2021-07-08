@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.1
+ * @lottiefiles/jlottie v1.0.2
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -2579,7 +2579,7 @@
             shapeObj._isShape = true;
           }
 
-          if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames) {
+          if (shapeObj.ks.k[kCount].t > animation[animationId]._totalFrames || shapeObj.ks.k[kCount].t < 0) {
             break;
           }
 
@@ -2895,6 +2895,7 @@
         document.getElementById("".concat(animationId, "_shape").concat(shapesGroup[i]._shape)).setAttribute('stroke-width', strokeToSet.width);
         document.getElementById("".concat(animationId, "_shape").concat(shapesGroup[i]._shape)).setAttribute('stroke-linecap', strokeToSet.lineCap);
         document.getElementById("".concat(animationId, "_shape").concat(shapesGroup[i]._shape)).setAttribute('stroke-linejoin', strokeToSet.lineJoin);
+        document.getElementById("".concat(animationId, "_shape").concat(shapesGroup[i]._shape)).setAttribute('stroke-opacity', strokeToSet.opacity);
 
         if (strokeToSet.lineJoin == 1) {
           document.getElementById("".concat(animationId, "_shape").concat(shapesGroup[i]._shape)).setAttribute('stroke-miterlimit', strokeToSet.miterLimit);
@@ -3085,6 +3086,7 @@
 
     return layerObj;
   }
+  function findChildren(passedObj) {}
   /**
    * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
    * 
@@ -3097,7 +3099,7 @@
    * @returns 
    */
 
-  function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth) {
+  function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray) {
     var newGroup;
     var newTranslateGroup;
     var newLayer;
@@ -3114,40 +3116,51 @@
           }
         }
 
+        addArray.push(layerId);
+
         if (!passedObj[passedKey][j]._addedToDom) {
-          resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
+          resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray);
         }
 
         animation[animationId].layerCount++;
         passedObj[passedKey][layerId]._parent = passedObj[passedKey][j]._layer;
-        newLayer = document.createElementNS(xmlns, 'g');
-        newLayer.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layer").concat(passedObj[passedKey][layerId]._layer));
-        newLayer.setAttribute('mask', lastMaskId);
-        newLayer.setAttribute('opacity', 1);
-        document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][layerId]._parent)).prepend(newLayer);
-        newTranslateGroup = document.createElementNS(xmlns, 'g');
-        newTranslateGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][layerId]._layer));
-        newTranslateGroup.setAttribute('opacity', 1);
-        newLayer.prepend(newTranslateGroup);
+        passedObj[passedKey][layerId]._parentIdx = j; //if (!passedObj[passedKey][j]._addedToDom) {
+
+        passedObj[passedKey][layerId].domObj = {};
+        passedObj[passedKey][layerId].domObj.newLayer = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layer").concat(passedObj[passedKey][layerId]._layer));
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('mask', lastMaskId);
+        passedObj[passedKey][layerId].domObj.newLayer.setAttribute('opacity', 1); //document
+        //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][layerId]._parent}`)
+        //  .append(newLayer);
+        //passedObj[passedKey][j].domObj.newTranslateGroup.prepend(newLayer);
+
+        passedObj[passedKey][layerId].domObj.newTranslateGroup = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][layerId]._layer));
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.setAttribute('opacity', 1);
+        passedObj[passedKey][layerId].domObj.newLayer.prepend(newTranslateGroup);
 
         if (passedObj[passedKey][layerId].w > 0) {
-          newLayer.style.width = passedObj[passedKey][layerId].w;
+          passedObj[passedKey][layerId].domObj.newLayer.style.width = passedObj[passedKey][layerId].w;
         }
 
         if (passedObj[passedKey][layerId].h > 0) {
-          newLayer.style.height = passedObj[passedKey][layerId].h;
+          passedObj[passedKey][layerId].domObj.newLayer.style.height = passedObj[passedKey][layerId].h;
         }
 
-        newGroup = document.createElementNS(xmlns, 'g');
-        newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][layerId]._layer));
-        newGroup.setAttribute('opacity', 1);
-        newTranslateGroup.prepend(newGroup); // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
+        passedObj[passedKey][layerId].domObj.newGroup = document.createElementNS(xmlns, 'g');
+        passedObj[passedKey][layerId].domObj.newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][layerId]._layer));
+        passedObj[passedKey][layerId].domObj.newGroup.setAttribute('opacity', 1);
+        passedObj[passedKey][layerId].domObj.newTranslateGroup.prepend(newGroup);
+        passedObj[passedKey][layerId]._addedToDom = true;
+        passedObj[passedKey][layerId].domObj.level = level;
+        passedObj[passedKey][layerId].processed = false; // Push the child's 'id' into this item's ._child[] and the serial number of the child into ._childId[]
 
         passedObj[passedKey][j]._child.push("_layerGroup".concat(passedObj[passedKey][layerId].parent));
 
-        passedObj[passedKey][j]._childId.push(layerId);
+        passedObj[passedKey][j]._childId.push(layerId); //}
 
-        passedObj[passedKey][j]._addedToDom = true;
+
         return;
       }
     }
@@ -3173,7 +3186,8 @@
     var newTranslateGroup;
     var posX;
     var posY;
-    var lastMaskId = '';
+    var lastMaskId = ''; //passedObj.myDepth = depth;
+    //if (depth < 1) {
 
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       if (passedObj[passedKey][i].w > animation[animationId].w) {
@@ -3233,10 +3247,13 @@
         newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][i]._layer));
         newGroup.setAttribute('opacity', 1);
         newTranslateGroup.prepend(newGroup);
+        passedObj[passedKey][i].processed = true;
       }
     }
 
-    for (var i = 0; i < passedObj.layers.length; i++) {
+    var addArray = [];
+
+    for (var i = 0; i < passedObj[passedKey].length; i++) {
       passedObj.layerCount = passedObj[passedKey][i]._layer;
 
       if (passedObj[passedKey][i].parent > 0) {
@@ -3252,43 +3269,72 @@
             }
 
             passedObj.layerCount++;
+            addArray.push(i);
 
             if (!passedObj[passedKey][j]._addedToDom) {
-              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth);
+              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray);
             }
 
             passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
-            newLayer = document.createElementNS(xmlns, 'g');
-            newLayer.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layer").concat(passedObj[passedKey][i]._layer));
-            newLayer.setAttribute('opacity', 1);
-            document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._parent)).prepend(newLayer);
-            newTranslateGroup = document.createElementNS(xmlns, 'g');
-            newTranslateGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._layer));
-            newTranslateGroup.setAttribute('opacity', 1);
-            newLayer.prepend(newTranslateGroup);
+            passedObj[passedKey][i]._parentIdx = j; //if (passedObj[passedKey][i]._addedToDom != true) {
+
+            passedObj[passedKey][i].domObj = {};
+            passedObj[passedKey][i].domObj.newLayer = document.createElementNS(xmlns, 'g');
+            passedObj[passedKey][i].domObj.newLayer.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layer").concat(passedObj[passedKey][i]._layer));
+            passedObj[passedKey][i].domObj.newLayer.setAttribute('opacity', 1); //document
+            //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+            //  .prepend(newLayer);
+
+            passedObj[passedKey][i].domObj.newTranslateGroup = document.createElementNS(xmlns, 'g');
+            passedObj[passedKey][i].domObj.newTranslateGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._layer));
+            passedObj[passedKey][i].domObj.newTranslateGroup.setAttribute('opacity', 1); //newLayer.prepend(newTranslateGroup);
 
             if (passedObj[passedKey][i].w > 0) {
-              newLayer.style.width = passedObj[passedKey][i].w;
+              passedObj[passedKey][i].domObj.newLayer.style.width = passedObj[passedKey][i].w;
             }
 
             if (passedObj[passedKey][i].h > 0) {
-              newLayer.style.height = passedObj[passedKey][i].h;
+              passedObj[passedKey][i].domObj.newLayer.style.height = passedObj[passedKey][i].h;
             }
 
-            newGroup = document.createElementNS(xmlns, 'g');
-            newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][i]._layer));
-            newGroup.setAttribute('opacity', 1);
-            newTranslateGroup.prepend(newGroup);
+            passedObj[passedKey][i].domObj.newGroup = document.createElementNS(xmlns, 'g');
+            passedObj[passedKey][i].domObj.newGroup.setAttribute('id', "".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][i]._layer));
+            passedObj[passedKey][i].domObj.newGroup.setAttribute('opacity', 1); //newTranslateGroup.prepend(newGroup);
+
+            passedObj[passedKey][i].domObj.newLayer.prepend(passedObj[passedKey][i].domObj.newTranslateGroup);
+            passedObj[passedKey][i].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newGroup); //document
+            //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+            //  .prepend(passedObj[passedKey][i].domObj.newLayer);
+
+            passedObj[passedKey][i]._addedToDom = true;
+            passedObj[passedKey][i].domObj.level = 1;
+            passedObj[passedKey][i].processed = false;
 
             passedObj[passedKey][j]._child.push("".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][i].parent));
 
-            passedObj[passedKey][j]._childId.push(i);
+            passedObj[passedKey][j]._childId.push(i); //}
 
-            passedObj[passedKey][j]._addedToDom = true;
           }
         }
       }
     }
+
+    var tempLevel = 1;
+    var remaining = 1;
+    addArray.forEach(function (i) {
+      if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
+        passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
+      } else {
+        document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._parent)).prepend(passedObj[passedKey][i].domObj.newLayer);
+      }
+    });
+
+    for (var i = 0; i < passedObj[passedKey].length; i++) {
+      if (passedObj[passedKey][i].hasOwnProperty('domObj')) {
+        delete passedObj[passedKey][i].domObj;
+      }
+    } //}
+
 
     for (var i = 0; i < passedObj.layers.length; i++) {
       passedObj[passedKey][i]._inPoint = -1;
@@ -3339,7 +3385,10 @@
         }
 
         if (tempRef >= 0) {
-          animation[animationId].assets[tempRef] = getLayers(elementId, animationId, newGroup, animation[animationId].assets[tempRef], 'layers', depth);
+          var tempDepth = depth;
+          animation[animationId].assets[tempRef] = getLayers(elementId, animationId, newGroup, animation[animationId].assets[tempRef], 'layers', depth); //animation[animationId].depth--;
+
+          depth = tempDepth;
         }
       }
 
@@ -3471,118 +3520,119 @@
    */
 
   function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
-    animation[animationId]._loaded = false;
+    animation[animationId]._loaded = false; //try {
 
-    try {
-      animation[animationId].depth = 0;
-      animation[animationId].shapeCount = 0;
-      animation[animationId].layerCount = 0;
-      animation[animationId]._removed = false;
-      animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
-      animation[animationId]._frameTime = 1 / animation[animationId].fr * 1000;
-      animation[animationId]._currentFrame = -1;
-      animation[animationId]._lastTime = Date.now();
-      animation[animationId]._autoplay = autoplay;
-      animation[animationId]._loop = loop;
-      animation[animationId]._customName = customName;
-      animation[animationId]._paused = false;
-      animation[animationId]._maxWidth = 0;
-      animation[animationId]._maxHeight = 0;
-      animation[animationId]._skewW = 0;
-      animation[animationId]._skewH = 0;
-      animation[animationId]._currScale = 1;
-      animation[animationId]._lastFrame = 0; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
-      //animation[animationId]._timeout = 0;
+    animation[animationId].depth = 0;
+    animation[animationId].shapeCount = 0;
+    animation[animationId].layerCount = 0;
+    animation[animationId]._removed = false;
+    animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
+    animation[animationId]._frameTime = 1 / animation[animationId].fr * 1000;
+    animation[animationId]._currentFrame = -1;
+    animation[animationId]._lastTime = Date.now();
+    animation[animationId]._autoplay = autoplay;
+    animation[animationId]._loop = loop;
+    animation[animationId]._customName = customName;
+    animation[animationId]._paused = false;
+    animation[animationId]._maxWidth = 0;
+    animation[animationId]._maxHeight = 0;
+    animation[animationId]._skewW = 0;
+    animation[animationId]._skewH = 0;
+    animation[animationId]._currScale = 1;
+    animation[animationId]._lastFrame = 0; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
+    //animation[animationId]._timeout = 0;
 
-      if (smallestFrameTime > animation[animationId]._frameTime) {
-        smallestFrameTime = animation[animationId]._frameTime;
-      } //for debugging
-
-
-      animation[animationId]._debugTimeElapsed = 0;
-      animation[animationId]._debugContainer = ''; //////
-      //elementObj.style.width = animation[animationId].w;
-      //elementObj.style.height = animation[animationId].h;
-      //elementObj.setAttribute('width', animation[animationId].w);
-      //elementObj.setAttribute('height', animation[animationId].h);
-
-      var newSVG = document.createElementNS(xmlns, 'svg');
-      newSVG.setAttribute('xmlns', xmlns); // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
-      // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
-
-      newSVG.setAttributeNS(null, 'viewBox', "0 0 ".concat(animation[animationId].w, " ").concat(animation[animationId].h));
-      newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
-      newSVG.style.width = '100%';
-      newSVG.style.height = '100%';
-      newSVG.setAttributeNS(null, 'id', "_svg".concat(animationId));
-      elementObj.prepend(newSVG);
-      animation[animationId].defs = document.createElementNS(xmlns, 'defs');
-      animation[animationId].defs.setAttributeNS(null, 'id', "_defs".concat(animationId));
-      animation[animationId].gradientCount = 0;
-      animation[animationId].maskCount = 0;
-      newSVG.prepend(animation[animationId].defs);
-      var newLayer = document.createElementNS(xmlns, 'g');
-      newLayer.setAttributeNS(null, 'id', "_lanim".concat(animationId));
-      newSVG.append(newLayer);
-      var newCompute = document.createElementNS(xmlns, 'g');
-      newCompute.setAttributeNS(null, 'id', "_compute".concat(animationId));
-      newCompute.style.display = 'none';
-      newLayer.prepend(newCompute);
-      animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 1).fill(null).map(function () {
-        return {
-          _transform: []
-        };
-      });
-      animation[animationId]._instated = {};
-      animation[animationId]._refObj = [];
-      animation[animationId]._objSize = {};
-      var clipPath = document.createElementNS(xmlns, 'clipPath');
-      clipPath.setAttributeNS(null, 'id', "_clip".concat(animationId));
-      animation[animationId].defs.prepend(clipPath);
-      var clipPathRect = document.createElementNS(xmlns, 'rect');
-      clipPathRect.setAttribute('x', 0);
-      clipPathRect.setAttribute('y', 0);
-      clipPathRect.setAttribute('width', animation[animationId].w);
-      clipPathRect.setAttribute('height', animation[animationId].h);
-      clipPath.append(clipPathRect);
-      animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 0);
-
-      if (animation[animationId]._maxWidth > 0 || animation[animationId]._maxHeight > 0) {
-        var scaleW = animation[animationId].w / animation[animationId]._maxWidth;
-        var scaleH = animation[animationId].h / animation[animationId]._maxHeight; //animation[animationId]._skewW = animation[animationId]
-        //clipPathRect.setAttribute('x', 0);
-        //clipPathRect.setAttribute('y', 0);
-        //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
-        //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
-
-        if (scaleW > scaleH) {
-          animation[animationId]._currScale = scaleW;
-        } else {
-          animation[animationId]._currScale = scaleH;
-        } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
-        //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+    if (smallestFrameTime > animation[animationId]._frameTime) {
+      smallestFrameTime = animation[animationId]._frameTime;
+    } //for debugging
 
 
-        scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
-      }
+    animation[animationId]._debugTimeElapsed = 0;
+    animation[animationId]._debugContainer = ''; //////
+    //elementObj.style.width = animation[animationId].w;
+    //elementObj.style.height = animation[animationId].h;
+    //elementObj.setAttribute('width', animation[animationId].w);
+    //elementObj.setAttribute('height', animation[animationId].h);
 
-      newLayer.setAttributeNS(null, 'clip-path', "url(#_clip".concat(animationId, ")"));
-      animation[animationId]._buildDone = true;
-      animationLoading -= 1;
-      animation[animationId]._loaded = true;
+    var newSVG = document.createElementNS(xmlns, 'svg');
+    newSVG.setAttribute('xmlns', xmlns); // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
+    // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
 
-      if (!animation[animationId]._autoplay) {
-        goToAndStop(1, '', animation[animationId]._elementId);
+    newSVG.setAttributeNS(null, 'viewBox', "0 0 ".concat(animation[animationId].w, " ").concat(animation[animationId].h));
+    newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
+    newSVG.style.width = '100%';
+    newSVG.style.height = '100%';
+    newSVG.setAttributeNS(null, 'id', "_svg".concat(animationId));
+    elementObj.prepend(newSVG);
+    animation[animationId].defs = document.createElementNS(xmlns, 'defs');
+    animation[animationId].defs.setAttributeNS(null, 'id', "_defs".concat(animationId));
+    animation[animationId].gradientCount = 0;
+    animation[animationId].maskCount = 0;
+    newSVG.prepend(animation[animationId].defs);
+    var newLayer = document.createElementNS(xmlns, 'g');
+    newLayer.setAttributeNS(null, 'id', "_lanim".concat(animationId));
+    newSVG.append(newLayer);
+    var newCompute = document.createElementNS(xmlns, 'g');
+    newCompute.setAttributeNS(null, 'id', "_compute".concat(animationId));
+    newCompute.style.display = 'none';
+    newLayer.prepend(newCompute);
+    animation[animationId]._scene = new Array(animation[animationId]._totalFrames + 10).fill(null).map(function () {
+      return {
+        _transform: []
+      };
+    });
+    animation[animationId]._instated = {};
+    animation[animationId]._refObj = [];
+    animation[animationId]._objSize = {};
+    var clipPath = document.createElementNS(xmlns, 'clipPath');
+    clipPath.setAttributeNS(null, 'id', "_clip".concat(animationId));
+    animation[animationId].defs.prepend(clipPath);
+    var clipPathRect = document.createElementNS(xmlns, 'rect');
+    clipPathRect.setAttribute('x', 0);
+    clipPathRect.setAttribute('y', 0);
+    clipPathRect.setAttribute('width', animation[animationId].w);
+    clipPathRect.setAttribute('height', animation[animationId].h);
+    clipPath.append(clipPathRect);
+    animation[animationId] = getLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 0);
+
+    if (animation[animationId]._maxWidth > 0 || animation[animationId]._maxHeight > 0) {
+      var scaleW = animation[animationId].w / animation[animationId]._maxWidth;
+      var scaleH = animation[animationId].h / animation[animationId]._maxHeight; //animation[animationId]._skewW = animation[animationId]
+      //clipPathRect.setAttribute('x', 0);
+      //clipPathRect.setAttribute('y', 0);
+      //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
+      //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
+
+      if (scaleW > scaleH) {
+        animation[animationId]._currScale = scaleW;
       } else {
-        loadFrame(animationId, 1);
-      }
-    } catch (e) {
-      animationCount = animationCount - 1;
-      elementObj.style.height = 0;
-      elementObj.style.width = 0;
-      elementObj.innerHTML = "";
-      animation.splice(animationId, 1);
+        animation[animationId]._currScale = scaleH;
+      } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
+      //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+
+
+      scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
     }
+
+    newLayer.setAttributeNS(null, 'clip-path', "url(#_clip".concat(animationId, ")"));
+    animation[animationId]._buildDone = true;
+    animationLoading -= 1;
+    animation[animationId]._loaded = true;
+
+    if (!animation[animationId]._autoplay) {
+      goToAndStop(1, '', animation[animationId]._elementId);
+    } else {
+      loadFrame(animationId, 1);
+    }
+    /*} catch (e) {
+    console.error(`Failed to load animation.${e}`);
+    animationCount = animationCount - 1;
+    elementObj.style.height = 0;
+    elementObj.style.width = 0;
+    elementObj.innerHTML = "";
+    animation.splice(animationId, 1);
+    }*/
+
   }
   /**
    * Load a Lottie JSON file from a URL and then pass to buildGraph().
@@ -3828,6 +3878,7 @@
   exports.extrapolateOffsetKeyframe = extrapolateOffsetKeyframe;
   exports.extrapolatePathPosition = extrapolatePathPosition;
   exports.extrapolateValueKeyframe = extrapolateValueKeyframe;
+  exports.findChildren = findChildren;
   exports.findExistingTransform = findExistingTransform;
   exports.getColorString = getColorString;
   exports.getEmptyFillTransform = getEmptyFillTransform;
