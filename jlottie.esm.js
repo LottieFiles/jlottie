@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.2
+ * @lottiefiles/jlottie v1.0.3
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -204,16 +204,22 @@ function loadFrame(i, _currentFrame) {
               if (animation[i]._scene[m]._transform[n].isTween) {
                 currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
               }
-              //if (animation[i]._scene[m]._transform[n].combined.length > 0) {
+              if (animation[i]._scene[m]._transform[n].combined.length > 0) {
                 currentObj.setAttribute(
                   'transform',
                   animation[i]._scene[m]._transform[n].combined,
                 );
-              //}
+              }
               if (animation[i]._scene[m]._transform[n].fillSet) {
                 currentObj.setAttribute(
                   'fill',
                   animation[i]._scene[m]._transform[n].fill,
+                );
+              }
+              if (animation[i]._scene[m]._transform[n].strokeWidth > -1) {
+                currentObj.setAttribute(
+                  'stroke-width',
+                  animation[i]._scene[m]._transform[n].strokeWidth,
                 );
               }
               currentObjOther.setAttribute(
@@ -292,16 +298,22 @@ function lottiemate() {
               if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
                 currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
               }
-              //if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
                 currentObj.setAttribute(
                   'transform',
                   animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
                 );
-              //}
+              }
               if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
                 currentObj.setAttribute(
                   'fill',
                   animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
+                );
+              }
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
+                currentObj.setAttribute(
+                  'stroke-width',
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
                 );
               }
               currentObjOther.setAttribute(
@@ -385,6 +397,10 @@ function getEmptyTransform() {
   transforms.isLayer = true;
   transforms.stageObj = '';
   transforms.isSet = false;
+
+  // related to strokes
+  transforms.strokeWidth = -1;
+
   return transforms;
 }
 
@@ -1136,6 +1152,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) 
     }
     return shapeObj;
   }
+
   var dataString = `M${shapeObj.ks.k.v[0][0]},${shapeObj.ks.k.v[0][1]}`;
   for (var i = 1; i < shapeObj.ks.k.v.length; i++) {
     dataString = `${dataString} C${shapeObj.ks.k.v[i - 1][0] + shapeObj.ks.k.o[i - 1][0]},${
@@ -1371,7 +1388,7 @@ const ljEnum = {
  * @param {integer} miterLimit The miter limit parameter.
  * @returns {JSON} strokeString An object that lists all the parameters needed for stroking.
  */
-function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
+function getStrokeString(shapeObj, animationId, depth, shapeGroup) {
   const strokeString = {
     color: '',
     opacity: 1,
@@ -1380,13 +1397,45 @@ function getStrokeString(color, opacity, width, lineCap, lineJoin, miterLimit) {
     lineJoin: 'round',
     miterLimit: 0,
   };
-  strokeString.color = `rgb(${color.k[0] * 255},${color.k[1] * 255},${color.k[2] * 255})`;
-  strokeString.opacity = opacity.k / 100;
-  strokeString.width = width.k;
-  strokeString.lineCap = lcEnum[lineCap];
-  strokeString.lineJoin = lcEnum[lineJoin];
-  if (lineJoin == 1) {
-    strokeString.miterLimit = lineJoin;
+
+  strokeString.color = `rgb(${shapeObj.c.k[0] * 255},${shapeObj.c.k[1] * 255},${shapeObj.c.k[2] * 255})`;
+  strokeString.opacity = shapeObj.o.k / 100;
+  if (shapeObj.w.k.length > 1 && shapeObj.w.k[0].hasOwnProperty('s')) {
+    let totalK;
+    shapeObj = extrapolateOffsetKeyframe(shapeObj, 'w', false, animationId, -1, shapeObj, depth);
+    if (shapeObj.w.k[shapeObj.w.k.length - 1].hasOwnProperty('s')) {
+      totalK = shapeObj.w.k.length;
+    } else {
+      totalK = shapeObj.w.k.length - 1;
+    }
+    for (let sCount = 0; sCount < shapeGroup.length; sCount++) {
+      if (shapeGroup[sCount]._isShape) {
+        for (let kCount = 0; kCount < shapeObj.w.k.length; kCount++) {
+          let transforms = getEmptyTransform();
+          transforms.isLayer = false;
+          transforms.isTween = false;
+          transforms.refObj = `${animationId}_shape${shapeGroup[sCount]._shape}`;
+          transforms.refObjOther = `${animationId}_shape${shapeGroup[sCount]._shape}`;
+          panda.log(transforms.refObj);
+          transforms.refObjSet = true;
+
+          transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
+          transforms.strokeWidth = shapeObj.w.k[kCount].s;
+          if (shapeObj.w.k[kCount].t > animation[animationId]._totalFrames || shapeObj.w.k[kCount].t < 0) {
+            break;
+          }
+          animation[animationId]._scene[parseInt(shapeObj.w.k[kCount].t)]._transform.push(transforms);
+        }
+      }
+    }
+    strokeString.width = shapeObj.w.k[0].s;
+  } else {
+    strokeString.width = shapeObj.w.k;
+  }
+  strokeString.lineCap = lcEnum[shapeObj.lc];
+  strokeString.lineJoin = lcEnum[shapeObj.lj];
+  if (strokeString.lineJoin == 1) {
+    strokeString.miterLimit = strokeString.lineJoin;
   }
   return strokeString;
 }
@@ -1525,13 +1574,19 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
       if (layerObj.it[i].ty == 'st') { // Stroke shape
         if (layerObj.it[i].c.k.length > 1) {
           currentStroke = getStrokeString(
+            layerObj.it[i],
+            animationId,
+            depth,
+            layerObj.it,
+          );
+          /*currentStroke = getStrokeString(
             layerObj.it[i].c,
             layerObj.it[i].o,
             layerObj.it[i].w,
             layerObj.it[i].lc,
             layerObj.it[i].lj,
             layerObj.it[i].ml,
-          );
+          );*/
           stroked = true;
         }
       }
@@ -1621,12 +1676,10 @@ function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMaske
       if (layerObj.shapes[i].ty == 'st') { // Stroke shape
         if (layerObj.shapes[i].c.k.length > 1) {
           currentStroke = getStrokeString(
-            layerObj.shapes[i].c,
-            layerObj.shapes[i].o,
-            layerObj.shapes[i].w,
-            layerObj.shapes[i].lc,
-            layerObj.shapes[i].lj,
-            layerObj.shapes[i].ml,
+            layerObj.shapes[i],
+            animationId,
+            depth,
+            layerObj.shapes,
           );
           stroked = true;
         }
@@ -1749,6 +1802,9 @@ function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, 
  * @returns 
  */
 function getLayers(elementId, animationId, elementObj, passedObj, passedKey, depth) {
+  if (passedObj[passedKey] === undefined || passedObj[passedKey].length < 1) {
+    return;
+  }
   animation[animationId].depth++;
   depth = animation[animationId].depth;
   let newLayer;
@@ -1892,11 +1948,11 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
 
     addArray.forEach(i => {
         if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
-          passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
+            passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
         } else {
-          document
-            .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
-            .prepend(passedObj[passedKey][i].domObj.newLayer);
+            document
+              .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+              .prepend(passedObj[passedKey][i].domObj.newLayer);
         }
       }
     );
@@ -2143,7 +2199,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
  */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2256,14 +2312,13 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
-  /*} catch (e) {
-		console.error(`Failed to load animation.${e}`);
+  } catch (e) {
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}*/
+	}
 }
 
 /**
