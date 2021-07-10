@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.3
+ * @lottiefiles/jlottie v1.0.6
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -2595,7 +2595,10 @@
             break;
           }
 
-          animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
+          animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms); //if (kCount == 0) {
+          //  animation[animationId]._scene[1]._transform.push(transforms);
+          //}
+
         }
       }
 
@@ -3157,7 +3160,7 @@
    * @returns 
    */
 
-  function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray) {
+  function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray, passedLevel) {
     var newGroup;
     var newTranslateGroup;
     var newLayer;
@@ -3174,10 +3177,13 @@
           }
         }
 
-        addArray.push(layerId);
+        addArray.push({
+          "item": layerId,
+          "level": passedLevel
+        });
 
         if (!passedObj[passedKey][j]._addedToDom) {
-          resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray);
+          resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray, passedLevel + 1);
         }
 
         animation[animationId].layerCount++;
@@ -3314,6 +3320,7 @@
     }
 
     var addArray = [];
+    var currentLevel = 1;
 
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       passedObj.layerCount = passedObj[passedKey][i]._layer;
@@ -3331,10 +3338,13 @@
             }
 
             passedObj.layerCount++;
-            addArray.push(i);
+            addArray.push({
+              "item": i,
+              "level": currentLevel
+            });
 
             if (!passedObj[passedKey][j]._addedToDom) {
-              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray);
+              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray, currentLevel + 1);
             }
 
             passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
@@ -3381,15 +3391,43 @@
       }
     }
 
+    var itemsThisLevel = 1;
     var tempLevel = 1;
-    var remaining = 1;
-    addArray.forEach(function (i) {
-      if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
-        passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
-      } else {
-        document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._parent)).prepend(passedObj[passedKey][i].domObj.newLayer);
+
+    while (itemsThisLevel > 0) {
+      itemsThisLevel = 0;
+      var tempArray = [];
+
+      for (var _j = 0; _j < addArray.length; _j++) {
+        if (addArray[_j].level == tempLevel) {
+          tempArray.push(addArray[_j].item);
+          itemsThisLevel++;
+        }
       }
-    });
+
+      tempLevel++;
+      tempArray.sort(function (a, b) {
+        return a - b;
+      });
+
+      if (itemsThisLevel > 0) {
+        tempArray.forEach(function (i) {
+          if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
+            if (passedObj[passedKey][i].ind >= passedObj[passedKey][passedObj[passedKey][i]._parentIdx].ind) {
+              passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
+            } else {
+              passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.append(passedObj[passedKey][i].domObj.newLayer);
+            }
+          } else {
+            if (passedObj[passedKey][i].ind >= passedObj[passedKey][i]._parent) {
+              document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._parent)).prepend(passedObj[passedKey][i].domObj.newLayer);
+            } else {
+              document.getElementById("".concat(animationId, "_").concat(depth, "_layerTranslate").concat(passedObj[passedKey][i]._parent)).append(passedObj[passedKey][i].domObj.newLayer);
+            }
+          }
+        });
+      }
+    }
 
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       if (passedObj[passedKey][i].hasOwnProperty('domObj')) {

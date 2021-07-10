@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.3
+ * @lottiefiles/jlottie v1.0.6
  */
 'use strict';
 
@@ -1152,6 +1152,9 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) 
           break;
         }
         animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
+        //if (kCount == 0) {
+        //  animation[animationId]._scene[1]._transform.push(transforms);
+        //}
       }
     }
     return shapeObj;
@@ -1724,7 +1727,7 @@ function findChildren(passedObj) {
  * @param {integer} depth An integer that describes the depth of the current layer group (1 for no iterations).
  * @returns 
  */
-function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray) {
+function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, depth, level, addArray, passedLevel) {
   let newGroup;
   let newTranslateGroup;
   let newLayer;
@@ -1740,10 +1743,10 @@ function resolveParents(animationId, layerId, lastMaskId, passedObj, passedKey, 
           }
         }
       }
-      addArray.push(layerId);
+      addArray.push({"item": layerId, "level": passedLevel});
 
       if (!passedObj[passedKey][j]._addedToDom) {
-        resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray);
+        resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, level + 1, addArray, passedLevel + 1);
       }
       animation[animationId].layerCount++;
       passedObj[passedKey][layerId]._parent = passedObj[passedKey][j]._layer;
@@ -1880,6 +1883,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
     }
 
     let addArray = [];
+    let currentLevel = 1;
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       passedObj.layerCount = passedObj[passedKey][i]._layer;
       if (passedObj[passedKey][i].parent > 0) {
@@ -1894,10 +1898,10 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
               }
             }
             passedObj.layerCount++;
-            addArray.push(i);
+            addArray.push({"item": i, "level": currentLevel});
 
             if (!passedObj[passedKey][j]._addedToDom) {
-              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray);
+              resolveParents(animationId, j, lastMaskId, passedObj, passedKey, depth, 1, addArray, currentLevel + 1);
             }
             passedObj[passedKey][i]._parent = passedObj[passedKey][j]._layer;
             passedObj[passedKey][i]._parentIdx = j;
@@ -1947,19 +1951,43 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
       }
     }
 
+    let itemsThisLevel = 1;
     let tempLevel = 1;
-    let remaining = 1;
-
-    addArray.forEach(i => {
-        if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
-            passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
-        } else {
-            document
-              .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
-              .prepend(passedObj[passedKey][i].domObj.newLayer);
+    while (itemsThisLevel > 0) {
+      itemsThisLevel = 0;
+      let tempArray = [];
+      for (let j = 0; j < addArray.length; j++) {
+        if (addArray[j].level == tempLevel) {
+          tempArray.push(addArray[j].item);
+          itemsThisLevel++;
         }
       }
-    );
+      tempLevel++;
+      tempArray.sort(function(a, b){return a-b});
+
+      if (itemsThisLevel > 0) {
+        tempArray.forEach(i => {
+            if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
+              if (passedObj[passedKey][i].ind >= passedObj[passedKey][passedObj[passedKey][i]._parentIdx].ind) {
+                passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
+              } else {
+                passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.append(passedObj[passedKey][i].domObj.newLayer);
+              }
+            } else {
+              if (passedObj[passedKey][i].ind >= passedObj[passedKey][i]._parent) {
+                document
+                  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+                  .prepend(passedObj[passedKey][i].domObj.newLayer);
+              } else {
+                document
+                  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
+                  .append(passedObj[passedKey][i].domObj.newLayer);
+              }
+            }
+          }
+        );
+      }
+    }
 
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       if (passedObj[passedKey][i].hasOwnProperty('domObj')) {
