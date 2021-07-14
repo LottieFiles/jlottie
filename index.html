@@ -201,7 +201,6 @@
                                 mb-3
                                 md:mb-0
                             "
-                            value="https://assets7.lottiefiles.com/packages/lf20_5n3dhrjg.json"
                         />
                         <button
                             id="loadanim"
@@ -367,13 +366,59 @@
             </div>
         </div> -->
         <script>
-            function loadLottie() {
+            var sources = [];
+            sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
+            sources.push('https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json');
+            sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_fwykef3x.json');
+            sources.push('https://assets2.lottiefiles.com/packages/lf20_ogsbbjhs.json');
+            sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
+            sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
+            sources.push('https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_hewaysm0.json');
+            sources.push('https://assets7.lottiefiles.com/packages/lf20_90ZmDV.json');
+            sources.push('https://assets9.lottiefiles.com/packages/lf20_GsFUFN.json');
+            sources.push('https://assets6.lottiefiles.com/packages/lf20_6xfdtlzb.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_zeut0ijf.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_qbvfmu8h.json');
+
+            sources.push('https://assets5.lottiefiles.com/datafiles/FdtKCvUPkcgdZEvWnsUbSO4rP3pWUWgZ5rKnG0rF/chinese.json');
+            sources.push('https://assets5.lottiefiles.com/temp/lf20_W14Z1y.json');
+            sources.push('https://assets9.lottiefiles.com/packages/lf20_IwfCpp.json');
+            sources.push('https://assets9.lottiefiles.com/packages/lf20_tWzLYe.json');
+            sources.push('https://assets9.lottiefiles.com/packages/lf20_MpQq5N.json');
+
+            sources.push('https://assets8.lottiefiles.com/packages/lf20_p5gon8vd.json');
+            sources.push('https://assets1.lottiefiles.com/packages/lf20_hIjFaT.json');
+            sources.push('https://assets1.lottiefiles.com/private_files/lf30_7BT8qy.json');
+            sources.push('https://assets8.lottiefiles.com/private_files/lf30_T5tVEx.json');
+            sources.push('https://assets5.lottiefiles.com/private_files/lf30_AGoC3n.json');
+            sources.push('https://assets4.lottiefiles.com/packages/lf20_sE2Em1.json');
+            sources.push('https://assets10.lottiefiles.com/private_files/lf30_nruc9E.json');
+            sources.push('https://assets10.lottiefiles.com/packages/lf20_gc88Qf.json');
+            sources.push('https://assets3.lottiefiles.com/packages/lf20_QegQCG.json');
+            sources.push('https://assets6.lottiefiles.com/packages/lf20_ctKmtF.json');
+            sources.push('https://assets6.lottiefiles.com/packages/lf20_hbqhhR.json');
+            sources.push('https://assets7.lottiefiles.com/packages/lf20_Lybh7B/data.json');
+            sources.push('https://assets4.lottiefiles.com/packages/lf20_gs7Ofl.json');
+            sources.push('https://assets6.lottiefiles.com/temp/lf20_vS6iGX.json');
+            sources.push('https://assets1.lottiefiles.com/private_files/lf30_kzp6harb.json');
+
+            function loadLottie(doLoad) {
+                let pathToLoad;
+                if (doLoad === undefined || doLoad != 1) {
+                    pathToLoad = sources[Math.floor(Math.random() * sources.length)];
+                } else {
+                    pathToLoad = document.getElementById('lottieSrc').value;
+                }
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
                     autoplay: true,
-                    path: document.getElementById('lottieSrc').value,
+                    path: pathToLoad, //document.getElementById('lottieSrc').value,
                 });
+                document.getElementById('lottieSrc').value = pathToLoad;
             }
             // setTimeout(function () {
             //     jlottie.goToAndStop(2, '', 'jlottie-container');
@@ -385,7 +430,7 @@
             var btn = document.getElementById('loadanim');
             btn.addEventListener('click', (event) => {
                 jlottie.destroy('jlottie-container');
-                loadLottie();
+                loadLottie(1);
             });
 
             // var list_items = document.getElementsByClassName('jlottie-list-item');

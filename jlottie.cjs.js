@@ -146,16 +146,18 @@ function bezierCurve(
       }
     }
     if (addTransformation > -1 && refKey != 'ks') {
-      addGroupPositionTransform(
-        currentFrame,
-        newNodes[newNodes.length - 1].s,
-        isLayer,
-        animationId,
-        refKey,
-        addTransformation,
-        objectId,
-        depth,
-      );
+      if (newNodes[newNodes.length - 1].hasOwnProperty('s')) {
+        addGroupPositionTransform(
+          currentFrame,
+          newNodes[newNodes.length - 1].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
     }
   }
 
@@ -726,6 +728,7 @@ function extrapolateOffsetKeyframe(
   let gotI;
   let gotO;
 
+
   while (i < objLength - 1) {
     gotI = true;
     gotO = true;
@@ -733,22 +736,25 @@ function extrapolateOffsetKeyframe(
     if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('_comp')) {
     } else {
       if (addTransformation > -1) {
-        addGroupPositionTransform(
-          offsetKeyframeObj[refKey].k[i].t,
-          offsetKeyframeObj[refKey].k[i].s,
-          isLayer,
-          animationId,
-          refKey,
-          addTransformation,
-          objectId,
-          depth,
-        );
+        if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')) {
+          addGroupPositionTransform(
+            offsetKeyframeObj[refKey].k[i].t,
+            offsetKeyframeObj[refKey].k[i].s,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
       }
-      if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
+      /*if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
         p2 = offsetKeyframeObj[refKey].k[i].e;
       } else if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('s')) {
         p2 = offsetKeyframeObj[refKey].k[i + 1].s;
-      }
+      }*/
+      p2 = offsetKeyframeObj[refKey].k[i + 1].s;
 
       if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && refKey != 'ks' && addTransformation > -1) {
         if (offsetKeyframeObj[refKey].k[i + 1].i.x < 1) offsetKeyframeObj[refKey].k[i + 1].i.x = 0.0;
@@ -761,6 +767,25 @@ function extrapolateOffsetKeyframe(
 
       var returnedKeyframeObj;
       if (
+        offsetKeyframeObj[refKey].k[i].hasOwnProperty('e') &&
+        offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')
+      ) {
+        panda.log("found");
+        returnedKeyframeObj = bezierCurve(
+          offsetKeyframeObj[refKey].k[i].s,
+          offsetKeyframeObj[refKey].k[i].o,
+          offsetKeyframeObj[refKey].k[i].i,
+          offsetKeyframeObj[refKey].k[i].e,
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i + 1].t,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,      
+        );
+      } else if (
         offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') &&
         offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') &&
         gotI
@@ -872,16 +897,18 @@ function extrapolatePathPosition(
     }
 
     for (var i = 0; i < currentObj[refKey].k.length; i++) {
-      addGroupPositionTransform(
-        currentObj[refKey].k[i].t,
-        currentObj[refKey].k[i].s,
-        isLayer,
-        animationId,
-        refKey,
-        addTransformation,
-        objectId,
-        depth,
-      );
+      if (currentObj[refKey].k[i].hasOwnProperty('s')) {
+        addGroupPositionTransform(
+          currentObj[refKey].k[i].t,
+          currentObj[refKey].k[i].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
     }
 
     return currentObj;
@@ -900,16 +927,18 @@ function extrapolatePathPosition(
     }
 
     for (var i = 0; i < currentObj[refKey].k.length; i++) {
-      addGroupPositionTransform(
-        currentObj[refKey].k[i].t,
-        currentObj[refKey].k[i].s,
-        isLayer,
-        animationId,
-        refKey,
-        addTransformation,
-        objectId,
-        depth,
-      );
+      if (currentObj[refKey].k[i].hasOwnProperty('s')) {
+        addGroupPositionTransform(
+          currentObj[refKey].k[i].t,
+          currentObj[refKey].k[i].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
     }
 
     return currentObj;
@@ -945,15 +974,17 @@ function extrapolatePathPosition(
     }
 
     for (var i = 0; i < currentObj[refKey].k.length; i++) {
-      addGroupPositionTransform(
-        currentObj[refKey].k[i].t,
-        currentObj[refKey].k[i].s,
-        isLayer,
-        animationId,
-        refKey,
-        addTransformation,
-        objectId,
-      );
+      if (currentObj[refKey].k[i].hasOwnProperty('s')) {
+        addGroupPositionTransform(
+          currentObj[refKey].k[i].t,
+          currentObj[refKey].k[i].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+        );
+      }
     }
 
     return currentObj;
@@ -989,16 +1020,18 @@ function extrapolatePathPosition(
     }
 
     for (var i = 0; i < currentObj[refKey].k.length; i++) {
-      addGroupPositionTransform(
-        currentObj[refKey].k[i].t,
-        currentObj[refKey].k[i].s,
-        isLayer,
-        animationId,
-        refKey,
-        addTransformation,
-        objectId,
-        depth,
-      );
+      if (currentObj[refKey].k[i].hasOwnProperty('s')) {
+        addGroupPositionTransform(
+          currentObj[refKey].k[i].t,
+          currentObj[refKey].k[i].s,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      }
     }
 
     return currentObj;
@@ -1910,7 +1943,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
               passedObj[passedKey][i].domObj.newLayer = document.createElementNS(xmlns, 'g');
               passedObj[passedKey][i].domObj.newLayer.setAttribute('id', `${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`);
               passedObj[passedKey][i].domObj.newLayer.setAttribute('opacity', 1);
-
+      
               //document
               //  .getElementById(`${animationId}_${depth}_layerTranslate${passedObj[passedKey][i]._parent}`)
               //  .prepend(newLayer);
@@ -1964,11 +1997,27 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
       }
       tempLevel++;
       tempArray.sort(function(a, b){return a-b});
-
+      
+      /*
+      let tempHalf1 = [];
+      let tempHalf2 = [];
+      for (let i = 0; i < tempArray.length; i++) {
+        if (passedObj[passedKey][tempArray[i]].ind <= passedObj[passedKey][passedObj[passedKey][tempArray[i]]._parentIdx].ind) {
+          tempHalf1.push(tempArray[i]);
+        } else {
+          tempHalf2.push(tempArray[i]);
+        }
+      }
+      tempHalf2.sort(function(a, b){return b-a});
+      tempArray = [];
+      tempArray = tempArray.concat(tempHalf1, tempHalf2);
+      //tempArray.concat(tempHalf2);
+      */
+      
       if (itemsThisLevel > 0) {
         tempArray.forEach(i => {
             if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
-              if (passedObj[passedKey][i].ind >= passedObj[passedKey][passedObj[passedKey][i]._parentIdx].ind) {
+              if (passedObj[passedKey][i].ind > passedObj[passedKey][passedObj[passedKey][i]._parentIdx].ind) {
                 passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.prepend(passedObj[passedKey][i].domObj.newLayer);
               } else {
                 passedObj[passedKey][passedObj[passedKey][i]._parentIdx].domObj.newTranslateGroup.append(passedObj[passedKey][i].domObj.newLayer);
@@ -2231,7 +2280,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
  */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2344,13 +2393,14 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
-  } catch (e) {
+  /*} catch (e) {
+		console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		elementObj.style.height = 0;
 		elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 /**
