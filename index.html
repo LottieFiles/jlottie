@@ -88,7 +88,7 @@
                         "
                     >
 
-                    <li>Shapes (except, ellipse, polystar, repeater, trim paths)</li>
+                    <li>Shapes (except ellipse, polystar, repeater, trim paths)</li>
                     <li>Fills (except radial gradient)</li>
                     <li>Strokes (without opacity and dashes)</li>
                     <li>Transforms</li>
@@ -412,6 +412,7 @@
                 } else {
                     pathToLoad = document.getElementById('lottieSrc').value;
                 }
+                document.getElementById('jlottie-container').innerHTML = "";
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
@@ -432,6 +433,12 @@
                 jlottie.destroy('jlottie-container');
                 loadLottie(1);
             });
+
+            addEventListener("onLoadError", function (e) {
+                    document.getElementById('jlottie-container').innerHTML = "Error:<br />" + e.detail.error;
+                },
+                false,
+            );
 
             // var list_items = document.getElementsByClassName('jlottie-list-item');
 
