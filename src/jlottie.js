@@ -1,8 +1,8 @@
 const xmlns = 'http://www.w3.org/2000/svg';
 
-let animation = [];
-let frame = [];
-let animationCount = -1;
+export let animation = [];
+export let frame = [];
+export let animationCount = -1;
 const animationLength = 0;
 let animationLoading = 0;
 const frozen = false;
@@ -11,6 +11,9 @@ var panda = console;
 var smallestFrameTime = 0;
 
 /// ////////// BEZIER
+export function arcLength(p1, p2) {
+  return Math.sqrt(Math.pow(p2[0] - p1[0]) + Math.pow(p2[1] - p1[1]));
+}
 
 export function bezierCurve(
   p1,
@@ -25,6 +28,7 @@ export function bezierCurve(
   addTransformation,
   objectId,
   depth,
+  customFlag,
 ) {
   const newNodes = [];
 
@@ -138,7 +142,7 @@ export function bezierCurve(
         ]);
       }
     }
-    if (addTransformation > -1 && refKey != 'ks') {
+    if (addTransformation > -1 && refKey != 'ks' && customFlag != 'length') {
       if (newNodes[newNodes.length - 1].hasOwnProperty('s')) {
         addGroupPositionTransform(
           currentFrame,
@@ -782,7 +786,7 @@ export function extrapolateOffsetKeyframe(
           refKey,
           addTransformation,
           objectId,
-          depth,      
+          depth,
         );
       } else if (
         offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') &&
@@ -844,6 +848,7 @@ export function extrapolateOffsetKeyframe(
     }
     i += 1;
   }
+
   return offsetKeyframeObj;
 }
 
@@ -1543,6 +1548,119 @@ export function setShapeColors(shapesGroup, colorToSet, animationId, isGradient,
   }
 }
 
+
+function getTrim(shapeObj, animationId, depth, shapeGroup) {
+  if (shapeObj.e.k.length > 1 && shapeObj.e.k.hasOwnProperty('s')) {
+    shapeObj = extrapolateOffsetKeyframe(shapeObj, 'e', false, animationId, -1, shapeObj, depth);
+  }
+  if (shapeObj.s.k.length > 1 && shapeObj.s.k.hasOwnProperty('s')) {
+    shapeObj = extrapolateOffsetKeyframe(shapeObj, 's', false, animationId, -1, shapeObj, depth);
+  }
+
+  return shapeObj;
+}
+
+/*
+p1,
+c1,
+c2,
+p2,
+fromT,
+toT,
+isLayer,
+animationId,
+refKey,
+addTransformation,
+objectId,
+depth,
+customFlag,
+
+export function extrapolateOffsetKeyframe(
+  offsetKeyframeObj,
+  refKey,
+  isLayer,
+  animationId,
+  addTransformation,
+  objectId,
+  depth,
+  */
+
+function setTrim(shapesGroup, trimToSet, animationId, depth) {
+  for (let i = 0; i < shapesGroup.length; i++) {
+    if (shapesGroup[i]._isShape) {
+      if (shapesGroup[i].ty == 'gr') {
+        setTrim(shapesGroup[i].it, trimToSet, animationId);
+      } else {
+        let bezierLength = 0;
+        if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.length > 1) {
+          for (let j = 0; j < shapesGroup[i].ks.k.v.length; j++) {
+            returnedKeyframeObj = bezierCurve(
+              shapesGroup[i].ks.k.v[j],
+              shapesGroup[i].ks.k.o[j],
+              shapesGroup[i].ks.k.i[j + 1],
+              shapesGroup[i].ks.k.v[j + 1],
+              1,
+              20,
+              false,
+              animationId,
+              's',
+              -1,
+              shapesGroup[i].ks.k,
+              depth,
+              'length',
+            );
+            shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
+            bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
+          }
+          let minT;
+          let maxT;
+          if (trimToSet.s.k.length > 1) {
+            minT = trimToSet.s.k[0].t;
+          }
+          if (trimToSet.s.k[0].t < minT) {
+            minT = trimToSet.s.k[0].t;
+          }
+          if (trimToSet.e.k.length > 1) {
+            maxT = trimToSet.e.k[trimToSet.s.k.length - 1].t;
+          }
+          if (trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
+            maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
+          }
+
+          let sIndex = -1;
+          let eIndex = -1;
+
+          for (let t = minT; t <= maxT; t++) {
+            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && trimToSet.s.k[0].t >= t) {
+              sIndex++;
+            }
+            if (trimToSet.e.k.length > 1 && sIndex < trimToSet.e.k.length - 1 && trimToSet.e.k[0].t >= t) {
+              eIndex++;
+            }
+            if (trimToSet.s.k[sIndex].t == t) {
+
+            }
+            if (trimToSet.e.k[eIndex].t == t) {
+
+            }
+          }
+
+        }
+      }
+    }
+  }
+
+
+
+    /*
+  let tempEnd = {length:{}};
+  let tempStart = {length:{}};
+  tempEnd.length = shapeObj.e;
+  tempStart.length = shapeObj.s;
+  tempEnd = extrapolateOffsetKeyframe(tempEnd, 'length', false, animationId, -1, tempEnd, depth);
+  */
+}
+
 /**
  * Iterate through the shapes in a shape group ('gr') object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
  * 
@@ -1558,7 +1676,9 @@ export function setShapeColors(shapesGroup, colorToSet, animationId, isGradient,
 export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
   let currentColor;
   let currentStroke;
+  let currentTrim;
   let stroked = false;
+  let trimmed = false;
   for (let i = 0; i < layerObj.it.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -1618,16 +1738,20 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
             depth,
             layerObj.it,
           );
-          /*currentStroke = getStrokeString(
-            layerObj.it[i].c,
-            layerObj.it[i].o,
-            layerObj.it[i].w,
-            layerObj.it[i].lc,
-            layerObj.it[i].lj,
-            layerObj.it[i].ml,
-          );*/
           stroked = true;
         }
+      }
+      if (layerObj.it[i].ty == 'tm') { // Stroke shape
+        //if (layerObj.it[i].c.k.length > 1) {
+          currentTrim = getTrim(
+            layerObj.it[i],
+            animationId,
+            depth,
+            layerObj.it,
+          );
+          layerObj.it[i] = currentTrim;
+          trimmed = true;
+        //}
       }
       if (layerObj.it[i].ty == 'gf') { // Gradient fill shape
         layerObj._isGradient = true;
@@ -1647,6 +1771,9 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
   if (stroked) {
     setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
+  if (trimmed) {
+    setTrim(layerObj.it, currentTrim, animationId); // Set the trim for this group of shapes.
+  }
   return layerObj;
 }
 
@@ -1665,7 +1792,9 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
 export function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
   let currentColor;
   let currentStroke;
+  let currentTrim;
   let stroked = false;
+  let trimmed = false;
   for (let i = 0; i < layerObj.shapes.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -1723,6 +1852,18 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
           stroked = true;
         }
       }
+      if (layerObj.shapes[i].ty == 'tm') { // Stroke shape
+        //if (layerObj.shapes[i].c.k.length > 1) {
+          currentTrim = getTrim(
+            layerObj.shapes[i],
+            animationId,
+            depth,
+            layerObj.shapes,
+          );
+          layerObj.shapes[i] = currentTrim;
+          trimmed = true;
+        //}
+      }
       if (layerObj.shapes[i].ty == 'gf') { // Gradient fill shape
         layerObj._isGradient = true;
         currentColor = createGradientDef(
@@ -1740,6 +1881,9 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
   setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
   if (stroked) {
     setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
+  }
+  if (trimmed) {
+    setTrim(layerObj.shapes, currentTrim, animationId); // Set the trim for this group of shapes.
   }
   return layerObj;
 }
@@ -2279,7 +2423,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
  */
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2392,14 +2536,15 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     } else {
       loadFrame(animationId, 1);
     }
-  /*} catch (e) {
-		console.error(`Failed to load animation.${e}`);
+  } catch (e) {
+		//console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
-		elementObj.style.height = 0;
-		elementObj.style.width = 0;
+		//elementObj.style.height = 0;
+		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-	}*/
+    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
+	}
 }
 
 /**
