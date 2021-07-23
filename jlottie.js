@@ -2760,7 +2760,7 @@
             dataString += ' Z';
           }
           */
-          var transforms = setDataString(animationId, shapeObj.ks.k[kCount].s[0], shapeObj._shape, shapeObj.ks.k[0].s[0].c, shapeObj.ks.k[kCount].t);
+          var _transforms = setDataString(animationId, shapeObj.ks.k[kCount].s[0], shapeObj._shape, shapeObj.ks.k[0].s[0].c, shapeObj.ks.k[kCount].t);
 
           if (kCount == 0) {
             var newShape = document.createElementNS(xmlns, 'path');
@@ -2776,10 +2776,11 @@
             break;
           }
 
-          exports.animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms); //if (kCount == 0) {
-          //  animation[animationId]._scene[1]._transform.push(transforms);
-          //}
+          exports.animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(_transforms);
 
+          if (kCount == 0) {
+            exports.animation[animationId]._scene[1]._transform.push(_transforms);
+          }
         }
       }
 
@@ -3066,21 +3067,22 @@
       for (var sCount = 0; sCount < shapeGroup.length; sCount++) {
         if (shapeGroup[sCount]._isShape) {
           for (var kCount = 0; kCount < shapeObj.w.k.length; kCount++) {
-            var transforms = getEmptyTransform();
-            transforms.isLayer = false;
-            transforms.isTween = false;
-            transforms.refObj = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
-            transforms.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape); //panda.log(transforms.refObj);
+            var _transforms2 = getEmptyTransform();
 
-            transforms.refObjSet = true;
-            transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
-            transforms.strokeWidth = shapeObj.w.k[kCount].s;
+            _transforms2.isLayer = false;
+            _transforms2.isTween = false;
+            _transforms2.refObj = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
+            _transforms2.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape); //panda.log(transforms.refObj);
+
+            _transforms2.refObjSet = true;
+            _transforms2 = findExistingTransform(_transforms2, animationId, shapeObj.w.k[kCount].t);
+            _transforms2.strokeWidth = shapeObj.w.k[kCount].s;
 
             if (shapeObj.w.k[kCount].t > exports.animation[animationId]._totalFrames || shapeObj.w.k[kCount].t < 0) {
               break;
             }
 
-            exports.animation[animationId]._scene[parseInt(shapeObj.w.k[kCount].t)]._transform.push(transforms);
+            exports.animation[animationId]._scene[parseInt(shapeObj.w.k[kCount].t)]._transform.push(_transforms2);
           }
         }
       }
@@ -3212,15 +3214,14 @@
   }
 
   function setTrim(shapesGroup, trimToSet, animationId, depth) {
-    panda.log("entered");
-
+    //panda.log("entered");
     for (var i = 0; i < shapesGroup.length; i++) {
       if (shapesGroup[i].ty == 'gr') {
-        panda.log("entering group");
+        //panda.log("entering group");
         setTrim(shapesGroup[i].it, trimToSet, animationId, depth);
       } else {
         if (shapesGroup[i]._isShape) {
-          panda.log("started");
+          //panda.log("started");
           var bezierLength = 0;
           var returnedKeyframeObj = {};
 
@@ -3233,8 +3234,8 @@
               bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
             }
 
-            var minT = void 0;
-            var maxT = void 0;
+            var minT = -1;
+            var maxT = -1;
 
             if (trimToSet.s.k.length > 1 && trimToSet.s.k.length > 1) {
               minT = trimToSet.s.k[0].t;
@@ -3252,19 +3253,28 @@
               maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
             }
 
+            if (minT == -1) {
+              if (minT == maxT) {
+                continue;
+              } else {
+                minT = 0;
+              }
+            }
+
+            panda.log("maxmin ", minT, maxT);
             var sIndex = 0;
             var eIndex = 0;
             var lastSL = -1;
             var lastEL = -1;
             var curSL = void 0;
             var curEL = void 0;
-            var startShapeIndex = -1;
-            var endShapeIndex = -1;
+            var startShapeIndex = 0;
+            var endShapeIndex = 0;
             var vList = [];
             var tDelta = void 0;
 
             for (var t = minT; t <= maxT; t++) {
-              var tempK = Object.assign({}, shapeGroup[i].ks.k);
+              var tempK = Object.assign({}, shapesGroup[i].ks.k);
 
               if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && trimToSet.s.k[0].t >= t) {
                 sIndex++;
@@ -3274,15 +3284,15 @@
                 eIndex++;
               }
 
-              var startSegment = void 0;
-              var endSegment = void 0;
+              var startSegment = [];
+              var endSegment = [];
               var sourceK = {
                 'i': [],
                 'o': [],
                 'v': []
               };
 
-              if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t) {
+              if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
                 curSL = trimToSet.s.k[sIndex].s[0];
                 tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
                 var tSeg = 1 / tDelta;
@@ -3299,7 +3309,7 @@
                 }
               }
 
-              if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t) {
+              if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
                 curEL = trimToSet.e.k[eIndex].s[0];
                 tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
 
@@ -3319,37 +3329,38 @@
                 }
               }
 
-              if (startShapeIndex > -1) {
+              if (trimToSet.s.k.length > 1) {
                 sourceK.i.push(tempK.i[startShapeIndex]);
                 sourceK.o.push(startSegment[1]);
                 sourceK.v.push(startSegment[0]);
               }
 
-              if (eIndex > 0 && eIndex - 1 - (sIndex + 1) >= 0) {
-                for (var _j3 = sIndex + 1; _j3 < eIndex; _j3++) {
+              if (endShapeIndex - startShapeIndex > 0) {
+                for (var _j3 = startShapeIndex + 1; _j3 < endShapeIndex; _j3++) {
                   sourceK.i.push(tempK.i[_j3]);
                   sourceK.o.push(tempK.o[_j3]);
                   sourceK.v.push(tempK.v[_j3]);
                 }
               }
 
-              if (endShapeIndex > -1) {
+              if (trimToSet.e.k.length > 1) {
                 sourceK.i.push(tempK.i[endShapeIndex]);
                 sourceK.o.push(endSegment[1]);
                 sourceK.v.push(endSegment[0]);
               }
 
-              var transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
-              panda.log("before adding");
+              if (sourceK.i.length > 1) {
+                transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
+                panda.log("before adding");
 
-              if (t > exports.animation[animationId]._totalFrames || t < 0) {
-                break;
+                if (t > exports.animation[animationId]._totalFrames || t < 0) {
+                  break;
+                }
+
+                panda.log("adding");
+
+                exports.animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
               }
-
-              panda.log("adding");
-
-              exports.animation[animationId]._scene[parseInt(t)]._transform.push(transforms); //shapeGroup[i]._shape
-
             }
           }
         }
