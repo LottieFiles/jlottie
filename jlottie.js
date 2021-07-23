@@ -3217,14 +3217,17 @@
     for (var i = 0; i < shapesGroup.length; i++) {
       if (shapesGroup[i].ty == 'gr') {
         panda.log("entering group");
-        setTrim(shapesGroup[i].it, trimToSet, animationId);
+        setTrim(shapesGroup[i].it, trimToSet, animationId, depth);
       } else {
         if (shapesGroup[i]._isShape) {
           panda.log("started");
           var bezierLength = 0;
+          var returnedKeyframeObj = {};
 
-          if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.length > 1) {
-            for (var j = 0; j < shapesGroup[i].ks.k.v.length; j++) {
+          if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
+            panda.log("preprocessing");
+
+            for (var j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
               returnedKeyframeObj = bezierCurve(shapesGroup[i].ks.k.v[j], shapesGroup[i].ks.k.o[j], shapesGroup[i].ks.k.i[j + 1], shapesGroup[i].ks.k.v[j + 1], 1, 20, false, animationId, 's', -1, shapesGroup[i].ks.k, depth, 'length');
               shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
               bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
@@ -3233,24 +3236,24 @@
             var minT = void 0;
             var maxT = void 0;
 
-            if (trimToSet.s.k.length > 1) {
+            if (trimToSet.s.k.length > 1 && trimToSet.s.k.length > 1) {
               minT = trimToSet.s.k[0].t;
             }
 
-            if (trimToSet.s.k[0].t < minT) {
+            if (trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
               minT = trimToSet.s.k[0].t;
             }
 
-            if (trimToSet.e.k.length > 1) {
-              maxT = trimToSet.e.k[trimToSet.s.k.length - 1].t;
-            }
-
-            if (trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
+            if (trimToSet.e.k.length > 1 && trimToSet.e.k.length > 1) {
               maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
             }
 
-            var sIndex = -1;
-            var eIndex = -1;
+            if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
+              maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
+            }
+
+            var sIndex = 0;
+            var eIndex = 0;
             var lastSL = -1;
             var lastEL = -1;
             var curSL = void 0;
@@ -3279,7 +3282,7 @@
                 'v': []
               };
 
-              if (trimToSet.s.k[sIndex].t == t) {
+              if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t) {
                 curSL = trimToSet.s.k[sIndex].s[0];
                 tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
                 var tSeg = 1 / tDelta;
@@ -3296,7 +3299,7 @@
                 }
               }
 
-              if (trimToSet.e.k[eIndex].t == t) {
+              if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t) {
                 curEL = trimToSet.e.k[eIndex].s[0];
                 tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
 
@@ -3322,7 +3325,7 @@
                 sourceK.v.push(startSegment[0]);
               }
 
-              if (eIndex - 1 - (sIndex + 1) >= 0) {
+              if (eIndex > 0 && eIndex - 1 - (sIndex + 1) >= 0) {
                 for (var _j3 = sIndex + 1; _j3 < eIndex; _j3++) {
                   sourceK.i.push(tempK.i[_j3]);
                   sourceK.o.push(tempK.o[_j3]);
