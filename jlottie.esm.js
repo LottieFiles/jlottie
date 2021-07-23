@@ -696,6 +696,24 @@ function addGroupPositionTransform(
   transforms.isSet = true;
   animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 
+  // Add this transformation head to the root frame if no previous transformations for this refObj exists
+  if (frame > 1) {
+    let foundPrevious = false;
+    for (let i = parseInt(frame) - 1; i > 0; i--) {
+      if (animation[animationId]._scene[i]._transform.refObj == transforms.refObj) {
+        if (animation[animationId]._scene[i]._transform.isTranslate) {
+          foundPrevious = true;
+          break;
+        }
+      }
+    }
+    if (! foundPrevious) {
+      /*for (let i = parseInt(frame) - 1; i > 0; i--) {
+        animation[animationId]._scene[i]._transform.push(transforms);
+      }*/
+    }
+  }
+
   lastRefObj = transforms.refObj;
 
   if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {
@@ -747,6 +765,19 @@ function extrapolateOffsetKeyframe(
             objectId,
             depth,
           );
+        } else {
+          if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
+            addGroupPositionTransform(
+              offsetKeyframeObj[refKey].k[i].t,
+              offsetKeyframeObj[refKey].k[i].e,
+              isLayer,
+              animationId,
+              refKey,
+              addTransformation,
+              objectId,
+              depth,
+            );
+          }  
         }
       }
       /*if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
@@ -770,7 +801,7 @@ function extrapolateOffsetKeyframe(
         offsetKeyframeObj[refKey].k[i].hasOwnProperty('e') &&
         offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')
       ) {
-        panda.log("found");
+        //panda.log("found");
         returnedKeyframeObj = bezierCurve(
           offsetKeyframeObj[refKey].k[i].s,
           offsetKeyframeObj[refKey].k[i].o,
@@ -897,7 +928,7 @@ function extrapolatePathPosition(
       }
     }
 
-    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    /*for (var i = 0; i < currentObj[refKey].k.length; i++) {
       if (currentObj[refKey].k[i].hasOwnProperty('s')) {
         addGroupPositionTransform(
           currentObj[refKey].k[i].t,
@@ -909,10 +940,23 @@ function extrapolatePathPosition(
           objectId,
           depth,
         );
+      } else {
+        if (currentObj[refKey].k[i].hasOwnProperty('e')) {
+          addGroupPositionTransform(
+            currentObj[refKey].k[i].t,
+            currentObj[refKey].k[i].e,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
       }
     }
 
-    return currentObj;
+    return currentObj;*/
   }
 
   if (!currentObj[refKey].y.k.isArray) {
@@ -927,7 +971,7 @@ function extrapolatePathPosition(
       }
     }
 
-    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    /*for (var i = 0; i < currentObj[refKey].k.length; i++) {
       if (currentObj[refKey].k[i].hasOwnProperty('s')) {
         addGroupPositionTransform(
           currentObj[refKey].k[i].t,
@@ -939,10 +983,23 @@ function extrapolatePathPosition(
           objectId,
           depth,
         );
+      } else {
+        if (currentObj[refKey].k[i].hasOwnProperty('e')) {
+          addGroupPositionTransform(
+            currentObj[refKey].k[i].t,
+            currentObj[refKey].k[i].e,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
       }
     }
 
-    return currentObj;
+    return currentObj;*/
   }
 
   if (currentObj[refKey].x.k.length > currentObj[refKey].y.k.length) {
@@ -974,7 +1031,7 @@ function extrapolatePathPosition(
       }
     }
 
-    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    /*for (var i = 0; i < currentObj[refKey].k.length; i++) {
       if (currentObj[refKey].k[i].hasOwnProperty('s')) {
         addGroupPositionTransform(
           currentObj[refKey].k[i].t,
@@ -985,10 +1042,23 @@ function extrapolatePathPosition(
           addTransformation,
           objectId,
         );
+      } else {
+        if (currentObj[refKey].k[i].hasOwnProperty('e')) {
+          addGroupPositionTransform(
+            currentObj[refKey].k[i].t,
+            currentObj[refKey].k[i].e,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
       }
     }
 
-    return currentObj;
+    return currentObj;*/
   }
 
   if (currentObj[refKey].x.k.length < currentObj[refKey].y.k.length) {
@@ -1020,7 +1090,7 @@ function extrapolatePathPosition(
       }
     }
 
-    for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    /*for (var i = 0; i < currentObj[refKey].k.length; i++) {
       if (currentObj[refKey].k[i].hasOwnProperty('s')) {
         addGroupPositionTransform(
           currentObj[refKey].k[i].t,
@@ -1032,10 +1102,64 @@ function extrapolatePathPosition(
           objectId,
           depth,
         );
+      } else {
+        if (currentObj[refKey].k[i].hasOwnProperty('e')) {
+          addGroupPositionTransform(
+            currentObj[refKey].k[i].t,
+            currentObj[refKey].k[i].e,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
       }
     }
 
-    return currentObj;
+    return currentObj;*/
+  }
+
+  for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    if (currentObj[refKey].k[i].hasOwnProperty('s')) {
+      addGroupPositionTransform(
+        currentObj[refKey].k[i].t,
+        currentObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+      );
+    } else {
+      if (currentObj[refKey].k[i].hasOwnProperty('e')) {
+        addGroupPositionTransform(
+          currentObj[refKey].k[i].t,
+          currentObj[refKey].k[i].e,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+        );
+      } else {
+        if (currentObj[refKey].k[i - 1].hasOwnProperty('e')) {
+          addGroupPositionTransform(
+            currentObj[refKey].k[i].t,
+            currentObj[refKey].k[i - 1].e,
+            isLayer,
+            animationId,
+            refKey,
+            addTransformation,
+            objectId,
+            depth,
+          );
+        }
+      }
+    }
   }
 
   return currentObj;
@@ -1128,6 +1252,46 @@ function prepShapeRcKeyframe(shapeObj, referrer, animationId, addTransformation,
   return shapeObj;
 }
 
+function prepDataString(sourceObject, closed) {
+  var dataString = `M${sourceObject.v[0][0]},${sourceObject.v[0][1]}`;
+  for (var i = 1; i < sourceObject.v.length; i++) {
+    dataString = `${dataString} C${
+      sourceObject.v[i - 1][0] + sourceObject.o[i - 1][0]
+    },${sourceObject.v[i - 1][1] + sourceObject.o[i - 1][1]} ${
+      sourceObject.v[i][0] + sourceObject.i[i][0]
+    },${sourceObject.v[i][1] + sourceObject.i[i][1]} ${
+      sourceObject.v[i][0]
+    },${sourceObject.v[i][1]}`;
+  }
+  if (closed) {
+    dataString = `${dataString} C${
+      sourceObject.v[sourceObject.v.length - 1][0] +
+      sourceObject.o[sourceObject.v.length - 1][0]
+    },${
+      sourceObject.v[sourceObject.v.length - 1][1] +
+      sourceObject.o[sourceObject.v.length - 1][1]
+    } ${sourceObject.v[0][0] + sourceObject.i[0][0]},${
+      sourceObject.v[0][1] + sourceObject.i[0][1]
+    } ${sourceObject.v[0][0]},${sourceObject.v[0][1]}`;
+    dataString += ' Z';
+  }
+
+  return dataString;
+}
+
+function setDataString(animationId, sourceObj, shapeId, pathClosed, frame) {
+  let transforms = getEmptyTransform();
+  transforms.isLayer = false;
+  transforms.isTween = true;
+  transforms.refObj = `${animationId}_shape${shapeId}`;
+  transforms.refObjOther = `${animationId}_shape${shapeId}`;
+  transforms.refObjSet = true;
+  transforms = findExistingTransform(transforms, animationId, frame);
+  transforms.dataString = prepDataString(sourceObj, pathClosed);
+
+  return transforms;
+}
+
 function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) {
   if (shapeObj.ks.k.hasOwnProperty('v')) {
   } else {
@@ -1141,6 +1305,7 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) 
         totalK = shapeObj.ks.k.length - 1;
       }
       for (let kCount = 0; kCount < totalK; kCount++) {
+        /*
         let transforms = getEmptyTransform();
         transforms.isLayer = false;
         transforms.isTween = true;
@@ -1170,8 +1335,9 @@ function prepShapeSh(shapeObj, referrer, animationId, addTransformation, depth) 
           } ${shapeObj.ks.k[kCount].s[0].v[0][0]},${shapeObj.ks.k[kCount].s[0].v[0][1]}`;
           dataString += ' Z';
         }
+        */
 
-        transforms.dataString = dataString;
+        let transforms = setDataString(animationId, shapeObj.ks.k[kCount].s[0], shapeObj._shape, shapeObj.ks.k[0].s[0].c, shapeObj.ks.k[kCount].t);
         if (kCount == 0) {
           var newShape = document.createElementNS(xmlns, 'path');
           newShape.setAttribute('fill', 'transparent');
@@ -1457,7 +1623,7 @@ function getStrokeString(shapeObj, animationId, depth, shapeGroup) {
           transforms.isTween = false;
           transforms.refObj = `${animationId}_shape${shapeGroup[sCount]._shape}`;
           transforms.refObjOther = `${animationId}_shape${shapeGroup[sCount]._shape}`;
-          panda.log(transforms.refObj);
+          //panda.log(transforms.refObj);
           transforms.refObjSet = true;
 
           transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
@@ -1582,12 +1748,42 @@ export function extrapolateOffsetKeyframe(
   depth,
   */
 
+
+function getSegment(p1, c1, c2, p2, t0, t1) {
+  let u0 = 1.0 - t0;
+  let u1 = 1.0 - t1;
+
+  let qxa = (p1[0] * u0 * u0) + (c1[0] * 2 * t0 * u0) + (c2[0] * t0 * t0);
+  let qxb = (p1[0] * u1 * u1) + (c1[0] * 2 * t1 * u1) + (c2[0] * t1 * t1);
+  let qxc = (c1[0] * u0 * u0) + (c2[0] * 2 * t0 * u0) + (p2[0] * t0 * t0);
+  let qxd = (c1[0] * u1 * u1) + (c2[0] * 2 * t1 * u1) + (p2[0] * t1 * t1);
+
+  let qya = (p1[1] * u0 * u0) + (c1[1] * 2 * t0 * u0) + (c2[1] * t0 * t0);
+  let qyb = (p1[1] * u1 * u1) + (c1[1] * 2 * t1 * u1) + (c2[1] * t1 * t1);
+  let qyc = (c1[1] * u0 * u0) + (c2[1] * 2 * t0 * u0) + (p2[1] * t0 * t0);
+  let qyd = (c1[1] * u1 * u1) + (c2[1] * 2 * t1 * u1) + (p2[1] * t1 * t1);
+
+  let segment = [];
+  segment.push( [(qxa * u0) + (qxc * t0), (qya * u0) + (qyc * t0)] );
+
+  segment.push( [(qxa * u1) + (qxc * t1), (qya * u1) + (qyc * t1)] );
+
+  segment.push( [(qxb * u0) + (qxd * t0), (qyb * u0) + (qyd * t0)] );
+
+  segment.push( [(qxb * u1) + (qxd * t1), (qyb * u1) + (qyd * t1)] );
+
+  return segment;
+}
+
 function setTrim(shapesGroup, trimToSet, animationId, depth) {
+  panda.log("entered");
   for (let i = 0; i < shapesGroup.length; i++) {
-    if (shapesGroup[i]._isShape) {
-      if (shapesGroup[i].ty == 'gr') {
-        setTrim(shapesGroup[i].it, trimToSet, animationId);
-      } else {
+    if (shapesGroup[i].ty == 'gr') {
+      panda.log("entering group");
+      setTrim(shapesGroup[i].it, trimToSet, animationId);
+  } else {
+      if (shapesGroup[i]._isShape) {
+        panda.log("started");
         let bezierLength = 0;
         if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.length > 1) {
           for (let j = 0; j < shapesGroup[i].ks.k.v.length; j++) {
@@ -1609,6 +1805,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
             bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
           }
+
           let minT;
           let maxT;
           if (trimToSet.s.k.length > 1) {
@@ -1626,20 +1823,87 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
           let sIndex = -1;
           let eIndex = -1;
-
+          let lastSL = -1;
+          let lastEL = -1;
+          let curSL;
+          let curEL;
+          let startShapeIndex = -1;
+          let endShapeIndex = -1;
+          let vList = [];
+          let tDelta;
           for (let t = minT; t <= maxT; t++) {
+            let tempK = Object.assign({}, shapeGroup[i].ks.k);
             if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && trimToSet.s.k[0].t >= t) {
               sIndex++;
             }
-            if (trimToSet.e.k.length > 1 && sIndex < trimToSet.e.k.length - 1 && trimToSet.e.k[0].t >= t) {
+            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 1 && trimToSet.e.k[0].t >= t) {
               eIndex++;
             }
+            let startSegment;
+            let endSegment;
+            let sourceK = {'i': [], 'o': [], 'v': []};
             if (trimToSet.s.k[sIndex].t == t) {
-
+              curSL = trimToSet.s.k[sIndex].s[0];
+              tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
+              let tSeg = 1 / tDelta;
+              for (let j = 0; j < tempK.v.length - 1; j++) {
+                if (curSL < tempK.v[j]._l) {
+                  startShapeIndex = j;
+                  let ratio = curlSL / tempK.v[j]._l;
+                  startSegment = getSegment(tempK.v[j], tempK.o[j], tempK.i[j + 1], tempK.v[j + 1], tSeg, 0.99);
+                  break;
+                } else {
+                  curSL = curSL - tempK.v[j]._l;
+                }
+              }
             }
+
             if (trimToSet.e.k[eIndex].t == t) {
-
+              curEL = trimToSet.e.k[eIndex].s[0];
+              tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
+              let tSeg = 1 / tDelta;
+              for (let j = tempK.v.length - 2; j > 0; j--) {
+                if (curEL < tempK.v[j]._l) {
+                  endShapeIndex = j;
+                  let ratio = curlEL / tempK.v[j]._l;
+                  endSegment = getSegment(tempK.v[j], tempK.o[j], tempK.i[j + 1], tempK.v[j + 1], 0.01, tSeg);
+                  break;
+                } else {
+                  curEL = curEL - tempK.v[j]._l;
+                }
+              }
             }
+
+            if (startShapeIndex > -1) {
+              sourceK.i.push(tempK.i[startShapeIndex]);
+              sourceK.o.push(startSegment[1]);
+              sourceK.v.push(startSegment[0]);
+            }
+
+            if ((eIndex - 1) - (sIndex + 1) >= 0) {
+              for (let j = sIndex + 1; j < eIndex; j ++) {
+                sourceK.i.push(tempK.i[j]);
+                sourceK.o.push(tempK.o[j]);
+                sourceK.v.push(tempK.v[j]);
+              }
+            }
+
+            if (endShapeIndex > -1) {
+              sourceK.i.push(tempK.i[endShapeIndex]);
+              sourceK.o.push(endSegment[1]);
+              sourceK.v.push(endSegment[0]);
+            }
+
+            let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
+
+            panda.log("before adding");
+            if (t > animation[animationId]._totalFrames || t < 0) {
+              break;
+            }
+            panda.log("adding");
+            animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
+    
+            //shapeGroup[i]._shape
           }
 
         }
@@ -1649,7 +1913,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
 
 
-    /*
+  /*
   let tempEnd = {length:{}};
   let tempStart = {length:{}};
   tempEnd.length = shapeObj.e;
@@ -2420,7 +2684,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
  */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2533,7 +2797,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
-  } catch (e) {
+  /*} catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		//elementObj.style.height = 0;
@@ -2541,7 +2805,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
     dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
-	}
+	}*/
 }
 
 /**
@@ -2566,11 +2830,18 @@ function getJson(
 ) {
   const http = new XMLHttpRequest();
   http.open('GET', src, true);
+  http.setRequestHeader('Access-Control-Allow-Origin', '*');
+  http.withCredentials = false;
   http.onreadystatechange = function () {
     if (http.readyState == 4 && http.status == 200) {
+      let received = http.responseText;
+      if (received.search(/(^("|'))|(("|')$)/g) > -1) {
+        received = received.replace(/(^("|'))|(("|')$)/g, "");
+        received = received.replace(/\\"/g, '"');
+      }
       animationCount += 1;
       const currentAnimation = animationCount;
-      animation[currentAnimation] = JSON.parse(http.responseText);
+      animation[currentAnimation] = JSON.parse(received);
       animation[currentAnimation]._elementId = elementId;
 
       if (_debugAnimation && typeof _debugContainer === 'object') {
@@ -2781,5 +3052,5 @@ function loadAnimation(obj) {
   }
 }
 
-export { addGroupPositionTransform, animation, animationCount, arcLength, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findChildren, findExistingTransform, frame, getColorString, getEmptyFillTransform, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, pause, play, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };
+export { addGroupPositionTransform, animation, animationCount, arcLength, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findChildren, findExistingTransform, frame, getColorString, getEmptyFillTransform, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, pause, play, prepDataString, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };
 //# sourceMappingURL=jlottie.esm.js.map
