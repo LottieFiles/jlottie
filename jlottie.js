@@ -1679,7 +1679,9 @@
   var smallestFrameTime = 0; /// ////////// BEZIER
 
   function arcLength(p1, p2) {
-    return Math.sqrt(Math.pow(p2[0] - p1[0]) + Math.pow(p2[1] - p1[1]));
+    var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
+    panda.log("result", result);
+    return result;
   }
   function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth, customFlag) {
     var newNodes = [];
@@ -2276,6 +2278,7 @@
 
     if (!transforms.isTranslate) {
       transforms.translate = "translate(".concat(transforms.paddingX, ",").concat(transforms.paddingY, ") ");
+      transforms.isTranslate = true;
     }
 
     if (refKey == 'o') {
@@ -2760,7 +2763,7 @@
             dataString += ' Z';
           }
           */
-          var _transforms = setDataString(animationId, shapeObj.ks.k[kCount].s[0], shapeObj._shape, shapeObj.ks.k[0].s[0].c, shapeObj.ks.k[kCount].t);
+          var transforms = setDataString(animationId, shapeObj.ks.k[kCount].s[0], shapeObj._shape, shapeObj.ks.k[0].s[0].c, shapeObj.ks.k[kCount].t);
 
           if (kCount == 0) {
             var newShape = document.createElementNS(xmlns, 'path');
@@ -2776,10 +2779,10 @@
             break;
           }
 
-          exports.animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(_transforms);
+          exports.animation[animationId]._scene[parseInt(shapeObj.ks.k[kCount].t)]._transform.push(transforms);
 
           if (kCount == 0) {
-            exports.animation[animationId]._scene[1]._transform.push(_transforms);
+            exports.animation[animationId]._scene[1]._transform.push(transforms);
           }
         }
       }
@@ -3067,22 +3070,21 @@
       for (var sCount = 0; sCount < shapeGroup.length; sCount++) {
         if (shapeGroup[sCount]._isShape) {
           for (var kCount = 0; kCount < shapeObj.w.k.length; kCount++) {
-            var _transforms2 = getEmptyTransform();
+            var transforms = getEmptyTransform();
+            transforms.isLayer = false;
+            transforms.isTween = false;
+            transforms.refObj = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
+            transforms.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape); //panda.log(transforms.refObj);
 
-            _transforms2.isLayer = false;
-            _transforms2.isTween = false;
-            _transforms2.refObj = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
-            _transforms2.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape); //panda.log(transforms.refObj);
-
-            _transforms2.refObjSet = true;
-            _transforms2 = findExistingTransform(_transforms2, animationId, shapeObj.w.k[kCount].t);
-            _transforms2.strokeWidth = shapeObj.w.k[kCount].s;
+            transforms.refObjSet = true;
+            transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
+            transforms.strokeWidth = shapeObj.w.k[kCount].s;
 
             if (shapeObj.w.k[kCount].t > exports.animation[animationId]._totalFrames || shapeObj.w.k[kCount].t < 0) {
               break;
             }
 
-            exports.animation[animationId]._scene[parseInt(shapeObj.w.k[kCount].t)]._transform.push(_transforms2);
+            exports.animation[animationId]._scene[parseInt(shapeObj.w.k[kCount].t)]._transform.push(transforms);
           }
         }
       }
@@ -3158,41 +3160,16 @@
   }
 
   function getTrim(shapeObj, animationId, depth, shapeGroup) {
-    if (shapeObj.e.k.length > 1 && shapeObj.e.k.hasOwnProperty('s')) {
+    if (shapeObj.e.k.length > 1 && shapeObj.e.k[0].hasOwnProperty('s')) {
       shapeObj = extrapolateOffsetKeyframe(shapeObj, 'e', false, animationId, -1, shapeObj, depth);
     }
 
-    if (shapeObj.s.k.length > 1 && shapeObj.s.k.hasOwnProperty('s')) {
+    if (shapeObj.s.k.length > 1 && shapeObj.s.k[0].hasOwnProperty('s')) {
       shapeObj = extrapolateOffsetKeyframe(shapeObj, 's', false, animationId, -1, shapeObj, depth);
     }
 
     return shapeObj;
   }
-  /*
-  p1,
-  c1,
-  c2,
-  p2,
-  fromT,
-  toT,
-  isLayer,
-  animationId,
-  refKey,
-  addTransformation,
-  objectId,
-  depth,
-  customFlag,
-
-  export function extrapolateOffsetKeyframe(
-    offsetKeyframeObj,
-    refKey,
-    isLayer,
-    animationId,
-    addTransformation,
-    objectId,
-    depth,
-    */
-
 
   function getSegment(p1, c1, c2, p2, t0, t1) {
     var u0 = 1.0 - t0;
@@ -3217,7 +3194,7 @@
     //panda.log("entered");
     for (var i = 0; i < shapesGroup.length; i++) {
       if (shapesGroup[i].ty == 'gr') {
-        //panda.log("entering group");
+        panda.log("entering group");
         setTrim(shapesGroup[i].it, trimToSet, animationId, depth);
       } else {
         if (shapesGroup[i]._isShape) {
@@ -3226,11 +3203,11 @@
           var returnedKeyframeObj = {};
 
           if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
-            panda.log("preprocessing");
-
+            //panda.log("preprocessing ", JSON.stringify(trimToSet));
             for (var j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
               returnedKeyframeObj = bezierCurve(shapesGroup[i].ks.k.v[j], shapesGroup[i].ks.k.o[j], shapesGroup[i].ks.k.i[j + 1], shapesGroup[i].ks.k.v[j + 1], 1, 20, false, animationId, 's', -1, shapesGroup[i].ks.k, depth, 'length');
               shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
+              panda.log("GOTL", returnedKeyframeObj[0].s, returnedKeyframeObj[1].s, shapesGroup[i].ks.k.v[j]._l);
               bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
             }
 
@@ -3264,23 +3241,20 @@
             panda.log("maxmin ", minT, maxT);
             var sIndex = 0;
             var eIndex = 0;
-            var lastSL = -1;
-            var lastEL = -1;
-            var curSL = void 0;
-            var curEL = void 0;
-            var startShapeIndex = 0;
-            var endShapeIndex = 0;
-            var vList = [];
-            var tDelta = void 0;
+            var tempK = Object.assign({}, shapesGroup[i].ks.k);
 
             for (var t = minT; t <= maxT; t++) {
-              var tempK = Object.assign({}, shapesGroup[i].ks.k);
+              var curSL = 0;
+              var curEL = 0;
+              var startShapeIndex = 0;
+              var endShapeIndex = 0;
+              var tDelta = 0;
 
-              if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && trimToSet.s.k[0].t >= t) {
+              if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length && trimToSet.s.k[0].t >= t) {
                 sIndex++;
               }
 
-              if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 1 && trimToSet.e.k[0].t >= t) {
+              if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length && trimToSet.e.k[0].t >= t) {
                 eIndex++;
               }
 
@@ -3297,45 +3271,59 @@
                 tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
                 var tSeg = 1 / tDelta;
 
-                for (var _j = 0; _j < tempK.v.length - 1; _j++) {
+                for (var _j = 0; _j < tempK.v.length; _j++) {
                   if (curSL < tempK.v[_j]._l) {
                     startShapeIndex = _j;
                     var ratio = curlSL / tempK.v[_j]._l;
                     startSegment = getSegment(tempK.v[_j], tempK.o[_j], tempK.i[_j + 1], tempK.v[_j + 1], tSeg, 0.99);
                     break;
                   } else {
-                    curSL = curSL - tempK.v[_j]._l;
+                    if (tempK.v[_j]._l === undefined) {} else {
+                      curSL = curSL - tempK.v[_j]._l;
+                    }
                   }
                 }
               }
 
               if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
+                panda.log("end encountered");
                 curEL = trimToSet.e.k[eIndex].s[0];
                 tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
 
                 var _tSeg = 1 / tDelta;
 
-                for (var _j2 = tempK.v.length - 2; _j2 > 0; _j2--) {
-                  if (curEL < tempK.v[_j2]._l) {
+                for (var _j2 = tempK.v.length - 1; _j2 > 0; _j2--) {
+                  panda.log("curlen ", tempK.v[_j2 - 1]._l);
+
+                  if (curEL < tempK.v[_j2 - 1]._l) {
                     endShapeIndex = _j2;
 
-                    var _ratio = curlEL / tempK.v[_j2]._l;
+                    var _ratio = curEL / tempK.v[_j2 - 1]._l;
 
-                    endSegment = getSegment(tempK.v[_j2], tempK.o[_j2], tempK.i[_j2 + 1], tempK.v[_j2 + 1], 0.01, _tSeg);
+                    endSegment = getSegment(tempK.v[_j2 - 1], tempK.o[_j2 - 1], tempK.i[_j2], tempK.v[_j2], 0.01, _tSeg);
+                    panda.log("endSegment", JSON.stringify(endSegment));
                     break;
                   } else {
-                    curEL = curEL - tempK.v[_j2]._l;
+                    curEL = curEL - tempK.v[_j2 - 1]._l;
                   }
                 }
               }
 
+              var startInc = false;
+              var middleInc = false;
+
               if (trimToSet.s.k.length > 1) {
+                startInc = true;
+                panda.log("__start");
                 sourceK.i.push(tempK.i[startShapeIndex]);
                 sourceK.o.push(startSegment[1]);
                 sourceK.v.push(startSegment[0]);
               }
 
-              if (endShapeIndex - startShapeIndex > 0) {
+              if (endShapeIndex - startShapeIndex > 0 && startInc) {
+                middleInc = true;
+                panda.log("__middle");
+
                 for (var _j3 = startShapeIndex + 1; _j3 < endShapeIndex; _j3++) {
                   sourceK.i.push(tempK.i[_j3]);
                   sourceK.o.push(tempK.o[_j3]);
@@ -3344,13 +3332,25 @@
               }
 
               if (trimToSet.e.k.length > 1) {
+                panda.log("__end", startShapeIndex, endShapeIndex, startInc, middleInc);
+
+                if (!startInc && !middleInc) {
+                  for (var _j4 = startShapeIndex; _j4 < endShapeIndex; _j4++) {
+                    sourceK.i.push(tempK.i[_j4]);
+                    sourceK.o.push(tempK.o[_j4]);
+                    sourceK.v.push(tempK.v[_j4]);
+                  }
+                }
+
                 sourceK.i.push(tempK.i[endShapeIndex]);
                 sourceK.o.push(endSegment[1]);
                 sourceK.v.push(endSegment[0]);
               }
 
-              if (sourceK.i.length > 1) {
-                transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
+              panda.log("sourceK", JSON.stringify(sourceK), t);
+
+              if (sourceK.v.length > 1) {
+                var transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
                 panda.log("before adding");
 
                 if (t > exports.animation[animationId]._totalFrames || t < 0) {
@@ -3469,7 +3469,9 @@
     }
 
     if (trimmed) {
-      setTrim(layerObj.it, currentTrim, animationId); // Set the trim for this group of shapes.
+      setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+
+      panda.log("DONE");
     }
 
     return layerObj;
@@ -3564,7 +3566,9 @@
     }
 
     if (trimmed) {
-      setTrim(layerObj.shapes, currentTrim, animationId); // Set the trim for this group of shapes.
+      setTrim(layerObj.shapes, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+
+      panda.log("DONE");
     }
 
     return layerObj;
@@ -3820,9 +3824,9 @@
       itemsThisLevel = 0;
       var tempArray = [];
 
-      for (var _j4 = 0; _j4 < addArray.length; _j4++) {
-        if (addArray[_j4].level == tempLevel) {
-          tempArray.push(addArray[_j4].item);
+      for (var _j5 = 0; _j5 < addArray.length; _j5++) {
+        if (addArray[_j5].level == tempLevel) {
+          tempArray.push(addArray[_j5].item);
           itemsThisLevel++;
         }
       }
@@ -4366,7 +4370,7 @@
     * @param {boolean} obj.autoplay Instructs jlottie to immediately play the Lottie after it is loaded.
     * @param {boolean} obj.loop Instructs jlottie to keep looping this animation.
     * @param {boolean} obj.debugAnimation Instructs jlottie to display debug information (currently limited to just FPS data).
-    * @param {boolean} obj.debugContainer A DOMElement in which the debug data will be displayed.
+    * @param {DOMElement} obj.debugContainer A DOMElement in which the debug data will be displayed.
     *
     */
 
