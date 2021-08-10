@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.8
+ * @lottiefiles/jlottie v1.0.9
  */
 'use strict';
 
@@ -286,7 +286,7 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount} }));
+          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
           exports.animation[i]._currentFrame = 0;
         }
       }
@@ -2826,7 +2826,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		exports.animation.splice(animationId, 1);
-    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
+    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 

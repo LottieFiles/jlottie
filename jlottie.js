@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.8
+ * @lottiefiles/jlottie v1.0.9
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1883,7 +1883,8 @@
             dispatchEvent(new CustomEvent("onLoopComplete", {
               bubbles: true,
               detail: {
-                "count": exports.animation[i]._loopCount
+                "count": exports.animation[i]._loopCount,
+                "animation": i
               }
             }));
             exports.animation[i]._currentFrame = 0;
@@ -4185,7 +4186,8 @@
       dispatchEvent(new CustomEvent("onLoadError", {
         bubbles: true,
         detail: {
-          "error": e
+          "error": e,
+          "animation": animationId
         }
       }));
     }

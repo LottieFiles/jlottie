@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.8
+ * @lottiefiles/jlottie v1.0.9
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -282,7 +282,7 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount} }));
+          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
           animation[i]._currentFrame = 0;
         }
       }
@@ -2822,7 +2822,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
+    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
