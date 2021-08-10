@@ -282,7 +282,7 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
+          animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
           animation[i]._currentFrame = 0;
         }
       }
@@ -2721,6 +2721,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._currScale = 1;
     animation[animationId]._lastFrame = 0;
     animation[animationId]._loopCount = 0;
+    animation[animationId]._renderObj = elementObj;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
@@ -2822,7 +2823,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
+    animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
@@ -2845,6 +2846,7 @@ function getJson(
   _loop,
   _debugAnimation,
   _debugContainer,
+  animationId
 ) {
   const http = new XMLHttpRequest();
   http.open('GET', src, true);
@@ -2857,8 +2859,9 @@ function getJson(
         received = received.replace(/(^("|'))|(("|')$)/g, "");
         received = received.replace(/\\"/g, '"');
       }
-      animationCount += 1;
-      const currentAnimation = animationCount;
+      //animationCount += 1;
+      //const currentAnimation = animationCount;
+      const currentAnimation = animationId;
       animation[currentAnimation] = JSON.parse(received);
       animation[currentAnimation]._elementId = elementId;
 
@@ -3047,9 +3050,12 @@ function loadAnimation(obj) {
     }
   }
 
+  animationCount += 1;
+  let currentAnimation = animationCount;
+  animation[currentAnimation] = {};
+  animation[currentAnimation]._loaded = false;
   if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
-    animationCount += 1;
-    const currentAnimation = animationCount;
+    //currentAnimation = animationCount;
     animation[currentAnimation] = JSON.parse(obj.animationData);
     animation[currentAnimation]._elementId = elementId;
     buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
@@ -3062,12 +3068,14 @@ function loadAnimation(obj) {
       loop,
       debugAnimation,
       debugContainer,
+      currentAnimation
     );
   }
   if (!playStarted) {
     playStarted = true;
     window.requestAnimationFrame(lottiemate);
   }
+  return animation[currentAnimation];
 }
 
 export { addGroupPositionTransform, animation, animationCount, arcLength, bezierCurve, buildGraph, createGradientDef, destroy, extrapolateOffsetKeyframe, extrapolatePathPosition, extrapolateValueKeyframe, findChildren, findExistingTransform, frame, getColorString, getEmptyFillTransform, getEmptyStageTransform, getEmptyTransform, getJson, getLayers, getPosition, getShapes, getShapesGr, getStrokeString, goToAndStop, loadAnimation, loadFrame, lottiemate, pause, play, prepDataString, prepShape, prepShapeEl, prepShapeElKeyframe, prepShapeRc, prepShapeRcKeyframe, prepShapeSh, prepShapeShKeyframe, prepShapeSr, prepShapeSrKeyframe, resolveParents, scaleLayers, setShapeColors, setShapeStrokes, stageSequence, stop };

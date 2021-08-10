@@ -1880,13 +1880,14 @@
             goToAndStop(exports.animation[i]._currentFrame, '', exports.animation[i]._elementId);
             continue; //return;
           } else {
-            dispatchEvent(new CustomEvent("onLoopComplete", {
+            exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {
               bubbles: true,
               detail: {
                 "count": exports.animation[i]._loopCount,
                 "animation": i
               }
             }));
+
             exports.animation[i]._currentFrame = 0;
           }
         } //setTimeout(function () {
@@ -4091,7 +4092,8 @@
       exports.animation[animationId]._skewH = 0;
       exports.animation[animationId]._currScale = 1;
       exports.animation[animationId]._lastFrame = 0;
-      exports.animation[animationId]._loopCount = 0; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
+      exports.animation[animationId]._loopCount = 0;
+      exports.animation[animationId]._renderObj = elementObj; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
       //animation[animationId]._timeout = 0;
 
       if (smallestFrameTime > exports.animation[animationId]._frameTime) {
@@ -4183,7 +4185,8 @@
 
       elementObj.innerHTML = "";
       exports.animation.splice(animationId, 1);
-      dispatchEvent(new CustomEvent("onLoadError", {
+
+      exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {
         bubbles: true,
         detail: {
           "error": e,
@@ -4204,7 +4207,7 @@
    * @param {DOMElement} _debugContainer The DOMElement in which debug information is to be displayed.
    */
 
-  function getJson(src, domElement, elementId, _autoplay, _loop, _debugAnimation, _debugContainer) {
+  function getJson(src, domElement, elementId, _autoplay, _loop, _debugAnimation, _debugContainer, animationId) {
     var http = new XMLHttpRequest();
     http.open('GET', src, true);
     http.setRequestHeader('Access-Control-Allow-Origin', '*');
@@ -4217,10 +4220,11 @@
         if (received.search(/(^("|'))|(("|')$)/g) > -1) {
           received = received.replace(/(^("|'))|(("|')$)/g, "");
           received = received.replace(/\\"/g, '"');
-        }
+        } //animationCount += 1;
+        //const currentAnimation = animationCount;
 
-        exports.animationCount += 1;
-        var currentAnimation = exports.animationCount;
+
+        var currentAnimation = animationId;
         exports.animation[currentAnimation] = JSON.parse(received);
         exports.animation[currentAnimation]._elementId = elementId;
 
@@ -4421,20 +4425,26 @@
       }
     }
 
+    exports.animationCount += 1;
+    var currentAnimation = exports.animationCount;
+    exports.animation[currentAnimation] = {};
+    exports.animation[currentAnimation]._loaded = false;
+
     if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
-      exports.animationCount += 1;
-      var currentAnimation = exports.animationCount;
+      //currentAnimation = animationCount;
       exports.animation[currentAnimation] = JSON.parse(obj.animationData);
       exports.animation[currentAnimation]._elementId = elementId;
       buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
     } else if (!(obj.path === undefined) && obj.path) {
-      getJson(obj.path, obj.container, obj.container.id, autoplay, loop, debugAnimation, debugContainer);
+      getJson(obj.path, obj.container, obj.container.id, autoplay, loop, debugAnimation, debugContainer, currentAnimation);
     }
 
     if (!playStarted) {
       playStarted = true;
       window.requestAnimationFrame(lottiemate);
     }
+
+    return exports.animation[currentAnimation];
   }
 
   exports.addGroupPositionTransform = addGroupPositionTransform;

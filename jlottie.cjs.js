@@ -286,7 +286,7 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
+          exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
           exports.animation[i]._currentFrame = 0;
         }
       }
@@ -2725,6 +2725,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     exports.animation[animationId]._currScale = 1;
     exports.animation[animationId]._lastFrame = 0;
     exports.animation[animationId]._loopCount = 0;
+    exports.animation[animationId]._renderObj = elementObj;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
@@ -2826,7 +2827,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		exports.animation.splice(animationId, 1);
-    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
+    exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
@@ -2849,6 +2850,7 @@ function getJson(
   _loop,
   _debugAnimation,
   _debugContainer,
+  animationId
 ) {
   const http = new XMLHttpRequest();
   http.open('GET', src, true);
@@ -2861,8 +2863,9 @@ function getJson(
         received = received.replace(/(^("|'))|(("|')$)/g, "");
         received = received.replace(/\\"/g, '"');
       }
-      exports.animationCount += 1;
-      const currentAnimation = exports.animationCount;
+      //animationCount += 1;
+      //const currentAnimation = animationCount;
+      const currentAnimation = animationId;
       exports.animation[currentAnimation] = JSON.parse(received);
       exports.animation[currentAnimation]._elementId = elementId;
 
@@ -3051,9 +3054,12 @@ function loadAnimation(obj) {
     }
   }
 
+  exports.animationCount += 1;
+  let currentAnimation = exports.animationCount;
+  exports.animation[currentAnimation] = {};
+  exports.animation[currentAnimation]._loaded = false;
   if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
-    exports.animationCount += 1;
-    const currentAnimation = exports.animationCount;
+    //currentAnimation = animationCount;
     exports.animation[currentAnimation] = JSON.parse(obj.animationData);
     exports.animation[currentAnimation]._elementId = elementId;
     buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
@@ -3066,12 +3072,14 @@ function loadAnimation(obj) {
       loop,
       debugAnimation,
       debugContainer,
+      currentAnimation
     );
   }
   if (!playStarted) {
     playStarted = true;
     window.requestAnimationFrame(lottiemate);
   }
+  return exports.animation[currentAnimation];
 }
 
 exports.addGroupPositionTransform = addGroupPositionTransform;
