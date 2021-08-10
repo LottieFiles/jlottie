@@ -272,6 +272,7 @@ export function lottiemate() {
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._loopCount++;
+        animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
         if (!animation[i]._loop) {
           animation[i]._currentFrame--;
           animation[i]._paused = true;
@@ -279,7 +280,6 @@ export function lottiemate() {
           continue;   
           //return;
         } else {
-          animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
           animation[i]._currentFrame = 0;
         }
       }
