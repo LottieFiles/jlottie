@@ -411,6 +411,7 @@
             sources.push('https://assets5.lottiefiles.com/packages/lf20_yinL5S.json'); 
             sources.push('https://assets6.lottiefiles.com/packages/lf20_evz3Cm.json');
             
+            let janim;
             function loadLottie(doLoad) {
                 let pathToLoad;
                 if (doLoad === undefined || doLoad != 1) {
@@ -419,7 +420,7 @@
                     pathToLoad = document.getElementById('lottieSrc').value;
                 }
                 document.getElementById('jlottie-container').innerHTML = "";
-                jlottie.loadAnimation({
+                janim = jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
                     autoplay: true,
@@ -440,12 +441,17 @@
                 loadLottie(1);
             });
 
-            addEventListener("onLoadError", function (e) {
+            document.getElementById('jlottie-container').addEventListener("onLoadError", function (e) {
                     document.getElementById('jlottie-container').innerHTML = "Error:<br />" + e.detail.error;
                 },
                 false,
             );
 
+            document.getElementById('jlottie-container').addEventListener("onLoopComplete", function (e) {
+    console.log(e.detail.count, e.detail.animation);
+},
+false,
+);
 
             // var list_items = document.getElementsByClassName('jlottie-list-item');
 
