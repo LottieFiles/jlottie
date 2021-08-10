@@ -1,6 +1,6 @@
 {
   "name": "@lottiefiles/jlottie",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Small size, low memory footprint, high performance Lottie player.",
   "main": "dist/jlottie.min.cjs.js",
   "module": "dist/jlottie.min.esm.js",
