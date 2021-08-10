@@ -271,13 +271,15 @@ export function lottiemate() {
       //animation[i]._lastFrame = animation[i]._currentFrame;
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
+        animation[i]._loopCount++;
         if (!animation[i]._loop) {
           animation[i]._currentFrame--;
           animation[i]._paused = true;
           goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
-          continue;
+          continue;   
           //return;
         } else {
+          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount} }));
           animation[i]._currentFrame = 0;
         }
       }
@@ -2702,7 +2704,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
  */
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2721,6 +2723,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     animation[animationId]._skewH = 0;
     animation[animationId]._currScale = 1;
     animation[animationId]._lastFrame = 0;
+    animation[animationId]._loopCount = 0;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
@@ -2815,7 +2818,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     } else {
       loadFrame(animationId, 1);
     }
-  /*} catch (e) {
+  } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
 		//elementObj.style.height = 0;
@@ -2823,7 +2826,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
     dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
-	}*/
+	}
 }
 
 /**
