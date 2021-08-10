@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.11
+ * @lottiefiles/jlottie v1.0.12
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -1761,15 +1761,13 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
   //panda.log("entered");
   for (let i = 0; i < shapesGroup.length; i++) {
     if (shapesGroup[i].ty == 'gr') {
-      panda.log("entering group");
+      //panda.log("entering group");
       setTrim(shapesGroup[i].it, trimToSet, animationId, depth);
     } else {
       if (shapesGroup[i]._isShape) {
-        //panda.log("started");
         let bezierLength = 0;
         let returnedKeyframeObj = {};
         if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
-          //panda.log("preprocessing ", JSON.stringify(trimToSet));
           for (let j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
             returnedKeyframeObj = bezierCurve(
               shapesGroup[i].ks.k.v[j],
@@ -1787,7 +1785,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               'length',
             );
             shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
-            panda.log("GOTL", returnedKeyframeObj[0].s, returnedKeyframeObj[1].s, shapesGroup[i].ks.k.v[j]._l);
+            //panda.log("GOTL", returnedKeyframeObj[0].s, returnedKeyframeObj[1].s, shapesGroup[i].ks.k.v[j]._l);
             bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
           }
 
@@ -1813,7 +1811,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               minT = 0;
             }
           }
-          panda.log("maxmin ", minT, maxT);
+          //panda.log("maxmin ", minT, maxT);
 
           let sIndex = 0;
           let eIndex = 0;
@@ -1855,17 +1853,17 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
-              panda.log("end encountered");
+              //panda.log("end encountered");
               curEL = trimToSet.e.k[eIndex].s[0];
               tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
               let tSeg = 1 / tDelta;
               for (let j = tempK.v.length - 1; j > 0; j--) {
-                panda.log("curlen ", tempK.v[j - 1]._l);
+                //panda.log("curlen ", tempK.v[j - 1]._l);
                 if (curEL < tempK.v[j - 1]._l) {
                   endShapeIndex = j;
                   let ratio = curEL / tempK.v[j - 1]._l;
                   endSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], 0.01, tSeg);
-                  panda.log("endSegment", JSON.stringify(endSegment));
+                  //panda.log("endSegment", JSON.stringify(endSegment));
                   break;
                 } else {
                   curEL = curEL - tempK.v[j - 1]._l;
@@ -1877,7 +1875,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let middleInc = false;
             if (trimToSet.s.k.length > 1) {
               startInc = true;
-              panda.log("__start");
+              //panda.log("__start");
               sourceK.i.push(tempK.i[startShapeIndex]);
               sourceK.o.push(startSegment[1]);
               sourceK.v.push(startSegment[0]);
@@ -1885,7 +1883,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
             if (endShapeIndex - startShapeIndex > 0 && startInc) {
               middleInc = true;
-              panda.log("__middle");
+              //panda.log("__middle");
               for (let j = startShapeIndex + 1; j < endShapeIndex; j++) {
                 sourceK.i.push(tempK.i[j]);
                 sourceK.o.push(tempK.o[j]);
@@ -1894,7 +1892,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (trimToSet.e.k.length > 1) {
-              panda.log("__end", startShapeIndex, endShapeIndex, startInc, middleInc);
+              //panda.log("__end", startShapeIndex, endShapeIndex, startInc, middleInc);
               if (! startInc && ! middleInc) {
                 for (let j = startShapeIndex; j < endShapeIndex; j++) {
                   sourceK.i.push(tempK.i[j]);
@@ -1907,15 +1905,15 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               sourceK.v.push(endSegment[0]);
             }
 
-            panda.log("sourceK", JSON.stringify(sourceK), t);
+            //panda.log("sourceK", JSON.stringify(sourceK), t);
             if (sourceK.v.length > 1) {
               let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
 
-              panda.log("before adding");
+              //panda.log("before adding");
               if (t > animation[animationId]._totalFrames || t < 0) {
                 break;
               }
-              panda.log("adding");
+              //panda.log("adding");
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             }
 
