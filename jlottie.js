@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.7
+ * @lottiefiles/jlottie v1.0.8
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1872,12 +1872,20 @@
         exports.animation[i]._currentFrame++;
 
         if (exports.animation[i]._currentFrame >= exports.animation[i]._totalFrames) {
+          exports.animation[i]._loopCount++;
+
           if (!exports.animation[i]._loop) {
             exports.animation[i]._currentFrame--;
             exports.animation[i]._paused = true;
             goToAndStop(exports.animation[i]._currentFrame, '', exports.animation[i]._elementId);
             continue; //return;
           } else {
+            dispatchEvent(new CustomEvent("onLoopComplete", {
+              bubbles: true,
+              detail: {
+                "count": exports.animation[i]._loopCount
+              }
+            }));
             exports.animation[i]._currentFrame = 0;
           }
         } //setTimeout(function () {
@@ -4061,120 +4069,126 @@
    */
 
   function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
-    exports.animation[animationId]._loaded = false; //try {
+    exports.animation[animationId]._loaded = false;
 
-    exports.animation[animationId].depth = 0;
-    exports.animation[animationId].shapeCount = 0;
-    exports.animation[animationId].layerCount = 0;
-    exports.animation[animationId]._removed = false;
-    exports.animation[animationId]._totalFrames = parseInt(exports.animation[animationId].op - exports.animation[animationId].ip);
-    exports.animation[animationId]._frameTime = 1 / exports.animation[animationId].fr * 1000;
-    exports.animation[animationId]._currentFrame = -1;
-    exports.animation[animationId]._lastTime = Date.now();
-    exports.animation[animationId]._autoplay = autoplay;
-    exports.animation[animationId]._loop = loop;
-    exports.animation[animationId]._customName = customName;
-    exports.animation[animationId]._paused = false;
-    exports.animation[animationId]._maxWidth = 0;
-    exports.animation[animationId]._maxHeight = 0;
-    exports.animation[animationId]._skewW = 0;
-    exports.animation[animationId]._skewH = 0;
-    exports.animation[animationId]._currScale = 1;
-    exports.animation[animationId]._lastFrame = 0; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
-    //animation[animationId]._timeout = 0;
+    try {
+      exports.animation[animationId].depth = 0;
+      exports.animation[animationId].shapeCount = 0;
+      exports.animation[animationId].layerCount = 0;
+      exports.animation[animationId]._removed = false;
+      exports.animation[animationId]._totalFrames = parseInt(exports.animation[animationId].op - exports.animation[animationId].ip);
+      exports.animation[animationId]._frameTime = 1 / exports.animation[animationId].fr * 1000;
+      exports.animation[animationId]._currentFrame = -1;
+      exports.animation[animationId]._lastTime = Date.now();
+      exports.animation[animationId]._autoplay = autoplay;
+      exports.animation[animationId]._loop = loop;
+      exports.animation[animationId]._customName = customName;
+      exports.animation[animationId]._paused = false;
+      exports.animation[animationId]._maxWidth = 0;
+      exports.animation[animationId]._maxHeight = 0;
+      exports.animation[animationId]._skewW = 0;
+      exports.animation[animationId]._skewH = 0;
+      exports.animation[animationId]._currScale = 1;
+      exports.animation[animationId]._lastFrame = 0;
+      exports.animation[animationId]._loopCount = 0; //animation[animationId]._nextInterval = animation[animationId]._frameTime;
+      //animation[animationId]._timeout = 0;
 
-    if (smallestFrameTime > exports.animation[animationId]._frameTime) {
-      smallestFrameTime = exports.animation[animationId]._frameTime;
-    } //for debugging
+      if (smallestFrameTime > exports.animation[animationId]._frameTime) {
+        smallestFrameTime = exports.animation[animationId]._frameTime;
+      } //for debugging
 
 
-    exports.animation[animationId]._debugTimeElapsed = 0;
-    exports.animation[animationId]._debugContainer = ''; //////
-    //elementObj.style.width = animation[animationId].w;
-    //elementObj.style.height = animation[animationId].h;
-    //elementObj.setAttribute('width', animation[animationId].w);
-    //elementObj.setAttribute('height', animation[animationId].h);
+      exports.animation[animationId]._debugTimeElapsed = 0;
+      exports.animation[animationId]._debugContainer = ''; //////
+      //elementObj.style.width = animation[animationId].w;
+      //elementObj.style.height = animation[animationId].h;
+      //elementObj.setAttribute('width', animation[animationId].w);
+      //elementObj.setAttribute('height', animation[animationId].h);
 
-    var newSVG = document.createElementNS(xmlns, 'svg');
-    newSVG.setAttribute('xmlns', xmlns); // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
-    // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
+      var newSVG = document.createElementNS(xmlns, 'svg');
+      newSVG.setAttribute('xmlns', xmlns); // newSVG.setAttributeNS(null, 'width', animation[animationId].w);
+      // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
 
-    newSVG.setAttributeNS(null, 'viewBox', "0 0 ".concat(exports.animation[animationId].w, " ").concat(exports.animation[animationId].h));
-    newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
-    newSVG.style.width = '100%';
-    newSVG.style.height = '100%';
-    newSVG.setAttributeNS(null, 'id', "_svg".concat(animationId));
-    elementObj.prepend(newSVG);
-    exports.animation[animationId].defs = document.createElementNS(xmlns, 'defs');
-    exports.animation[animationId].defs.setAttributeNS(null, 'id', "_defs".concat(animationId));
-    exports.animation[animationId].gradientCount = 0;
-    exports.animation[animationId].maskCount = 0;
-    newSVG.prepend(exports.animation[animationId].defs);
-    var newLayer = document.createElementNS(xmlns, 'g');
-    newLayer.setAttributeNS(null, 'id', "_lanim".concat(animationId));
-    newSVG.append(newLayer);
-    var newCompute = document.createElementNS(xmlns, 'g');
-    newCompute.setAttributeNS(null, 'id', "_compute".concat(animationId));
-    newCompute.style.display = 'none';
-    newLayer.prepend(newCompute);
-    exports.animation[animationId]._scene = new Array(exports.animation[animationId]._totalFrames + 10).fill(null).map(function () {
-      return {
-        _transform: []
-      };
-    });
-    exports.animation[animationId]._instated = {};
-    exports.animation[animationId]._refObj = [];
-    exports.animation[animationId]._objSize = {};
-    var clipPath = document.createElementNS(xmlns, 'clipPath');
-    clipPath.setAttributeNS(null, 'id', "_clip".concat(animationId));
-    exports.animation[animationId].defs.prepend(clipPath);
-    var clipPathRect = document.createElementNS(xmlns, 'rect');
-    clipPathRect.setAttribute('x', 0);
-    clipPathRect.setAttribute('y', 0);
-    clipPathRect.setAttribute('width', exports.animation[animationId].w);
-    clipPathRect.setAttribute('height', exports.animation[animationId].h);
-    clipPath.append(clipPathRect);
-    exports.animation[animationId] = getLayers(elementId, animationId, newLayer, exports.animation[animationId], 'layers', 0);
+      newSVG.setAttributeNS(null, 'viewBox', "0 0 ".concat(exports.animation[animationId].w, " ").concat(exports.animation[animationId].h));
+      newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
+      newSVG.style.width = '100%';
+      newSVG.style.height = '100%';
+      newSVG.setAttributeNS(null, 'id', "_svg".concat(animationId));
+      elementObj.prepend(newSVG);
+      exports.animation[animationId].defs = document.createElementNS(xmlns, 'defs');
+      exports.animation[animationId].defs.setAttributeNS(null, 'id', "_defs".concat(animationId));
+      exports.animation[animationId].gradientCount = 0;
+      exports.animation[animationId].maskCount = 0;
+      newSVG.prepend(exports.animation[animationId].defs);
+      var newLayer = document.createElementNS(xmlns, 'g');
+      newLayer.setAttributeNS(null, 'id', "_lanim".concat(animationId));
+      newSVG.append(newLayer);
+      var newCompute = document.createElementNS(xmlns, 'g');
+      newCompute.setAttributeNS(null, 'id', "_compute".concat(animationId));
+      newCompute.style.display = 'none';
+      newLayer.prepend(newCompute);
+      exports.animation[animationId]._scene = new Array(exports.animation[animationId]._totalFrames + 10).fill(null).map(function () {
+        return {
+          _transform: []
+        };
+      });
+      exports.animation[animationId]._instated = {};
+      exports.animation[animationId]._refObj = [];
+      exports.animation[animationId]._objSize = {};
+      var clipPath = document.createElementNS(xmlns, 'clipPath');
+      clipPath.setAttributeNS(null, 'id', "_clip".concat(animationId));
+      exports.animation[animationId].defs.prepend(clipPath);
+      var clipPathRect = document.createElementNS(xmlns, 'rect');
+      clipPathRect.setAttribute('x', 0);
+      clipPathRect.setAttribute('y', 0);
+      clipPathRect.setAttribute('width', exports.animation[animationId].w);
+      clipPathRect.setAttribute('height', exports.animation[animationId].h);
+      clipPath.append(clipPathRect);
+      exports.animation[animationId] = getLayers(elementId, animationId, newLayer, exports.animation[animationId], 'layers', 0);
 
-    if (exports.animation[animationId]._maxWidth > 0 || exports.animation[animationId]._maxHeight > 0) {
-      var scaleW = exports.animation[animationId].w / exports.animation[animationId]._maxWidth;
-      var scaleH = exports.animation[animationId].h / exports.animation[animationId]._maxHeight; //animation[animationId]._skewW = animation[animationId]
-      //clipPathRect.setAttribute('x', 0);
-      //clipPathRect.setAttribute('y', 0);
-      //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
-      //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
+      if (exports.animation[animationId]._maxWidth > 0 || exports.animation[animationId]._maxHeight > 0) {
+        var scaleW = exports.animation[animationId].w / exports.animation[animationId]._maxWidth;
+        var scaleH = exports.animation[animationId].h / exports.animation[animationId]._maxHeight; //animation[animationId]._skewW = animation[animationId]
+        //clipPathRect.setAttribute('x', 0);
+        //clipPathRect.setAttribute('y', 0);
+        //clipPathRect.setAttribute('width', animation[animationId]._maxWidth);
+        //clipPathRect.setAttribute('height', animation[animationId]._maxHeight);
 
-      if (scaleW > scaleH) {
-        exports.animation[animationId]._currScale = scaleW;
+        if (scaleW > scaleH) {
+          exports.animation[animationId]._currScale = scaleW;
+        } else {
+          exports.animation[animationId]._currScale = scaleH;
+        } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
+        //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+
+
+        scaleLayers(elementId, animationId, newLayer, exports.animation[animationId], 'layers', 1);
+      }
+
+      newLayer.setAttributeNS(null, 'clip-path', "url(#_clip".concat(animationId, ")"));
+      exports.animation[animationId]._buildDone = true;
+      animationLoading -= 1;
+      exports.animation[animationId]._loaded = true;
+
+      if (!exports.animation[animationId]._autoplay) {
+        goToAndStop(1, '', exports.animation[animationId]._elementId);
       } else {
-        exports.animation[animationId]._currScale = scaleH;
-      } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
-      //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+        loadFrame(animationId, 1);
+      }
+    } catch (e) {
+      //console.error(`Failed to load animation.${e}`);
+      exports.animationCount = exports.animationCount - 1; //elementObj.style.height = 0;
+      //elementObj.style.width = 0;
 
-
-      scaleLayers(elementId, animationId, newLayer, exports.animation[animationId], 'layers', 1);
+      elementObj.innerHTML = "";
+      exports.animation.splice(animationId, 1);
+      dispatchEvent(new CustomEvent("onLoadError", {
+        bubbles: true,
+        detail: {
+          "error": e
+        }
+      }));
     }
-
-    newLayer.setAttributeNS(null, 'clip-path', "url(#_clip".concat(animationId, ")"));
-    exports.animation[animationId]._buildDone = true;
-    animationLoading -= 1;
-    exports.animation[animationId]._loaded = true;
-
-    if (!exports.animation[animationId]._autoplay) {
-      goToAndStop(1, '', exports.animation[animationId]._elementId);
-    } else {
-      loadFrame(animationId, 1);
-    }
-    /*} catch (e) {
-    //console.error(`Failed to load animation.${e}`);
-    animationCount = animationCount - 1;
-    //elementObj.style.height = 0;
-    //elementObj.style.width = 0;
-    elementObj.innerHTML = "";
-    animation.splice(animationId, 1);
-      dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
-    }*/
-
   }
   /**
    * Load a Lottie JSON file from a URL and then pass to buildGraph().

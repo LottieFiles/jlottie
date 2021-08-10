@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.7
+ * @lottiefiles/jlottie v1.0.8
  */
 'use strict';
 
@@ -278,13 +278,15 @@ function lottiemate() {
       //animation[i]._lastFrame = animation[i]._currentFrame;
       exports.animation[i]._currentFrame++;
       if (exports.animation[i]._currentFrame >= exports.animation[i]._totalFrames) {
+        exports.animation[i]._loopCount++;
         if (!exports.animation[i]._loop) {
           exports.animation[i]._currentFrame--;
           exports.animation[i]._paused = true;
           goToAndStop(exports.animation[i]._currentFrame, '', exports.animation[i]._elementId);
-          continue;
+          continue;   
           //return;
         } else {
+          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount} }));
           exports.animation[i]._currentFrame = 0;
         }
       }
@@ -2703,7 +2705,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
  */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   exports.animation[animationId]._loaded = false;
-  //try {
+  try {
     exports.animation[animationId].depth = 0;
     exports.animation[animationId].shapeCount = 0;
     exports.animation[animationId].layerCount = 0;
@@ -2722,6 +2724,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     exports.animation[animationId]._skewH = 0;
     exports.animation[animationId]._currScale = 1;
     exports.animation[animationId]._lastFrame = 0;
+    exports.animation[animationId]._loopCount = 0;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
@@ -2816,15 +2819,15 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
-  /*} catch (e) {
+  } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
-		animationCount = animationCount - 1;
+		exports.animationCount = exports.animationCount - 1;
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
-		animation.splice(animationId, 1);
+		exports.animation.splice(animationId, 1);
     dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
-	}*/
+	}
 }
 
 /**
