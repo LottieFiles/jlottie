@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.10
+ * @lottiefiles/jlottie v1.0.11
  */
 'use strict';
 
@@ -279,6 +279,7 @@ function lottiemate() {
       exports.animation[i]._currentFrame++;
       if (exports.animation[i]._currentFrame >= exports.animation[i]._totalFrames) {
         exports.animation[i]._loopCount++;
+        exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
         if (!exports.animation[i]._loop) {
           exports.animation[i]._currentFrame--;
           exports.animation[i]._paused = true;
@@ -286,7 +287,6 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
           exports.animation[i]._currentFrame = 0;
         }
       }

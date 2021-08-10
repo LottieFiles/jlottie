@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.10
+ * @lottiefiles/jlottie v1.0.11
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1874,20 +1874,20 @@
         if (exports.animation[i]._currentFrame >= exports.animation[i]._totalFrames) {
           exports.animation[i]._loopCount++;
 
+          exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {
+            bubbles: true,
+            detail: {
+              "count": exports.animation[i]._loopCount,
+              "animation": i
+            }
+          }));
+
           if (!exports.animation[i]._loop) {
             exports.animation[i]._currentFrame--;
             exports.animation[i]._paused = true;
             goToAndStop(exports.animation[i]._currentFrame, '', exports.animation[i]._elementId);
             continue; //return;
           } else {
-            exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {
-              bubbles: true,
-              detail: {
-                "count": exports.animation[i]._loopCount,
-                "animation": i
-              }
-            }));
-
             exports.animation[i]._currentFrame = 0;
           }
         } //setTimeout(function () {

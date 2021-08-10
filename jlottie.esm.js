@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.10
+ * @lottiefiles/jlottie v1.0.11
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -275,6 +275,7 @@ function lottiemate() {
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._loopCount++;
+        animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
         if (!animation[i]._loop) {
           animation[i]._currentFrame--;
           animation[i]._paused = true;
@@ -282,7 +283,6 @@ function lottiemate() {
           continue;   
           //return;
         } else {
-          animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
           animation[i]._currentFrame = 0;
         }
       }
