@@ -279,7 +279,7 @@ export function lottiemate() {
           continue;   
           //return;
         } else {
-          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount} }));
+          dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
           animation[i]._currentFrame = 0;
         }
       }
@@ -2825,7 +2825,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 		//elementObj.style.width = 0;
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
-    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e} }));
+    dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
