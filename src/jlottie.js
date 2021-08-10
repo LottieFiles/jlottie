@@ -13,7 +13,7 @@ var smallestFrameTime = 0;
 /// ////////// BEZIER
 export function arcLength(p1, p2) {
   let result = Math.sqrt(Math.pow((p2[0] - p1[0]), 2) + Math.pow((p2[1] - p1[1]), 2));
-  panda.log("result", result);
+  //panda.log("result", result);
   return result;
 }
 
@@ -2050,7 +2050,7 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
   }
   if (trimmed) {
     setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-    panda.log("DONE");
+    //panda.log("DONE");
   }
   return layerObj;
 }
