@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.12
+ * @lottiefiles/jlottie v1.0.13
  */
 'use strict';
 
@@ -20,7 +20,7 @@ var smallestFrameTime = 0;
 /// ////////// BEZIER
 function arcLength(p1, p2) {
   let result = Math.sqrt(Math.pow((p2[0] - p1[0]), 2) + Math.pow((p2[1] - p1[1]), 2));
-  panda.log("result", result);
+  //panda.log("result", result);
   return result;
 }
 
@@ -2051,7 +2051,7 @@ function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMas
   }
   if (trimmed) {
     setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-    panda.log("DONE");
+    //panda.log("DONE");
   }
   return layerObj;
 }

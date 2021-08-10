@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.12
+ * @lottiefiles/jlottie v1.0.13
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1679,8 +1679,8 @@
   var smallestFrameTime = 0; /// ////////// BEZIER
 
   function arcLength(p1, p2) {
-    var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
-    panda.log("result", result);
+    var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2)); //panda.log("result", result);
+
     return result;
   }
   function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth, customFlag) {
@@ -3472,8 +3472,7 @@
 
     if (trimmed) {
       setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-
-      panda.log("DONE");
+      //panda.log("DONE");
     }
 
     return layerObj;
