@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.9
+ * @lottiefiles/jlottie v1.0.10
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
