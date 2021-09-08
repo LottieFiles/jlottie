@@ -1820,7 +1820,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
           let eIndex = 0;
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
           for (let t = minT; t <= maxT; t++) {
-
+            
             let curSL = 0;
             let curEL = 0;
             let startShapeIndex = 0;
@@ -1837,6 +1837,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let endSegment = [];
             let sourceK = {'i': [], 'o': [], 'v': []};
             if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+              panda.log("start encountered");
               curSL = trimToSet.s.k[sIndex].s[0];
               tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
               let tSeg = 1 / tDelta;
