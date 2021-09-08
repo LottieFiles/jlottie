@@ -3276,6 +3276,7 @@
               };
 
               if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+                panda.log("start encountered");
                 curSL = trimToSet.s.k[sIndex].s[0];
                 tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
                 var tSeg = 1 / tDelta;
