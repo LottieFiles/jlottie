@@ -1,6 +1,6 @@
 {
   "name": "@lottiefiles/jlottie",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Small size, low memory footprint, high performance Lottie player.",
   "main": "dist/jlottie.min.cjs.js",
   "module": "dist/jlottie.min.esm.js",
@@ -8,10 +8,6 @@
   "repository": "https://github.com/LottieFiles/jlottie.git",
   "author": "Mohamed Shaafiee <shaafiee@lottiefiles.com>",
   "license": "MIT",
-  "engines": {
-    "yarn": ">= 2.0.0",
-    "node": ">= 14.2.0"
-  },
   "files": [
     "dist"
   ],
