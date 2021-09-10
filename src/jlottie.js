@@ -13,7 +13,6 @@ var smallestFrameTime = 0;
 /// ////////// BEZIER
 export function arcLength(p1, p2) {
   let result = Math.sqrt(Math.pow((p2[0] - p1[0]), 2) + Math.pow((p2[1] - p1[1]), 2));
-  //panda.log("result", result);
   return result;
 }
 
@@ -809,7 +808,6 @@ export function extrapolateOffsetKeyframe(
         offsetKeyframeObj[refKey].k[i].hasOwnProperty('e') &&
         offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')
       ) {
-        //panda.log("found");
         returnedKeyframeObj = bezierCurve(
           offsetKeyframeObj[refKey].k[i].s,
           offsetKeyframeObj[refKey].k[i].o,
@@ -1493,7 +1491,6 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
   }
   newDef.setAttribute('id', newDefId);
   animation[animationId].defs.prepend(newDef);
-  //panda.log('---------------------------------------');
   if (gradient.k.k[0].hasOwnProperty('s')) {
     var firstRun = true;
     gradient = extrapolateOffsetKeyframe(gradient, 'k', false, animationId, -1, gradient, depth);
@@ -1506,7 +1503,6 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
       transforms.styles = [];
       if (gradient.k.k[j].hasOwnProperty('s')) {
         for (var i = 0; i < gradient.p; i++) {
-          //panda.log(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
           if (gradient.k.k[j].s[i * 4 + 0] == 0 || isNaN(gradient.k.k[j].s[i * 4 + 0])) {
             offsets.push("0%");
           } else {
@@ -1517,9 +1513,6 @@ export function createGradientDef(start, end, opacity, gradient, radial, animati
               gradient.k.k[j].s[i * 4 + 3] * 255,
             )});`,
           );
-          /*panda.log(`stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
-            gradient.k.k[j].s[i * 4 + 3] * 255,
-          )});`);*/
           opacities.push('stop-opacity:1;');
         }
         if (gradient.k.k[j].s.length > gradient.p * 4) {
@@ -1631,7 +1624,6 @@ export function getStrokeString(shapeObj, animationId, depth, shapeGroup) {
           transforms.isTween = false;
           transforms.refObj = `${animationId}_shape${shapeGroup[sCount]._shape}`;
           transforms.refObjOther = `${animationId}_shape${shapeGroup[sCount]._shape}`;
-          //panda.log(transforms.refObj);
           transforms.refObjSet = true;
 
           transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
@@ -2051,7 +2043,6 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
   }
   if (trimmed) {
     setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-    //panda.log("DONE");
   }
   return layerObj;
 }
@@ -2163,7 +2154,6 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
   }
   if (trimmed) {
     setTrim(layerObj.shapes, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-    //panda.log("DONE");
   }
   return layerObj;
 }
