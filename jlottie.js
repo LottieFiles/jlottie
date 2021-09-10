@@ -1679,8 +1679,7 @@
   var smallestFrameTime = 0; /// ////////// BEZIER
 
   function arcLength(p1, p2) {
-    var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2)); //panda.log("result", result);
-
+    var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
     return result;
   }
   function bezierCurve(p1, c1, c2, p2, fromT, toT, isLayer, animationId, refKey, addTransformation, objectId, depth, customFlag) {
@@ -2381,7 +2380,6 @@
         var returnedKeyframeObj;
 
         if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')) {
-          //panda.log("found");
           returnedKeyframeObj = bezierCurve(offsetKeyframeObj[refKey].k[i].s, offsetKeyframeObj[refKey].k[i].o, offsetKeyframeObj[refKey].k[i].i, offsetKeyframeObj[refKey].k[i].e, offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i + 1].t, isLayer, animationId, refKey, addTransformation, objectId, depth);
         } else if (offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') && offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotI) {
           returnedKeyframeObj = bezierCurve(offsetKeyframeObj[refKey].k[i].s, offsetKeyframeObj[refKey].k[i].o, offsetKeyframeObj[refKey].k[i + 1].i, p2, offsetKeyframeObj[refKey].k[i].t, offsetKeyframeObj[refKey].k[i + 1].t, isLayer, animationId, refKey, addTransformation, objectId, depth);
@@ -2935,7 +2933,7 @@
     }
 
     newDef.setAttribute('id', newDefId);
-    exports.animation[animationId].defs.prepend(newDef); //panda.log('---------------------------------------');
+    exports.animation[animationId].defs.prepend(newDef);
 
     if (gradient.k.k[0].hasOwnProperty('s')) {
       var firstRun = true;
@@ -2951,7 +2949,6 @@
 
         if (gradient.k.k[j].hasOwnProperty('s')) {
           for (var i = 0; i < gradient.p; i++) {
-            //panda.log(`${gradient.k.k[j].s[i * 4 + 0] * 100}%`);
             if (gradient.k.k[j].s[i * 4 + 0] == 0 || isNaN(gradient.k.k[j].s[i * 4 + 0])) {
               offsets.push("0%");
             } else {
@@ -2959,10 +2956,6 @@
             }
 
             styles.push("stop-color:rgb(".concat(parseInt(gradient.k.k[j].s[i * 4 + 1] * 255), ",").concat(parseInt(gradient.k.k[j].s[i * 4 + 2] * 255), ",").concat(parseInt(gradient.k.k[j].s[i * 4 + 3] * 255), ");"));
-            /*panda.log(`stop-color:rgb(${parseInt(gradient.k.k[j].s[i * 4 + 1] * 255)},${parseInt(gradient.k.k[j].s[i * 4 + 2] * 255)},${parseInt(
-              gradient.k.k[j].s[i * 4 + 3] * 255,
-            )});`);*/
-
             opacities.push('stop-opacity:1;');
           }
 
@@ -3084,8 +3077,7 @@
             transforms.isLayer = false;
             transforms.isTween = false;
             transforms.refObj = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
-            transforms.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape); //panda.log(transforms.refObj);
-
+            transforms.refObjOther = "".concat(animationId, "_shape").concat(shapeGroup[sCount]._shape);
             transforms.refObjSet = true;
             transforms = findExistingTransform(transforms, animationId, shapeObj.w.k[kCount].t);
             transforms.strokeWidth = shapeObj.w.k[kCount].s;
@@ -3473,7 +3465,6 @@
 
     if (trimmed) {
       setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-      //panda.log("DONE");
     }
 
     return layerObj;
@@ -3569,7 +3560,6 @@
 
     if (trimmed) {
       setTrim(layerObj.shapes, currentTrim, animationId, depth); // Set the trim for this group of shapes.
-      //panda.log("DONE");
     }
 
     return layerObj;
