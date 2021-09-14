@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.14
+ * @lottiefiles/jlottie v1.0.15
  */
 'use strict';
 
@@ -278,7 +278,8 @@ function lottiemate() {
       exports.animation[i]._currentFrame++;
       if (exports.animation[i]._currentFrame >= exports.animation[i]._totalFrames) {
         exports.animation[i]._loopCount++;
-        exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i} }));
+        exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i, "frame": exports.animation[i]._currentFrame} }));
+        exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("loopComplete", {bubbles: true, detail: {"count": exports.animation[i]._loopCount, "animation": i, "frame": exports.animation[i]._currentFrame} }));
         if (!exports.animation[i]._loop) {
           exports.animation[i]._currentFrame--;
           exports.animation[i]._paused = true;
@@ -2809,6 +2810,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
+    exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
   } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		exports.animationCount = exports.animationCount - 1;
@@ -2817,6 +2819,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		elementObj.innerHTML = "";
 		exports.animation.splice(animationId, 1);
     exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
+    exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("loadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
@@ -2966,7 +2969,7 @@ function play(name) {
  * @param {string} name The 'id' value of the container of this Lottie animation.
  */
 function stop(name) {
-  goToAndStop(1, '', name);
+  goToAndStop(1, false, name);
 }
 
 /**
@@ -2978,6 +2981,9 @@ function stop(name) {
  * 
  */
 function goToAndStop(_frame, isFrame, name) {
+  if (typeof isFrame === 'string') {
+    name = isFrame;
+  }
   if (exports.animationCount < 0) {
     return;
   }
@@ -3068,6 +3074,12 @@ function loadAnimation(obj) {
     playStarted = true;
     window.requestAnimationFrame(lottiemate);
   }
+
+  exports.animation[currentAnimation].destroy = function() {destroy(exports.animation[currentAnimation]._elementId);};
+  exports.animation[currentAnimation].play = function() {play(exports.animation[currentAnimation]._elementId);};
+  exports.animation[currentAnimation].pause = function() {pause(exports.animation[currentAnimation]._elementId);};
+  exports.animation[currentAnimation].stop = function() {stop(exports.animation[currentAnimation]._elementId);};
+  exports.animation[currentAnimation].goToAndStop = function(frame) {goToAndStop(frame, exports.animation[currentAnimation]._elementId);};
   return exports.animation[currentAnimation];
 }
 

@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.14
+ * @lottiefiles/jlottie v1.0.15
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1877,7 +1877,17 @@
             bubbles: true,
             detail: {
               "count": exports.animation[i]._loopCount,
-              "animation": i
+              "animation": i,
+              "frame": exports.animation[i]._currentFrame
+            }
+          }));
+
+          exports.animation[i]._renderObj.dispatchEvent(new CustomEvent("loopComplete", {
+            bubbles: true,
+            detail: {
+              "count": exports.animation[i]._loopCount,
+              "animation": i,
+              "frame": exports.animation[i]._currentFrame
             }
           }));
 
@@ -4159,6 +4169,13 @@
       } else {
         loadFrame(animationId, 1);
       }
+
+      exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {
+        bubbles: true,
+        detail: {
+          "animation": animationId
+        }
+      }));
     } catch (e) {
       //console.error(`Failed to load animation.${e}`);
       exports.animationCount = exports.animationCount - 1; //elementObj.style.height = 0;
@@ -4168,6 +4185,14 @@
       exports.animation.splice(animationId, 1);
 
       exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {
+        bubbles: true,
+        detail: {
+          "error": e,
+          "animation": animationId
+        }
+      }));
+
+      exports.animation[animationId]._renderObj.dispatchEvent(new CustomEvent("loadError", {
         bubbles: true,
         detail: {
           "error": e,
@@ -4326,7 +4351,7 @@
    */
 
   function stop(name) {
-    goToAndStop(1, '', name);
+    goToAndStop(1, false, name);
   }
   /**
    * Stops the animation, goes to the specified frame and freezes there.
@@ -4338,6 +4363,10 @@
    */
 
   function goToAndStop(_frame, isFrame, name) {
+    if (typeof isFrame === 'string') {
+      name = isFrame;
+    }
+
     if (exports.animationCount < 0) {
       return;
     }
@@ -4423,6 +4452,26 @@
       playStarted = true;
       window.requestAnimationFrame(lottiemate);
     }
+
+    exports.animation[currentAnimation].destroy = function () {
+      destroy(exports.animation[currentAnimation]._elementId);
+    };
+
+    exports.animation[currentAnimation].play = function () {
+      play(exports.animation[currentAnimation]._elementId);
+    };
+
+    exports.animation[currentAnimation].pause = function () {
+      pause(exports.animation[currentAnimation]._elementId);
+    };
+
+    exports.animation[currentAnimation].stop = function () {
+      stop(exports.animation[currentAnimation]._elementId);
+    };
+
+    exports.animation[currentAnimation].goToAndStop = function (frame) {
+      goToAndStop(frame, exports.animation[currentAnimation]._elementId);
+    };
 
     return exports.animation[currentAnimation];
   }

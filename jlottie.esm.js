@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.14
+ * @lottiefiles/jlottie v1.0.15
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -274,7 +274,8 @@ function lottiemate() {
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._loopCount++;
-        animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i} }));
+        animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
+        animation[i]._renderObj.dispatchEvent(new CustomEvent("loopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
         if (!animation[i]._loop) {
           animation[i]._currentFrame--;
           animation[i]._paused = true;
@@ -2805,6 +2806,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     } else {
       loadFrame(animationId, 1);
     }
+    animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
   } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		animationCount = animationCount - 1;
@@ -2813,6 +2815,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
 		elementObj.innerHTML = "";
 		animation.splice(animationId, 1);
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
+    animation[animationId]._renderObj.dispatchEvent(new CustomEvent("loadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
 	}
 }
 
@@ -2962,7 +2965,7 @@ function play(name) {
  * @param {string} name The 'id' value of the container of this Lottie animation.
  */
 function stop(name) {
-  goToAndStop(1, '', name);
+  goToAndStop(1, false, name);
 }
 
 /**
@@ -2974,6 +2977,9 @@ function stop(name) {
  * 
  */
 function goToAndStop(_frame, isFrame, name) {
+  if (typeof isFrame === 'string') {
+    name = isFrame;
+  }
   if (animationCount < 0) {
     return;
   }
@@ -3064,6 +3070,12 @@ function loadAnimation(obj) {
     playStarted = true;
     window.requestAnimationFrame(lottiemate);
   }
+
+  animation[currentAnimation].destroy = function() {destroy(animation[currentAnimation]._elementId);};
+  animation[currentAnimation].play = function() {play(animation[currentAnimation]._elementId);};
+  animation[currentAnimation].pause = function() {pause(animation[currentAnimation]._elementId);};
+  animation[currentAnimation].stop = function() {stop(animation[currentAnimation]._elementId);};
+  animation[currentAnimation].goToAndStop = function(frame) {goToAndStop(frame, animation[currentAnimation]._elementId);};
   return animation[currentAnimation];
 }
 

@@ -3,7 +3,6 @@
     <head>
         <title>jlottie Player</title>
         <script src="/jlottie/jlottie.min.js" type="text/javascript"></script>
-        <script src="jlottie.min.js" type="text/javascript"></script>
 
         <link rel="stylesheet" href="./style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -437,7 +436,7 @@
 
             var btn = document.getElementById('loadanim');
             btn.addEventListener('click', (event) => {
-                jlottie.destroy('jlottie-container');
+                jlottie.destroy(janim);
                 loadLottie(1);
             });
 
@@ -476,13 +475,16 @@
             function jcontrol(element, todo) {
                 switch (todo) {
                     case 1:
-                        jlottie.play(element);
+                        //jlottie.play(element);
+                        janim.play();
                         break;
                     case 2:
-                        jlottie.pause(element);
+                        //jlottie.pause(element);
+                        janim.pause();
                         break;
                     case 3:
-                        jlottie.goToAndStop(1, '', element);
+                        //jlottie.goToAndStop(1, '', element);
+                        janim.goToAndStop(1);
                         break;
                     default:
                 }
