@@ -303,19 +303,27 @@
                 </div>
             </div>
         </div>
+        <div id='stuff'></Div>
 
         <script>
+            let pathTrim = "https://assets6.lottiefiles.com/packages/lf20_lfre60iw.json";
+            let defLot = "https://assets6.lottiefiles.com/packages/lf20_hbqhhR.json";
             function loadLottie() {
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     loop: true,
                     autoplay: true,
-                    path: document.getElementById('lottieSrc').value,
+                    path: defLot,
                 });
             }
 
             // Load an initial animation
             loadLottie();
+
+            document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
+            function handleEvent(event) {
+                document.getElementById('stuff').innerHTML = event.detail.count;
+            }
         </script>
     </body>
 </html>
