@@ -233,7 +233,7 @@ jlottie.loadAnimation({
 
 ## API
 
-### Methods
+### **Methods**
 
 ### `jlottie.loadAnimation(configObject)`
 
@@ -250,11 +250,17 @@ Takes in an object with format as follows as parameter
 
 #### Returns
 
-Type: `Null`
+Type: Object, that refers to the created animation with the following properties:
+```jis
+thisAnimation._currentFrame; // the current frame number thisAnimation is on
+thisAnimation._totalFrames; // the total number of frames in thisAnimation 
+```
 
 ### `jlottie.pause(elementId)`
 
 Pause animation. Takes in the Dom element Id as parameter.
+
+Alternative : `thisAnimation.pause()`
 
 #### Returns
 
@@ -264,6 +270,8 @@ Type: `Null`
 
 Play animation. Takes in the Dom element Id as parameter.
 
+Alternative : `thisAnimation.play()`
+
 #### Returns
 
 Type: `Null`
@@ -271,6 +279,8 @@ Type: `Null`
 ### `jlottie.stop(elementId)`
 
 Stop animation. Takes in the Dom element Id as parameter.
+
+Alternative : `thisAnimation.stop()`
 
 #### Returns
 
@@ -280,17 +290,55 @@ Type: `Null`
 
 Destroy animation. Takes in the Dom element Id as parameter.
 
+Alternative : `thisAnimation.destroy()`
+
 #### Returns
 
 Type: `Null`
 
-### `jlottie.goToAndStop(frame,elementId)`
+### `jlottie.goToAndStop(frame, elementId)`
 
 Go to specified frame and stop. Takes in a frame number and Dom element Id as parameter.
 
+Alternative : `thisAnimation.goToAndStop(frame)`
+
 #### Returns
 
 Type: `Null`
+
+### **Events dispatched**
+
+### `loopComplete`
+
+Fires at the end of each loop.
+```js
+detail = {  
+            count: num1, // number of loops thus far
+            frame: num2, // the current frame number
+            animation: num3 // internal index number of this animation
+          }
+```
+
+### `DOMLoaded`
+
+Fires right after all DOM content is loaded.
+```js
+detail = {  
+            animation: num1 // internal index number of this animation
+          }
+```
+
+### `loadError`
+
+Fires if an error is encountered whilst loading the animation.
+```js
+detail = {  
+            error: {} // the error object thrown
+            animation: num1 // internal index number of this animation
+          }
+```
+
+Go to specified frame and stop. Takes in a frame number and Dom element Id as parameter.
 
 ## Development
 
