@@ -436,7 +436,7 @@
 
             var btn = document.getElementById('loadanim');
             btn.addEventListener('click', (event) => {
-                jlottie.destroy(janim);
+                janim.destroy();
                 loadLottie(1);
             });
 

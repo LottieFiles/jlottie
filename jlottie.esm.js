@@ -2889,7 +2889,8 @@ function destroy(name) {
     return;
   }
   if (name === undefined) {
-    const elements = [];
+    return;
+    /*const elements = [];
     for (var i = 0; i <= animationCount; i++) {
       elements.push(animation[i]._elementId);
     }
@@ -2897,16 +2898,19 @@ function destroy(name) {
     for (var i = 0; i <= elements; i++) {
       document.getElementById(elements[i]).innerHTML = '';
       animationCount -= 1;
-    }
+    }*/
   } else {
     name.toString();
     name = name.replace(/#/g, '');
-    for (var i = 0; i <= animationCount; i++) {
-      if (animation[i]._elementId == name || animation[i]._customName == name) {
-        animation.splice(i, 1);
-        document.getElementById(name).innerHTML = '';
-        animationCount -= 1;
-        break;
+    if (name.length > 0) {
+      for (var i = 0; i <= animationCount; i++) {
+        if (animation[i]._elementId == name || animation[i]._customName == name) {
+          pause(name);
+          animationCount -= 1;
+          animation.splice(i, 1);
+          document.getElementById(name).innerHTML = '';
+          break;
+        }
       }
     }
   }
@@ -3052,8 +3056,8 @@ function loadAnimation(obj) {
   if (!(obj.animationData === undefined) && obj.animationData.length > 0) {
     //currentAnimation = animationCount;
     animation[currentAnimation] = JSON.parse(obj.animationData);
-    animation[currentAnimation]._elementId = elementId;
-    buildGraph(elementId, currentAnimation, obj.container, autoplay, loop);
+    animation[currentAnimation]._elementId = obj.container.id;
+    buildGraph(obj.container.id, currentAnimation, obj.container, autoplay, loop);
   } else if (!(obj.path === undefined) && obj.path) {
     getJson(
       obj.path,
