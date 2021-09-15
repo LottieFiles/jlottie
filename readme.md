@@ -205,7 +205,7 @@ npm install --save @lottiefiles/jlottie
 2. Import package in your code.
 
 ```javascript
-import jlottie from '@lottiefiles/jlottie';
+import * as jlottie from '@lottiefiles/jlottie';
 ```
 
 OR
