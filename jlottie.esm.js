@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.15
+ * @lottiefiles/jlottie v1.0.16
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -2691,6 +2691,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
  */
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
+  animation[animationId]._renderObj = elementObj;
   try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
@@ -2703,7 +2704,11 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._autoplay = autoplay;
     animation[animationId]._loop = loop;
     animation[animationId]._customName = customName;
-    animation[animationId]._paused = false;
+    if (autoplay) {
+      animation[animationId]._paused = false;
+    } else {
+      animation[animationId]._paused = true;
+    }
     animation[animationId]._maxWidth = 0;
     animation[animationId]._maxHeight = 0;
     animation[animationId]._skewW = 0;
@@ -2711,7 +2716,6 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._currScale = 1;
     animation[animationId]._lastFrame = 0;
     animation[animationId]._loopCount = 0;
-    animation[animationId]._renderObj = elementObj;
     //animation[animationId]._nextInterval = animation[animationId]._frameTime;
     //animation[animationId]._timeout = 0;
 
