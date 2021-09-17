@@ -1,7 +1,7 @@
 # jLottie
 
 <p align="center">
-  <img src="public/jLottie_logo.png" width="120" width="120" style="pointer-events: none;"/>
+  <img src="public/jlottie_logo.png" width="120" width="120" style="pointer-events: none;"/>
 </p>
 
 **jLottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jLottie is
