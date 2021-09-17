@@ -1,30 +1,30 @@
-# jlottie
+# jLottie
 
 <p align="center">
-  <img src="public/jlottie_logo.png" width="120" width="120" style="pointer-events: none;"/>
+  <img src="public/jLottie_logo.png" width="120" width="120" style="pointer-events: none;"/>
 </p>
 
-**jlottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jlottie is
+**jLottie** is a Lottie player written in javascript with an aim to have the smallest possible file size. jLottie is
 suitable as a general purpose lottie player, though implements a
 subset of the features in the core player - this approach leads to a
 tiny footprint and great performance.
 
-At only 9kb when gzipped, jlottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
-are necessary - common use cases include animated icons and micro animations. A list of all of the playback features supported by jlottie is
-available [here](https://lottiefiles.github.io/jlottie/features.html), and there's a test page available [here](https://lottiefiles.github.io/jlottie).
+At only 9kb when gzipped, jLottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
+are necessary - common use cases include animated icons and micro animations. A list of all of the playback features supported by jLottie is
+available [here](https://lottiefiles.github.io/jLottie/features.html), and there's a test page available [here](https://lottiefiles.github.io/jLottie).
 
-jlottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play
-the animation. This forgoes any need to perform real-time computations during playback. jlottie is suitable for use when
+jLottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play
+the animation. This forgoes any need to perform real-time computations during playback. jLottie is suitable for use when
 there are many animations playing on a single page.
 
-- **jlottie player is best used for animated icons and micro animations**
-- **jlottie player is vastly smaller in size _(less than 15kb, gzipped)_ compared to other Lottie players**
-- **jlottie player is suitable for use if there are many animations playing on a single page**
-- **jlottie player is highly performant**
+- **jLottie player is best used for animated icons and micro animations**
+- **jLottie player is vastly smaller in size _(less than 15kb, gzipped)_ compared to other Lottie players**
+- **jLottie player is suitable for use if there are many animations playing on a single page**
+- **jLottie player is highly performant**
 
 ## Performance
 
-Below are results of some performance tests comparing jlottie with
+Below are results of some performance tests comparing jLottie with
 [lottie-player](https://github.com/airbnb/lottie-web/blob/master/build/player/lottie.js).
 
 ### Single animation
@@ -51,7 +51,7 @@ _All figures other than memory is in milliseconds._
   <tbody>
     <tr>
       <td rowspan=2>Best</td>
-      <td>jlottie</td>
+      <td>jLottie</td>
       <td>41</td>
       <td>11</td>
       <td>5</td>
@@ -70,7 +70,7 @@ _All figures other than memory is in milliseconds._
     </tr>
     <tr>
       <td rowspan=2>Average</td>
-      <td>jlottie</td>
+      <td>jLottie</td>
       <td>70</td>
       <td>29</td>
       <td>8</td>
@@ -89,7 +89,7 @@ _All figures other than memory is in milliseconds._
     </tr>
     <tr>
       <td rowspan=2>Worst</td>
-      <td>jlottie</td>
+      <td>jLottie</td>
       <td>124</td>
       <td>35</td>
       <td>11</td>
@@ -112,16 +112,16 @@ _All figures other than memory is in milliseconds._
 
 ### Stress test
 
-In this test, a total of 35 Lottie animations, whose features are fully supported by jlottie, were chosen at random from
+In this test, a total of 35 Lottie animations, whose features are fully supported by jLottie, were chosen at random from
 the Lottiefiles public animations repository. These animations were then rendered in one page at the same time, and
 performance and memory utilization analyzed using Chrome tools.
 
 The test pages used for this test are
-[here for jlottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and
-[here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
+[here for jLottie](https://lottiefiles.github.io/jLottie/examples/general_jLottie2.html) and
+[here for lottie-player](https://lottiefiles.github.io/jLottie/examples/general_lottie2.html).
 
 During this test, it was discovered that all 35 animations noticeably skipped frames when lottie-player was rendering
-them. Conversely, jlottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the
+them. Conversely, jLottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the
 animations even during the Chrome performance analysis.
 
 _All figures other than memory is in milliseconds._
@@ -140,7 +140,7 @@ _All figures other than memory is in milliseconds._
   </thead>
   <tbody>
     <tr>
-      <td>jlottie</td>
+      <td>jLottie</td>
       <td>515</td>
       <td>269</td>
       <td>36</td>
@@ -191,7 +191,7 @@ _All figures other than memory is in milliseconds._
 - Import from CDN.
 
 ```html
-<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie.js" type="module"></script>
+<script src="https://unpkg.com/@lottiefiles/jLottie@latest/dist/jLottie.js" type="module"></script>
 ```
 
 #### In Javascript or TypeScript:
@@ -199,19 +199,19 @@ _All figures other than memory is in milliseconds._
 1. Install package using npm or yarn.
 
 ```shell
-npm install --save @lottiefiles/jlottie
+npm install --save @lottiefiles/jLottie
 ```
 
 2. Import package in your code.
 
 ```javascript
-import * as jlottie from '@lottiefiles/jlottie';
+import * as jLottie from '@lottiefiles/jLottie';
 ```
 
 OR
 
 ```javascript
-const jlottie = require('@lottiefiles/jlottie');
+const jLottie = require('@lottiefiles/jLottie');
 ```
 
 ## Usage
@@ -223,7 +223,7 @@ const jlottie = require('@lottiefiles/jlottie');
 ```
 
 ```js
-jlottie.loadAnimation({
+jLottie.loadAnimation({
   container: document.getElementById('my-animation'),
   loop: true,
   autoplay: true,
@@ -390,16 +390,16 @@ See [how to contribute](contributing.md) to this project.
 
 ## FAQ
 
-- **Why doesnt my Lottie animation work on the jlottie player?**
+- **Why doesnt my Lottie animation work on the jLottie player?**
 
-- The jlottie player does not support as many Adobe After Effects features as other players, as it was built
+- The jLottie player does not support as many Adobe After Effects features as other players, as it was built
   to be smaller in size and highly performant. It therefore may not support certain settings, effects or features that
   were used when creating the animation. Please send us feedback and by popular demand we may make accomdations as
-  needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jlottie)
+  needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jLottie)
 
 - **What features/effects of After Effects does this player support?**
 
-- Features supported by jlottie are listed [here](https://lottiefiles.github.io/jlottie/features).
+- Features supported by jLottie are listed [here](https://lottiefiles.github.io/jLottie/features).
 
 - **Where can I raise issues?**
 
@@ -407,7 +407,7 @@ See [how to contribute](contributing.md) to this project.
 
 - **Where can I drop feedback?**
 
-- You may [Click here](https://lottiefiles.canny.io/jlottie) and submit your feedback
+- You may [Click here](https://lottiefiles.canny.io/jLottie) and submit your feedback
 
 ## License
 
