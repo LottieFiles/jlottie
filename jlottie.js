@@ -4184,12 +4184,8 @@
       }));
     } catch (e) {
       //console.error(`Failed to load animation.${e}`);
-      exports.animationCount = exports.animationCount - 1; //elementObj.style.height = 0;
+      //elementObj.style.height = 0;
       //elementObj.style.width = 0;
-
-      elementObj.innerHTML = "";
-      animation.splice(animationId, 1);
-
       animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {
         bubbles: true,
         detail: {
@@ -4205,6 +4201,10 @@
           "animation": animationId
         }
       }));
+
+      exports.animationCount = exports.animationCount - 1;
+      elementObj.innerHTML = e;
+      animation.splice(animationId, 1);
     }
   }
   /**
