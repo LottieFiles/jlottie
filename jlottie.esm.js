@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.16
+ * @lottiefiles/jlottie v1.0.17
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
