@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.17
+ * @lottiefiles/jlottie v1.0.18
  */
 'use strict';
 
