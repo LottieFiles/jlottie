@@ -439,6 +439,7 @@ function getEmptyStageTransform() {
 function findExistingTransform(transforms, animationId, frame, forFill) {
   let found = 0;
   if (animation[animationId]._scene[parseInt(frame)] === undefined) {
+    //console.log(frame);
     return transforms;
   }
   for (let i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
@@ -637,8 +638,13 @@ function addGroupPositionTransform(
       .getElementById(transforms.refObj)
       .getBoundingClientRect().height;
   }
-  if (objectId._layer == 3) {
-  }
+  /*if (objectId._layer == 3) {
+    console.log(
+      `ORIGINAL: ${animation[animationId]._objSize[transforms.refObj][0]}, ${
+        animation[animationId]._objSize[transforms.refObj][1]
+      } // ${transforms.anchorX}, ${transforms.anchorY}`,
+    );
+  }*/
   transforms.refObjSet = true;
 
   let posY = 0;
@@ -3007,6 +3013,7 @@ function goToAndStop(_frame, isFrame, name) {
       if (animation[i]._elementId == name || animation[i]._customName == name) {
         animation[i]._paused = true;
         animation[i]._currentFrame = _frame;
+        //console.log(`${name} == ${_frame}`);
         loadFrame(i, _frame);
         break;
       }
