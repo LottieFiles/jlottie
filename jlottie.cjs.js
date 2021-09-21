@@ -366,7 +366,9 @@ function lottiemate() {
     }
       
   }
-  setTimeout(lottiemate, smallestFrameTime - (postRender - currentDate));
+  setTimeout(() => {
+    requestAnimationFrame(lottiemate);
+  }, smallestFrameTime - 16 /* 1 animation frame */ - (postRender - currentDate));
 }
 
 /// ////////// BUILD SCENE GRAPH
@@ -2743,6 +2745,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     // newSVG.setAttributeNS(null, 'height', animation[animationId].h);
     newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId].w} ${animation[animationId].h}`);
     newSVG.setAttributeNS(null, 'preserveAspectRatio', 'xMidYMid meet');
+    newSVG.style.contain = 'strict';
     newSVG.style.width = '100%';
     newSVG.style.height = '100%';
     newSVG.setAttributeNS(null, 'id', `_svg${animationId}`);
