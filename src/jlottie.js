@@ -635,13 +635,13 @@ export function addGroupPositionTransform(
       .getElementById(transforms.refObj)
       .getBoundingClientRect().height;
   }
-  // if (objectId._layer == 3) {
-  //   console.log(
-  //     `ORIGINAL: ${animation[animationId]._objSize[transforms.refObj][0]}, ${
-  //       animation[animationId]._objSize[transforms.refObj][1]
-  //     } // ${transforms.anchorX}, ${transforms.anchorY}`,
-  //   );
-  // }
+  if (objectId._layer == 3) {
+    console.log(
+      `ORIGINAL: ${animation[animationId]._objSize[transforms.refObj][0]}, ${
+        animation[animationId]._objSize[transforms.refObj][1]
+      } // ${transforms.anchorX}, ${transforms.anchorY}`,
+    );
+  }
   transforms.refObjSet = true;
 
   let posY = 0;
@@ -3010,7 +3010,7 @@ export function goToAndStop(_frame, isFrame, name) {
       if (animation[i]._elementId == name || animation[i]._customName == name) {
         animation[i]._paused = true;
         animation[i]._currentFrame = _frame;
-        // console.log(`${name} == ${_frame}`);
+        console.log(`${name} == ${_frame}`);
         loadFrame(i, _frame);
         break;
       }
