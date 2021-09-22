@@ -1675,8 +1675,26 @@
   var animationLoading = 0;
   var frozen = false;
   var playStarted = false;
-  var panda = console;
-  var smallestFrameTime = 0; /// ////////// BEZIER
+  var smallestFrameTime = 0;
+  var debugAnimation = false;
+  /**
+   * Exposes a near-zero cost console logger.
+   *
+   * @example debug(() => 'My logging statement'); // only prints if debugAnimation is set
+   * @example debug(() => ['My logging statement', { state }]); // Prints the message and state if debugAnimation is set
+   */
+
+  function debug(loggerFn) {
+    if (!debugAnimation) return;
+    var loggingArgs = loggerFn();
+
+    if (Array.isArray(loggingArgs)) {
+      var _console;
+
+      (_console = console).log.apply(_console, _toConsumableArray(loggingArgs));
+    } else {
+    }
+  } /// ////////// BEZIER
 
   function arcLength(p1, p2) {
     var result = Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
@@ -2242,14 +2260,14 @@
       animation[animationId]._objSize[transforms.refObj][0] = document.getElementById(transforms.refObj).getBoundingClientRect().width;
       animation[animationId]._objSize[transforms.refObj][1] = document.getElementById(transforms.refObj).getBoundingClientRect().height;
     }
-    /*if (objectId._layer == 3) {
-      console.log(
-        `ORIGINAL: ${animation[animationId]._objSize[transforms.refObj][0]}, ${
-          animation[animationId]._objSize[transforms.refObj][1]
-        } // ${transforms.anchorX}, ${transforms.anchorY}`,
-      );
-    }*/
 
+    var sizeObjFromTransform = animation[animationId]._objSize[transforms.refObj];
+
+    if (objectId._layer == 3) {
+      debug(function () {
+        return ['GroupPositionTransform: Layer 3', [sizeObjFromTransform[0], sizeObjFromTransform[1]], [transforms.anchorX, transforms.anchorY]];
+      });
+    }
 
     transforms.refObjSet = true;
     var posY = 0;
@@ -2269,8 +2287,8 @@
 
     if (refKey == 's') {
       transforms.scaleFactorX += posX;
-      tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
-      tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
+      tempBoundingW = sizeObjFromTransform[0];
+      tempBoundingH = sizeObjFromTransform[1];
       var currentScaleX;
       var currentScaleY;
 
@@ -4429,7 +4447,6 @@
 
     var autoplay = true;
     var loop = true;
-    var debugAnimation = false;
     var debugContainer;
 
     if (!(obj.autoplay === undefined)) {
@@ -4501,6 +4518,7 @@
   exports.bezierCurve = bezierCurve;
   exports.buildGraph = buildGraph;
   exports.createGradientDef = createGradientDef;
+  exports.debug = debug;
   exports.destroy = destroy;
   exports.extrapolateOffsetKeyframe = extrapolateOffsetKeyframe;
   exports.extrapolatePathPosition = extrapolatePathPosition;
