@@ -7,8 +7,26 @@ const animationLength = 0;
 let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
-var panda = console;
 var smallestFrameTime = 0;
+let debugAnimation = false;
+
+/**
+ * Exposes a near-zero cost console logger.
+ *
+ * @example debug(() => 'My logging statement'); // only prints if debugAnimation is set
+ * @example debug(() => ['My logging statement', { state }]); // Prints the message and state if debugAnimation is set
+ */
+export function debug(loggerFn) {
+  if (!debugAnimation) return;
+
+  const loggingArgs = loggerFn();
+
+  if (Array.isArray(loggingArgs)) {
+    console.log(...loggingArgs);
+  } else {
+    console.log(loggingArgs);
+  }
+}
 
 /// ////////// BEZIER
 export function arcLength(p1, p2) {
@@ -635,13 +653,14 @@ export function addGroupPositionTransform(
       .getElementById(transforms.refObj)
       .getBoundingClientRect().height;
   }
-  /*if (objectId._layer == 3) {
-    console.log(
-      `ORIGINAL: ${animation[animationId]._objSize[transforms.refObj][0]}, ${
-        animation[animationId]._objSize[transforms.refObj][1]
-      } // ${transforms.anchorX}, ${transforms.anchorY}`,
-    );
-  }*/
+  const sizeObjFromTransform = animation[animationId]._objSize[transforms.refObj];
+  if (objectId._layer == 3) {
+    debug(() => [
+      'GroupPositionTransform: Layer 3',
+      [sizeObjFromTransform[0], sizeObjFromTransform[1]],
+      [transforms.anchorX, transforms.anchorY],
+    ]);
+  }
   transforms.refObjSet = true;
 
   let posY = 0;
@@ -656,12 +675,12 @@ export function addGroupPositionTransform(
       },${document.getElementById(transforms.refObj).getBoundingClientRect().height / 2}) `;
     }
   }
-  var tempBoundingW;
-  var tempBoundingH;
+  let tempBoundingW;
+  let tempBoundingH;
   if (refKey == 's') {
     transforms.scaleFactorX += posX;
-    tempBoundingW = animation[animationId]._objSize[transforms.refObj][0];
-    tempBoundingH = animation[animationId]._objSize[transforms.refObj][1];
+    tempBoundingW = sizeObjFromTransform[0];
+    tempBoundingH = sizeObjFromTransform[1];
     let currentScaleX;
     let currentScaleY;
     if (position.length > 1) {
@@ -3035,7 +3054,6 @@ export function loadAnimation(obj) {
   }
   let autoplay = true;
   let loop = true;
-  let debugAnimation = false;
   let debugContainer;
 
 
