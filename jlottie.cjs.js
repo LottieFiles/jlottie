@@ -1806,8 +1806,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               depth,
               'length',
             );
-            shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 22;
-            //panda.log("GOTL", returnedKeyframeObj[0].s, returnedKeyframeObj[1].s, shapesGroup[i].ks.k.v[j]._l);
+            shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 20;
+            debug(() => ["GOTL", [returnedKeyframeObj, shapesGroup[i].ks.k.v[j]._l]]);
             bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
           }
 
@@ -1834,9 +1834,10 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
           }
           //panda.log("maxmin ", minT, maxT);
+          debug(() => ['stuff', minT, maxT, bezierLength]);
 
-          let sIndex = 0;
-          let eIndex = 0;
+          let sIndex = -1;
+          let eIndex = -1;
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
           for (let t = minT; t <= maxT; t++) {
             
@@ -1846,11 +1847,12 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let endShapeIndex = 0;
             let tDelta = 0;
   
-            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length && trimToSet.s.k[0].t >= t) {
+            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 2 && t >= trimToSet.s.k[0].t) {
               sIndex++;
             }
-            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length && trimToSet.e.k[0].t >= t) {
+            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 2 && t >= trimToSet.e.k[0].t) {
               eIndex++;
+              //debug(() => ['incr', trimToSet.e.k[eIndex].t, t, eIndex]);
             }
             let startSegment = [];
             let endSegment = [];
@@ -1876,17 +1878,16 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
-              //panda.log("end encountered");
-              curEL = trimToSet.e.k[eIndex].s[0];
+              debug(() => ['end', t, trimToSet.e.k[eIndex]]);
+              curEL = bezierLength * (trimToSet.e.k[eIndex].s[0] / 100);
               tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
               let tSeg = 1 / tDelta;
+              debug(() => ['delta', t, trimToSet.e.k[eIndex].t, trimToSet.e.k[eIndex + 1].t, bezierLength, curEL]);
               for (let j = tempK.v.length - 1; j > 0; j--) {
-                //panda.log("curlen ", tempK.v[j - 1]._l);
                 if (curEL < tempK.v[j - 1]._l) {
                   endShapeIndex = j;
                   let ratio = curEL / tempK.v[j - 1]._l;
                   endSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], 0.01, tSeg);
-                  //panda.log("endSegment", JSON.stringify(endSegment));
                   break;
                 } else {
                   curEL = curEL - tempK.v[j - 1]._l;
@@ -1931,11 +1932,12 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             //panda.log("sourceK", JSON.stringify(sourceK), t);
             if (sourceK.v.length > 1) {
               let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
-
+              
               //panda.log("before adding");
               if (t > animation[animationId]._totalFrames || t < 0) {
                 break;
               }
+              debug(() => ['setString', sourceK]);
               //panda.log("adding");
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             }
@@ -2721,7 +2723,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   animation[animationId]._renderObj = elementObj;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2841,16 +2843,16 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
       loadFrame(animationId, 1);
     }
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
-  } catch (e) {
+  /*} catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("loadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
-		exports.animationCount = exports.animationCount - 1;
+		animationCount = animationCount - 1;
 		elementObj.innerHTML = e;
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 /**
