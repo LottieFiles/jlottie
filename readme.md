@@ -11,7 +11,7 @@ tiny footprint and great performance.
 
 At only 9kb when gzipped, jLottie is perfect as a lightweight addition to any webapp where not all of the lottie featues
 are necessary - common use cases include animated icons and micro animations. A list of all of the playback features supported by jLottie is
-available [here](https://lottiefiles.github.io/jLottie/features.html), and there's a test page available [here](https://lottiefiles.github.io/jLottie).
+available [here](https://lottiefiles.github.io/jlottie/features.html), and there's a test page available [here](https://lottiefiles.github.io/jlottie).
 
 jLottie's performance is achieved by compiling the Lottie source into a scene graph, which is subsequently used to play
 the animation. This forgoes any need to perform real-time computations during playback. jLottie is suitable for use when
@@ -117,8 +117,8 @@ the Lottiefiles public animations repository. These animations were then rendere
 performance and memory utilization analyzed using Chrome tools.
 
 The test pages used for this test are
-[here for jLottie](https://lottiefiles.github.io/jLottie/examples/general_jLottie2.html) and
-[here for lottie-player](https://lottiefiles.github.io/jLottie/examples/general_lottie2.html).
+[here for jLottie](https://lottiefiles.github.io/jlottie/examples/general_jlottie2.html) and
+[here for lottie-player](https://lottiefiles.github.io/jlottie/examples/general_lottie2.html).
 
 During this test, it was discovered that all 35 animations noticeably skipped frames when lottie-player was rendering
 them. Conversely, jLottie is designed not to skip any frames, and therefore no jitter could be discerned on any of the
@@ -199,19 +199,19 @@ _All figures other than memory is in milliseconds._
 1. Install package using npm or yarn.
 
 ```shell
-npm install --save @lottiefiles/jLottie
+npm install --save @lottiefiles/jlottie
 ```
 
 2. Import package in your code.
 
 ```javascript
-import * as jLottie from '@lottiefiles/jLottie';
+import * as jlottie from '@lottiefiles/jlottie';
 ```
 
 OR
 
 ```javascript
-const jLottie = require('@lottiefiles/jLottie');
+const jlottie = require('@lottiefiles/jlottie');
 ```
 
 ## Usage
@@ -395,11 +395,11 @@ See [how to contribute](contributing.md) to this project.
 - The jLottie player does not support as many Adobe After Effects features as other players, as it was built
   to be smaller in size and highly performant. It therefore may not support certain settings, effects or features that
   were used when creating the animation. Please send us feedback and by popular demand we may make accomdations as
-  needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jLottie)
+  needed. You can submit your feed back here. [Click here](https://lottiefiles.canny.io/jlottie)
 
 - **What features/effects of After Effects does this player support?**
 
-- Features supported by jLottie are listed [here](https://lottiefiles.github.io/jLottie/features).
+- Features supported by jLottie are listed [here](https://lottiefiles.github.io/jlottie/features).
 
 - **Where can I raise issues?**
 
@@ -407,7 +407,7 @@ See [how to contribute](contributing.md) to this project.
 
 - **Where can I drop feedback?**
 
-- You may [Click here](https://lottiefiles.canny.io/jLottie) and submit your feedback
+- You may [Click here](https://lottiefiles.canny.io/jlottie) and submit your feedback
 
 ## License
 
