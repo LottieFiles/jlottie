@@ -1764,12 +1764,23 @@ function getSegment(p1, c1, c2, p2, t0, t1) {
 
   let segment = [];
   segment.push( [(qxa * u0) + (qxc * t0), (qya * u0) + (qyc * t0)] ); // p1
-
+  if (p1[0] == p2[0]) {
+    segment[0][0] = p1[0];
+  }
+  if (p1[1] == p2[1]) {
+    segment[0][1] = p1[1];
+  }
   segment.push( [(qxa * u1) + (qxc * t1), (qya * u1) + (qyc * t1)] ); // c1
 
   segment.push( [(qxb * u0) + (qxd * t0), (qyb * u0) + (qyd * t0)] ); // c2
 
   segment.push( [(qxb * u1) + (qxd * t1), (qyb * u1) + (qyd * t1)] ); // p2
+  if (p1[0] == p2[0]) {
+    segment[3][0] = p1[0];
+  }
+  if (p1[1] == p2[1]) {
+    segment[3][1] = p1[1];
+  }
 
   return segment;
 }
@@ -1818,14 +1829,14 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
           let minT = -1;
           let maxT = -1;
-          if (trimToSet.s.k.length > 1 && trimToSet.s.k.length > 1) {
+          if (trimToSet.s.k.length > 1) {
             minT = trimToSet.s.k[0].t;
           }
-          if (trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
-            minT = trimToSet.s.k[0].t;
+          if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
+            maxT = trimToSet.s.k[trimToSet.s.k.length - 1].t;
           }
-          if (trimToSet.e.k.length > 1 && trimToSet.e.k.length > 1) {
-            maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
+          if (trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
+            minT = trimToSet.e.k[0].t;
           }
           if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
             maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
@@ -1839,11 +1850,13 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
           }
           //panda.log("maxmin ", minT, maxT);
-          debug(() => ['stuff', minT, maxT, fullBezierLength]);
 
           let sIndex = -1;
           let eIndex = -1;
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
+          //let tempK = shapesGroup[i].ks.k;
+
+          debug(() => ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet]);
           for (let t = minT; t <= maxT; t++) {
             
             let curSL = 0;
@@ -1862,15 +1875,16 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let startSegment = [];
             let endSegment = [];
             let sourceK = {'i': [], 'o': [], 'v': []};
-            if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
-              //panda.log("start encountered");
-              curSL = fullBezierLength - (fullBezierLength * (trimToSet.e.k[eIndex].s[0] / 100));
+            if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+              debug(() => ['start', t, trimToSet, tempK]);
+              curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
               tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
               let tSeg = 1 / tDelta;
               for (let j = 1; j < tempK.v.length; j++) {
                 if (curSL < tempK.v[j - 1]._l) {
                   startShapeIndex = j;
-                  startSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], (curSL / tempK.v[j]._l), 0.99);
+                  startSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], ((tempK.v[j]._l - curSL) / tempK.v[j]._l), 0.999999);
+                  debug(() => ['hup', j, ((tempK.v[j]._l - curSL) / tempK.v[j]._l), startSegment, (tempK.i.length - startShapeIndex), tempK, startShapeIndex]);
                   break;
                 } else {
                   if (tempK.v[j - 1]._l === undefined) {
@@ -1881,7 +1895,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               }
             }
 
-            if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
+            if (eIndex >= 0 && trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
               debug(() => ['end', t, trimToSet.e.k[eIndex]]);
               curEL = fullBezierLength - (fullBezierLength * (trimToSet.e.k[eIndex].s[0] / 100));
               tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
@@ -1891,8 +1905,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 debug(() => ['circling']);
                 if (curEL < tempK.v[j]._l) {
                   endShapeIndex = j;
-                  endSegment = getSegment(tempK.v[j], tempK.o[j], tempK.i[j + 1], tempK.v[j + 1], 0.01, (curEL / tempK.v[j]._l));
-                  debug(() => ['hup', (curEL / tempK.v[j]._l), endSegment]);
+                  endSegment = getSegment(tempK.v[j], tempK.o[j], tempK.i[j + 1], tempK.v[j + 1], 0.000001, ((tempK.v[j]._l - curEL) / tempK.v[j]._l));
+                  debug(() => ['hup', j, ((tempK.v[j]._l - curEL) / tempK.v[j]._l), endSegment, (tempK.i.length - endShapeIndex), tempK, endShapeIndex]);
                   break;
                 } else {
                   curEL = curEL - tempK.v[j]._l;
@@ -1901,16 +1915,20 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (endShapeIndex >= 0) {
-              tempK.i.splice(endShapeIndex + 1, (tempK.i.length - endShapeIndex), endSegment[0]);
-              tempK.o.splice(endShapeIndex + 1, (tempK.o.length - endShapeIndex), endSegment[0]);
-              tempK.v.splice(endShapeIndex + 1, (tempK.v.length - endShapeIndex), endSegment[0]);
+              tempK.i.splice(endShapeIndex + 1, ((tempK.i.length - 1) - endShapeIndex), [0, 0]);
+              tempK.o.splice(endShapeIndex + 1, ((tempK.o.length - 1) - endShapeIndex), [0, 0]);
+              tempK.v.splice(endShapeIndex + 1, ((tempK.v.length - 1) - endShapeIndex), endSegment[3]);
+              debug(() => ['tempK', tempK]);
             }
 
             if (startShapeIndex >= 0) {
-              tempK.i.splice(0, startShapeIndex, (tempK.i.length - startShapeIndex), startSegment[0]);
-              tempK.o.splice(0, startShapeIndex, (tempK.o.length - startShapeIndex), startSegment[0]);
+              tempK.i.splice(0, startShapeIndex, (tempK.i.length - startShapeIndex), [0, 0]);
+              tempK.o.splice(0, startShapeIndex, (tempK.o.length - startShapeIndex), [0, 0]);
               tempK.v.splice(0, startShapeIndex, (tempK.v.length - startShapeIndex), startSegment[0]);
             }
+
+            startShapeIndex = -1;
+            endShapeIndex = -1;
 
             /*
             let startInc = false;
@@ -1929,7 +1947,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 sourceK.o.push(tempK.o[j]);
                 sourceK.v.push(tempK.v[j]);
               }
-            }
+            }1111111111111111111111111111111111111111111111111111111111111111111111
 
             if (trimToSet.e.k.length > 1) {
               if (! startInc && ! middleInc) {
@@ -1945,7 +1963,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
             */
 
-            if (sourceK.v.length > 1) {
+            if (tempK.v.length > 1) {
               let transforms = setDataString(animationId, tempK, shapesGroup[i]._shape, false, t);
               
               if (t > animation[animationId]._totalFrames || t < 0) {
