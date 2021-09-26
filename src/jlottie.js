@@ -1796,7 +1796,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
         let fullBezierLength = 0;
         let returnedKeyframeObj = {};
         if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
-          debug(() => ["GLLL", shapesGroup[i].ks.k]);
+          debug(() => ["GLLL", shapesGroup[i].ks]);
           for (let j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
             let bezierLength = 0;
             returnedKeyframeObj = bezierCurve(
@@ -1854,8 +1854,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
           let sIndex = -1;
           let eIndex = -1;
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
-          //let tempK = shapesGroup[i].ks.k;
-
+          
           debug(() => ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet]);
           for (let t = minT; t <= maxT; t++) {
             
@@ -1874,7 +1873,6 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
             let startSegment = [];
             let endSegment = [];
-            let sourceK = {'i': [], 'o': [], 'v': []};
             if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
               debug(() => ['start', t, trimToSet, tempK]);
               curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
@@ -1914,18 +1912,19 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               }
             }
 
+            let sourceK = JSON.parse(JSON.stringify(tempK));
             if (endShapeIndex >= 0) {
-              tempK.i.splice(endShapeIndex + 1, ((tempK.i.length - 1) - endShapeIndex), [0, 0]);
-              tempK.o.splice(endShapeIndex + 1, ((tempK.o.length - 1) - endShapeIndex), [0, 0]);
-              tempK.v.splice(endShapeIndex + 1, ((tempK.v.length - 1) - endShapeIndex), endSegment[3]);
-              debug(() => ['etempK', tempK]);
+              debug(() => ['etempK', sourceK]);
+              sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), [0, 0]);
+              sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0, 0]);
+              sourceK.v.splice(endShapeIndex + 1, ((sourceK.v.length - 1) - endShapeIndex), endSegment[3]);
             }
 
             if (startShapeIndex >= 0) {
-              tempK.i.splice(0, startShapeIndex, (tempK.i.length - startShapeIndex), [0, 0]);
-              tempK.o.splice(0, startShapeIndex, (tempK.o.length - startShapeIndex), [0, 0]);
-              tempK.v.splice(0, startShapeIndex, (tempK.v.length - startShapeIndex), startSegment[0]);
-              debug(() => ['stempK', tempK]);
+              debug(() => ['stempK', sourceK]);
+              sourceK.i.splice(0, startShapeIndex, (sourceK.i.length - startShapeIndex), [0, 0]);
+              sourceK.o.splice(0, startShapeIndex, (sourceK.o.length - startShapeIndex), [0, 0]);
+              sourceK.v.splice(0, startShapeIndex, (sourceK.v.length - startShapeIndex), startSegment[0]);
             }
 
             startShapeIndex = -1;
@@ -1964,13 +1963,13 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
             */
 
-            if (tempK.v.length > 1) {
-              let transforms = setDataString(animationId, tempK, shapesGroup[i]._shape, false, t);
+            if (sourceK.v.length > 1) {
+              let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
               
               if (t > animation[animationId]._totalFrames || t < 0) {
                 break;
               }
-              debug(() => ['setString', tempK]);
+              debug(() => ['setString', sourceK]);
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             }
 
@@ -2039,7 +2038,11 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
       );
     } else {
       layerObj.it[i]._shape = animation[animationId].shapeCount;
+      let tempK = JSON.parse(JSON.stringify(layerObj.it[i]));
+
+      debug(() => ['CO', tempK]);
       layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+      debug(() => ['FRICO', layerObj.it[i]]);
       if (layerObj.it[i].ty == 'tr') { // Transformations
         layerObj.it[i]._trIndex = i;
         if (layerObj.it[i].p.hasOwnProperty('k')) {
@@ -2108,6 +2111,7 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
     setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
   if (layerObj.trimmed) {
+    debug(() => ['CurrentTrim', layerObj.currentTrim]);
     setTrim(layerObj.it, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
   }
   return layerObj;
@@ -2158,7 +2162,9 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
 
     } else {
       layerObj.shapes[i]._shape = animation[animationId].shapeCount;
+      debug(() => ['RICO', layerObj.shapes[i]]);
       layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+      debug(() => ['FRICO', layerObj.shapes[i]]);
       if (layerObj.shapes[i].ty == 'tr') { // Transformation
         layerObj.shapes[i]._trIndex = i;
         if (layerObj.shapes[i].p.hasOwnProperty('k')) {
@@ -2220,6 +2226,7 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
     setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
   if (layerObj.trimmed) {
+    debug(() => ['CurrentTrim', layerObj.currentTrim]);
     setTrim(layerObj.shapes, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
   }
   return layerObj;
@@ -2567,7 +2574,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
     if (passedObj[passedKey][i].hasOwnProperty('refId')) {
       let tempRef = -1;
       for (let m = 0; m < animation[animationId].assets.length; m++) {
-        if (animation[animationId].assets[m].id == passedObj[passedKey][i].refId) {
+        if (typeof animation[animationId].assets[m] != 'undefined' && animation[animationId].assets[m].id == passedObj[passedKey][i].refId) {
           tempRef = m;
           break;
         }
