@@ -1676,7 +1676,7 @@
   var frozen = false;
   var playStarted = false;
   var smallestFrameTime = 0;
-  var debugAnimation = false;
+  var debugAnimation = true;
   /**
    * Exposes a near-zero cost console logger.
    *
@@ -3223,10 +3223,30 @@
     var qyc = c1[1] * u0 * u0 + c2[1] * 2 * t0 * u0 + p2[1] * t0 * t0;
     var qyd = c1[1] * u1 * u1 + c2[1] * 2 * t1 * u1 + p2[1] * t1 * t1;
     var segment = [];
-    segment.push([qxa * u0 + qxc * t0, qya * u0 + qyc * t0]);
-    segment.push([qxa * u1 + qxc * t1, qya * u1 + qyc * t1]);
-    segment.push([qxb * u0 + qxd * t0, qyb * u0 + qyd * t0]);
-    segment.push([qxb * u1 + qxd * t1, qyb * u1 + qyd * t1]);
+    segment.push([qxa * u0 + qxc * t0, qya * u0 + qyc * t0]); // p1
+
+    if (p1[0] == p2[0]) {
+      segment[0][0] = p1[0];
+    }
+
+    if (p1[1] == p2[1]) {
+      segment[0][1] = p1[1];
+    }
+
+    segment.push([qxa * u1 + qxc * t1, qya * u1 + qyc * t1]); // c1
+
+    segment.push([qxb * u0 + qxd * t0, qyb * u0 + qyd * t0]); // c2
+
+    segment.push([qxb * u1 + qxd * t1, qyb * u1 + qyd * t1]); // p2
+
+    if (p1[0] == p2[0]) {
+      segment[3][0] = p1[0];
+    }
+
+    if (p1[1] == p2[1]) {
+      segment[3][1] = p1[1];
+    }
+
     return segment;
   }
 
@@ -3238,18 +3258,39 @@
       } else {
         if (shapesGroup[i]._isShape) {
           var _ret2 = function () {
-            var bezierLength = 0;
+            var fullBezierLength = 0;
             var returnedKeyframeObj = {};
 
             if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
               var _ret3 = function () {
+                debug(function () {
+                  return ["GLLL", shapesGroup[i].ks];
+                });
+
                 var _loop3 = function _loop3(j) {
+                  var bezierLength = 0;
                   returnedKeyframeObj = bezierCurve(shapesGroup[i].ks.k.v[j], shapesGroup[i].ks.k.o[j], shapesGroup[i].ks.k.i[j + 1], shapesGroup[i].ks.k.v[j + 1], 1, 20, false, animationId, 's', -1, shapesGroup[i].ks.k, depth, 'length');
-                  shapesGroup[i].ks.k.v[j]._l = arcLength(returnedKeyframeObj[0].s, returnedKeyframeObj[1].s) * 20;
+
+                  for (var k = 0; k < returnedKeyframeObj.length - 1; k++) {
+                    bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s);
+                    debug(function () {
+                      return ["blut", bezierLength];
+                    });
+                  }
+
+                  bezierLength = bezierLength + arcLength(shapesGroup[i].ks.k.v[j], returnedKeyframeObj[0].s);
                   debug(function () {
-                    return ["GOTL", [returnedKeyframeObj, shapesGroup[i].ks.k.v[j]._l]];
+                    return ["blut", bezierLength];
                   });
-                  bezierLength = bezierLength + shapesGroup[i].ks.k.v[j]._l;
+                  bezierLength = bezierLength + arcLength(returnedKeyframeObj[returnedKeyframeObj.length - 1].s, shapesGroup[i].ks.k.v[j + 1]);
+                  fullBezierLength = fullBezierLength + bezierLength;
+                  shapesGroup[i].ks.k.v[j]._l = bezierLength;
+                  debug(function () {
+                    return ["blut", bezierLength];
+                  });
+                  debug(function () {
+                    return ["GOTL", returnedKeyframeObj, bezierLength];
+                  });
                 };
 
                 for (var j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
@@ -3259,16 +3300,16 @@
                 var minT = -1;
                 var maxT = -1;
 
-                if (trimToSet.s.k.length > 1 && trimToSet.s.k.length > 1) {
+                if (trimToSet.s.k.length > 1) {
                   minT = trimToSet.s.k[0].t;
                 }
 
-                if (trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
-                  minT = trimToSet.s.k[0].t;
+                if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
+                  maxT = trimToSet.s.k[trimToSet.s.k.length - 1].t;
                 }
 
-                if (trimToSet.e.k.length > 1 && trimToSet.e.k.length > 1) {
-                  maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
+                if (trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
+                  minT = trimToSet.e.k[0].t;
                 }
 
                 if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
@@ -3288,18 +3329,18 @@
                 } //panda.log("maxmin ", minT, maxT);
 
 
-                debug(function () {
-                  return ['stuff', minT, maxT, bezierLength];
-                });
                 var sIndex = -1;
                 var eIndex = -1;
                 var tempK = Object.assign({}, shapesGroup[i].ks.k);
+                debug(function () {
+                  return ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet];
+                });
 
                 var _loop4 = function _loop4(t) {
                   var curSL = 0;
                   var curEL = 0;
-                  var startShapeIndex = 0;
-                  var endShapeIndex = 0;
+                  var startShapeIndex = -1;
+                  var endShapeIndex = -1;
                   var tDelta = 0;
 
                   if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 2 && t >= trimToSet.s.k[0].t) {
@@ -3312,98 +3353,129 @@
 
                   var startSegment = [];
                   var endSegment = [];
-                  var sourceK = {
-                    'i': [],
-                    'o': [],
-                    'v': []
-                  };
 
-                  if (trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
-                    //panda.log("start encountered");
-                    curSL = trimToSet.s.k[sIndex].s[0];
+                  if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+                    debug(function () {
+                      return ['start', t, trimToSet, tempK];
+                    });
+                    curSL = fullBezierLength - fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100);
                     tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
                     var tSeg = 1 / tDelta;
 
-                    for (var _j = 0; _j < tempK.v.length; _j++) {
-                      if (curSL < tempK.v[_j]._l) {
+                    var _loop5 = function _loop5(_j) {
+                      if (curSL < tempK.v[_j - 1]._l) {
                         startShapeIndex = _j;
-                        var ratio = curlSL / tempK.v[_j]._l;
-                        startSegment = getSegment(tempK.v[_j], tempK.o[_j], tempK.i[_j + 1], tempK.v[_j + 1], tSeg, 0.99);
-                        break;
+                        startSegment = getSegment(tempK.v[_j - 1], tempK.o[_j - 1], tempK.i[_j], tempK.v[_j], (tempK.v[_j]._l - curSL) / tempK.v[_j]._l, 0.999999);
+                        debug(function () {
+                          return ['hup', _j, (tempK.v[_j]._l - curSL) / tempK.v[_j]._l, startSegment, tempK.i.length - startShapeIndex, tempK, startShapeIndex];
+                        });
+                        return "break";
                       } else {
-                        if (tempK.v[_j]._l === undefined) {} else {
-                          curSL = curSL - tempK.v[_j]._l;
+                        if (tempK.v[_j - 1]._l === undefined) {} else {
+                          curSL = curSL - tempK.v[_j - 1]._l;
                         }
                       }
+                    };
+
+                    for (var _j = 1; _j < tempK.v.length; _j++) {
+                      var _ret5 = _loop5(_j);
+
+                      if (_ret5 === "break") break;
                     }
                   }
 
-                  if (trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
+                  if (eIndex >= 0 && trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
                     debug(function () {
                       return ['end', t, trimToSet.e.k[eIndex]];
                     });
-                    curEL = bezierLength * (trimToSet.e.k[eIndex].s[0] / 100);
+                    curEL = fullBezierLength - fullBezierLength * (trimToSet.e.k[eIndex].s[0] / 100);
                     tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
 
                     var _tSeg = 1 / tDelta;
 
                     debug(function () {
-                      return ['delta', t, trimToSet.e.k[eIndex].t, trimToSet.e.k[eIndex + 1].t, bezierLength, curEL];
+                      return ['delta', t, trimToSet.e.k[eIndex].t, trimToSet.e.k[eIndex + 1].t, fullBezierLength, curEL, tempK];
                     });
 
-                    for (var _j2 = tempK.v.length - 1; _j2 > 0; _j2--) {
-                      if (curEL < tempK.v[_j2 - 1]._l) {
+                    var _loop6 = function _loop6(_j2) {
+                      debug(function () {
+                        return ['circling'];
+                      });
+
+                      if (curEL < tempK.v[_j2]._l) {
                         endShapeIndex = _j2;
-
-                        var _ratio = curEL / tempK.v[_j2 - 1]._l;
-
-                        endSegment = getSegment(tempK.v[_j2 - 1], tempK.o[_j2 - 1], tempK.i[_j2], tempK.v[_j2], 0.01, _tSeg);
-                        break;
+                        endSegment = getSegment(tempK.v[_j2], tempK.o[_j2], tempK.i[_j2 + 1], tempK.v[_j2 + 1], 0.000001, (tempK.v[_j2]._l - curEL) / tempK.v[_j2]._l);
+                        debug(function () {
+                          return ['hup', _j2, (tempK.v[_j2]._l - curEL) / tempK.v[_j2]._l, endSegment, tempK.i.length - endShapeIndex, tempK, endShapeIndex];
+                        });
+                        return "break";
                       } else {
-                        curEL = curEL - tempK.v[_j2 - 1]._l;
+                        curEL = curEL - tempK.v[_j2]._l;
                       }
+                    };
+
+                    for (var _j2 = tempK.v.length - 2; _j2 >= 0; _j2--) {
+                      var _ret6 = _loop6(_j2);
+
+                      if (_ret6 === "break") break;
                     }
                   }
 
-                  var startInc = false;
-                  var middleInc = false;
+                  var sourceK = JSON.parse(JSON.stringify(tempK));
 
+                  if (endShapeIndex >= 0) {
+                    debug(function () {
+                      return ['etempK', sourceK];
+                    });
+                    sourceK.i.splice(endShapeIndex + 1, sourceK.i.length - 1 - endShapeIndex, [0, 0]);
+                    sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, [0, 0]);
+                    sourceK.v.splice(endShapeIndex + 1, sourceK.v.length - 1 - endShapeIndex, endSegment[3]);
+                  }
+
+                  if (startShapeIndex >= 0) {
+                    debug(function () {
+                      return ['stempK', sourceK];
+                    });
+                    sourceK.i.splice(0, startShapeIndex, sourceK.i.length - startShapeIndex, [0, 0]);
+                    sourceK.o.splice(0, startShapeIndex, sourceK.o.length - startShapeIndex, [0, 0]);
+                    sourceK.v.splice(0, startShapeIndex, sourceK.v.length - startShapeIndex, startSegment[0]);
+                  }
+
+                  startShapeIndex = -1;
+                  endShapeIndex = -1;
+                  /*
+                  let startInc = false;
+                  let middleInc = false;
                   if (trimToSet.s.k.length > 1) {
-                    startInc = true; //panda.log("__start");
-
+                    startInc = true;
                     sourceK.i.push(tempK.i[startShapeIndex]);
                     sourceK.o.push(startSegment[1]);
                     sourceK.v.push(startSegment[0]);
                   }
-
-                  if (endShapeIndex - startShapeIndex > 0 && startInc) {
-                    middleInc = true; //panda.log("__middle");
-
-                    for (var _j3 = startShapeIndex + 1; _j3 < endShapeIndex; _j3++) {
-                      sourceK.i.push(tempK.i[_j3]);
-                      sourceK.o.push(tempK.o[_j3]);
-                      sourceK.v.push(tempK.v[_j3]);
+                   if (endShapeIndex - startShapeIndex > 0 && startInc) {
+                    middleInc = true;
+                    for (let j = startShapeIndex + 1; j < endShapeIndex; j++) {
+                      sourceK.i.push(tempK.i[j]);
+                      sourceK.o.push(tempK.o[j]);
+                      sourceK.v.push(tempK.v[j]);
                     }
-                  }
-
-                  if (trimToSet.e.k.length > 1) {
-                    //panda.log("__end", startShapeIndex, endShapeIndex, startInc, middleInc);
-                    if (!startInc && !middleInc) {
-                      for (var _j4 = startShapeIndex; _j4 < endShapeIndex; _j4++) {
-                        sourceK.i.push(tempK.i[_j4]);
-                        sourceK.o.push(tempK.o[_j4]);
-                        sourceK.v.push(tempK.v[_j4]);
+                  }1111111111111111111111111111111111111111111111111111111111111111111111
+                   if (trimToSet.e.k.length > 1) {
+                    if (! startInc && ! middleInc) {
+                      for (let j = startShapeIndex; j < endShapeIndex; j++) {
+                        sourceK.i.push(tempK.i[j]);
+                        sourceK.o.push(tempK.o[j]);
+                        sourceK.v.push(tempK.v[j]);
                       }
                     }
-
                     sourceK.i.push(tempK.i[endShapeIndex]);
                     sourceK.o.push(endSegment[1]);
                     sourceK.v.push(endSegment[0]);
-                  } //panda.log("sourceK", JSON.stringify(sourceK), t);
-
+                  }
+                  */
 
                   if (sourceK.v.length > 1) {
-                    var transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t); //panda.log("before adding");
+                    var transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t);
 
                     if (t > animation[animationId]._totalFrames || t < 0) {
                       return "break";
@@ -3411,7 +3483,7 @@
 
                     debug(function () {
                       return ['setString', sourceK];
-                    }); //panda.log("adding");
+                    });
 
                     animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
                   }
@@ -3462,14 +3534,19 @@
    */
 
 
-  function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+  function getShapesGr(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer) {
     var currentColor;
     var currentStroke;
-    var currentTrim;
+    layerObj.currentTrim;
     var stroked = false;
-    var trimmed = false;
+    layerObj.trimmed = false;
 
-    for (var i = 0; i < layerObj.it.length; i++) {
+    if (outer.trimmed) {
+      layerObj.trimmed = true;
+      layerObj.currentTrim = outer.currentTrim;
+    }
+
+    var _loop7 = function _loop7(i) {
       layerObj._isGradient = false;
       animation[animationId].shapeCount++;
 
@@ -3484,10 +3561,17 @@
         newGroup.setAttribute('id', "".concat(animationId, "_group").concat(animation[animationId].shapeCount));
         animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
         referrer.prepend(newGroup);
-        layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth);
+        layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth, layerObj);
       } else {
         layerObj.it[i]._shape = animation[animationId].shapeCount;
+        var tempK = JSON.parse(JSON.stringify(layerObj.it[i]));
+        debug(function () {
+          return ['CO', tempK];
+        });
         layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+        debug(function () {
+          return ['FRICO', layerObj.it[i]];
+        });
 
         if (layerObj.it[i].ty == 'tr') {
           // Transformations
@@ -3496,9 +3580,9 @@
           if (layerObj.it[i].p.hasOwnProperty('k')) {
             if (layerObj.it[i].p.k.length > 1) {
               if (layerObj.it[i].hasOwnProperty('a')) {
-                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0], ",").concat(layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1], ")"));
+                document.getElementById(refLabel).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0], ",").concat(layerObj.it[i].p.k[1] - layerObj.it[i].a.k[1], ")"));
               } else {
-                document.getElementById(refGroup).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0], ",").concat(layerObj.it[i].p.k[1], ")"));
+                document.getElementById(refLabel).setAttribute('transform', "translate(".concat(layerObj.it[i].p.k[0], ",").concat(layerObj.it[i].p.k[1], ")"));
               }
             }
           }
@@ -3522,9 +3606,9 @@
         if (layerObj.it[i].ty == 'tm') {
           // Stroke shape
           //if (layerObj.it[i].c.k.length > 1) {
-          currentTrim = getTrim(layerObj.it[i], animationId, depth, layerObj.it);
-          layerObj.it[i] = currentTrim;
-          trimmed = true; //}
+          layerObj.currentTrim = getTrim(layerObj.it[i], animationId, depth, layerObj.it); //layerObj.it[i] = currentTrim;
+
+          layerObj.trimmed = true; //}
         }
 
         if (layerObj.it[i].ty == 'gf') {
@@ -3533,6 +3617,10 @@
           currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, layerObj.it[i].r, animationId, depth);
         }
       }
+    };
+
+    for (var i = 0; i < layerObj.it.length; i++) {
+      _loop7(i);
     }
 
     setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
@@ -3541,8 +3629,11 @@
       setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
     }
 
-    if (trimmed) {
-      setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+    if (layerObj.trimmed) {
+      debug(function () {
+        return ['CurrentTrim', layerObj.currentTrim];
+      });
+      setTrim(layerObj.it, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
     }
 
     return layerObj;
@@ -3560,14 +3651,14 @@
    * @returns 
    */
 
-  function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+  function getShapes(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth) {
     var currentColor;
     var currentStroke;
-    var currentTrim;
+    layerObj.currentTrim = {};
     var stroked = false;
-    var trimmed = false;
+    layerObj.trimmed = false;
 
-    for (var i = 0; i < layerObj.shapes.length; i++) {
+    var _loop8 = function _loop8(i) {
       layerObj._isGradient = false;
       animation[animationId].shapeCount++;
 
@@ -3583,10 +3674,16 @@
         newGroup.setAttribute('opacity', 1);
         animation[animationId]._currentShapeGroup = animation[animationId].shapeCount;
         referrer.prepend(newGroup);
-        layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth);
+        layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth, layerObj);
       } else {
         layerObj.shapes[i]._shape = animation[animationId].shapeCount;
+        debug(function () {
+          return ['RICO', layerObj.shapes[i]];
+        });
         layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+        debug(function () {
+          return ['FRICO', layerObj.shapes[i]];
+        });
 
         if (layerObj.shapes[i].ty == 'tr') {
           // Transformation
@@ -3617,9 +3714,9 @@
         if (layerObj.shapes[i].ty == 'tm') {
           // Stroke shape
           //if (layerObj.shapes[i].c.k.length > 1) {
-          currentTrim = getTrim(layerObj.shapes[i], animationId, depth, layerObj.shapes);
-          layerObj.shapes[i] = currentTrim;
-          trimmed = true; //}
+          layerObj.currentTrim = getTrim(layerObj.shapes[i], animationId, depth, layerObj.shapes); //layerObj.shapes[i] = currentTrim;
+
+          layerObj.trimmed = true; //}
         }
 
         if (layerObj.shapes[i].ty == 'gf') {
@@ -3628,6 +3725,10 @@
           currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, layerObj.shapes[i].r, animationId, depth);
         }
       }
+    };
+
+    for (var i = 0; i < layerObj.shapes.length; i++) {
+      _loop8(i);
     }
 
     setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
@@ -3636,8 +3737,11 @@
       setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
     }
 
-    if (trimmed) {
-      setTrim(layerObj.shapes, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+    if (layerObj.trimmed) {
+      debug(function () {
+        return ['CurrentTrim', layerObj.currentTrim];
+      });
+      setTrim(layerObj.shapes, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
     }
 
     return layerObj;
@@ -3893,9 +3997,9 @@
       itemsThisLevel = 0;
       var tempArray = [];
 
-      for (var _j5 = 0; _j5 < addArray.length; _j5++) {
-        if (addArray[_j5].level == tempLevel) {
-          tempArray.push(addArray[_j5].item);
+      for (var _j3 = 0; _j3 < addArray.length; _j3++) {
+        if (addArray[_j3].level == tempLevel) {
+          tempArray.push(addArray[_j3].item);
           itemsThisLevel++;
         }
       }
@@ -3988,7 +4092,7 @@
         var tempRef = -1;
 
         for (var m = 0; m < animation[animationId].assets.length; m++) {
-          if (animation[animationId].assets[m].id == passedObj[passedKey][i].refId) {
+          if (typeof animation[animationId].assets[m] != 'undefined' && animation[animationId].assets[m].id == passedObj[passedKey][i].refId) {
             tempRef = m;
             break;
           }
