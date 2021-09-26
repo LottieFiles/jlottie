@@ -1796,7 +1796,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
         let fullBezierLength = 0;
         let returnedKeyframeObj = {};
         if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
-          debug(() => ["GLLL", shapesGroup[i].ks.k.v]);
+          debug(() => ["GLLL", shapesGroup[i].ks.k]);
           for (let j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
             let bezierLength = 0;
             returnedKeyframeObj = bezierCurve(
@@ -1918,13 +1918,14 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               tempK.i.splice(endShapeIndex + 1, ((tempK.i.length - 1) - endShapeIndex), [0, 0]);
               tempK.o.splice(endShapeIndex + 1, ((tempK.o.length - 1) - endShapeIndex), [0, 0]);
               tempK.v.splice(endShapeIndex + 1, ((tempK.v.length - 1) - endShapeIndex), endSegment[3]);
-              debug(() => ['tempK', tempK]);
+              debug(() => ['etempK', tempK]);
             }
 
             if (startShapeIndex >= 0) {
               tempK.i.splice(0, startShapeIndex, (tempK.i.length - startShapeIndex), [0, 0]);
               tempK.o.splice(0, startShapeIndex, (tempK.o.length - startShapeIndex), [0, 0]);
               tempK.v.splice(0, startShapeIndex, (tempK.v.length - startShapeIndex), startSegment[0]);
+              debug(() => ['stempK', tempK]);
             }
 
             startShapeIndex = -1;
@@ -2003,12 +2004,16 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
  * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
  * @returns 
  */
-export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer) {
   let currentColor;
   let currentStroke;
-  let currentTrim;
+  layerObj.currentTrim;
   let stroked = false;
-  let trimmed = false;
+  layerObj.trimmed = false;
+  if (outer.trimmed) {
+    layerObj.trimmed = true;
+    layerObj.currentTrim = outer.currentTrim;
+  }
   for (let i = 0; i < layerObj.it.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -2030,6 +2035,7 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
         refGroup,
         isMasked,
         depth,
+        layerObj,
       );
     } else {
       layerObj.it[i]._shape = animation[animationId].shapeCount;
@@ -2040,7 +2046,7 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
           if (layerObj.it[i].p.k.length > 1) {
             if (layerObj.it[i].hasOwnProperty('a')) {
               document
-                .getElementById(refGroup)
+                .getElementById(refLabel)
                 .setAttribute(
                   'transform',
                   `translate(${layerObj.it[i].p.k[0] - layerObj.it[i].a.k[0]},${
@@ -2049,7 +2055,7 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
                 );
             } else {
               document
-                .getElementById(refGroup)
+                .getElementById(refLabel)
                 .setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
             }
           }
@@ -2073,14 +2079,14 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
       }
       if (layerObj.it[i].ty == 'tm') { // Stroke shape
         //if (layerObj.it[i].c.k.length > 1) {
-          currentTrim = getTrim(
+          layerObj.currentTrim = getTrim(
             layerObj.it[i],
             animationId,
             depth,
             layerObj.it,
           );
-          layerObj.it[i] = currentTrim;
-          trimmed = true;
+          //layerObj.it[i] = currentTrim;
+          layerObj.trimmed = true;
         //}
       }
       if (layerObj.it[i].ty == 'gf') { // Gradient fill shape
@@ -2101,8 +2107,8 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
   if (stroked) {
     setShapeStrokes(layerObj.it, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
-  if (trimmed) {
-    setTrim(layerObj.it, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+  if (layerObj.trimmed) {
+    setTrim(layerObj.it, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
   }
   return layerObj;
 }
@@ -2119,12 +2125,12 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refGroup
  * @param {integer} depth The level of iteration of precompositions (1 if this is the root layers and their corresponding shape groups).
  * @returns 
  */
-export function getShapes(elementId, animationId, layerObj, referrer, refGroup, isMasked, depth) {
+export function getShapes(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth) {
   let currentColor;
   let currentStroke;
-  let currentTrim;
+  layerObj.currentTrim = {};
   let stroked = false;
-  let trimmed = false;
+  layerObj.trimmed = false;
   for (let i = 0; i < layerObj.shapes.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -2147,6 +2153,7 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
         refGroup,
         isMasked,
         depth,
+        layerObj,
       );
 
     } else {
@@ -2184,14 +2191,14 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
       }
       if (layerObj.shapes[i].ty == 'tm') { // Stroke shape
         //if (layerObj.shapes[i].c.k.length > 1) {
-          currentTrim = getTrim(
+          layerObj.currentTrim = getTrim(
             layerObj.shapes[i],
             animationId,
             depth,
             layerObj.shapes,
           );
-          layerObj.shapes[i] = currentTrim;
-          trimmed = true;
+          //layerObj.shapes[i] = currentTrim;
+          layerObj.trimmed = true;
         //}
       }
       if (layerObj.shapes[i].ty == 'gf') { // Gradient fill shape
@@ -2212,8 +2219,8 @@ export function getShapes(elementId, animationId, layerObj, referrer, refGroup, 
   if (stroked) {
     setShapeStrokes(layerObj.shapes, currentStroke, animationId); // Set the stroke for this group of shapes.
   }
-  if (trimmed) {
-    setTrim(layerObj.shapes, currentTrim, animationId, depth); // Set the trim for this group of shapes.
+  if (layerObj.trimmed) {
+    setTrim(layerObj.shapes, layerObj.currentTrim, animationId, depth); // Set the trim for this group of shapes.
   }
   return layerObj;
 }
