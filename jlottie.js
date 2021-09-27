@@ -3214,14 +3214,14 @@
   function getSegment(p1, c1, c2, p2, t0, t1) {
     var u0 = 1.0 - t0;
     var u1 = 1.0 - t1;
-    var qxa = p1[0] * u0 * u0 + c1[0] * 2 * t0 * u0 + c2[0] * t0 * t0;
-    var qxb = p1[0] * u1 * u1 + c1[0] * 2 * t1 * u1 + c2[0] * t1 * t1;
-    var qxc = c1[0] * u0 * u0 + c2[0] * 2 * t0 * u0 + p2[0] * t0 * t0;
-    var qxd = c1[0] * u1 * u1 + c2[0] * 2 * t1 * u1 + p2[0] * t1 * t1;
-    var qya = p1[1] * u0 * u0 + c1[1] * 2 * t0 * u0 + c2[1] * t0 * t0;
-    var qyb = p1[1] * u1 * u1 + c1[1] * 2 * t1 * u1 + c2[1] * t1 * t1;
-    var qyc = c1[1] * u0 * u0 + c2[1] * 2 * t0 * u0 + p2[1] * t0 * t0;
-    var qyd = c1[1] * u1 * u1 + c2[1] * 2 * t1 * u1 + p2[1] * t1 * t1;
+    var qxa = p1[0] * u0 * u0 + (c1[0] + p1[0]) * 2 * t0 * u0 + (c2[0] + p2[0]) * t0 * t0;
+    var qxb = p1[0] * u1 * u1 + (c1[0] + p1[0]) * 2 * t1 * u1 + (c2[0] + p2[0]) * t1 * t1;
+    var qxc = (c1[0] + p1[0]) * u0 * u0 + (c2[0] + p2[0]) * 2 * t0 * u0 + p2[0] * t0 * t0;
+    var qxd = (c1[0] + p1[0]) * u1 * u1 + (c2[0] + p2[0]) * 2 * t1 * u1 + p2[0] * t1 * t1;
+    var qya = p1[1] * u0 * u0 + (c1[1] + p1[1]) * 2 * t0 * u0 + (c2[1] + p2[1]) * t0 * t0;
+    var qyb = p1[1] * u1 * u1 + (c1[1] + p1[1]) * 2 * t1 * u1 + (c2[1] + p2[1]) * t1 * t1;
+    var qyc = (c1[1] + p1[1]) * u0 * u0 + (c2[1] + p2[1]) * 2 * t0 * u0 + p2[1] * t0 * t0;
+    var qyd = (c1[1] + p1[1]) * u1 * u1 + (c2[1] + p2[1]) * 2 * t1 * u1 + p2[1] * t1 * t1;
     var segment = [];
     segment.push([qxa * u0 + qxc * t0, qya * u0 + qyc * t0]); // p1
 
@@ -3247,6 +3247,10 @@
       segment[3][1] = p1[1];
     }
 
+    segment[1][0] = segment[1][0] - segment[0][0];
+    segment[1][1] = segment[1][1] - segment[0][1];
+    segment[2][0] = segment[2][0] - segment[3][0];
+    segment[2][1] = segment[2][1] - segment[3][1];
     return segment;
   }
 
@@ -3424,8 +3428,9 @@
                   var sourceK = JSON.parse(JSON.stringify(tempK));
 
                   if (endShapeIndex >= 0) {
+                    sourceK.o[endShapeIndex] = endSegment[1];
                     sourceK.i.splice(endShapeIndex + 1, sourceK.i.length - 1 - endShapeIndex, endSegment[2]);
-                    sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, endSegment[1]);
+                    sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, [0, 0]);
                     sourceK.v.splice(endShapeIndex + 1, sourceK.v.length - 1 - endShapeIndex, endSegment[3]);
                     debug(function () {
                       return ['etempK', sourceK];
@@ -3433,8 +3438,9 @@
                   }
 
                   if (startShapeIndex >= 0) {
+                    sourceK.i[startShapeIndex] = startSegment[2];
                     sourceK.i.splice(0, startShapeIndex, sourceK.i.length - startShapeIndex, [0, 0]);
-                    sourceK.o.splice(0, startShapeIndex, sourceK.o.length - startShapeIndex, [0, 0]);
+                    sourceK.o.splice(0, startShapeIndex, sourceK.o.length - startShapeIndex, startSegment[1]);
                     sourceK.v.splice(0, startShapeIndex, sourceK.v.length - startShapeIndex, startSegment[0]);
                     debug(function () {
                       return ['stempK', sourceK];
@@ -3546,7 +3552,7 @@
       layerObj.currentTrim = outer.currentTrim;
     }
 
-    var _loop7 = function _loop7(i) {
+    for (var i = 0; i < layerObj.it.length; i++) {
       layerObj._isGradient = false;
       animation[animationId].shapeCount++;
 
@@ -3564,14 +3570,9 @@
         layerObj.it[i] = getShapesGr(elementId, animationId, layerObj.it[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth, layerObj);
       } else {
         layerObj.it[i]._shape = animation[animationId].shapeCount;
-        var tempK = JSON.parse(JSON.stringify(layerObj.it[i]));
-        debug(function () {
-          return ['CO', tempK];
-        });
-        layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
-        debug(function () {
-          return ['FRICO', layerObj.it[i]];
-        });
+        var tempK = JSON.parse(JSON.stringify(layerObj.it[i])); //debug(() => ['CO', tempK]);
+
+        layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked); //debug(() => ['FRICO', layerObj.it[i]]);
 
         if (layerObj.it[i].ty == 'tr') {
           // Transformations
@@ -3617,10 +3618,6 @@
           currentColor = createGradientDef(layerObj.it[i].s, layerObj.it[i].e, layerObj.it[i].o, layerObj.it[i].g, layerObj.it[i].r, animationId, depth);
         }
       }
-    };
-
-    for (var i = 0; i < layerObj.it.length; i++) {
-      _loop7(i);
     }
 
     setShapeColors(layerObj.it, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
@@ -3658,7 +3655,7 @@
     var stroked = false;
     layerObj.trimmed = false;
 
-    var _loop8 = function _loop8(i) {
+    for (var i = 0; i < layerObj.shapes.length; i++) {
       layerObj._isGradient = false;
       animation[animationId].shapeCount++;
 
@@ -3676,14 +3673,9 @@
         referrer.prepend(newGroup);
         layerObj.shapes[i] = getShapesGr(elementId, animationId, layerObj.shapes[i], newGroup, "".concat(animationId, "_group").concat(animation[animationId].shapeCount), refGroup, isMasked, depth, layerObj);
       } else {
-        layerObj.shapes[i]._shape = animation[animationId].shapeCount;
-        debug(function () {
-          return ['RICO', layerObj.shapes[i]];
-        });
-        layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
-        debug(function () {
-          return ['FRICO', layerObj.shapes[i]];
-        });
+        layerObj.shapes[i]._shape = animation[animationId].shapeCount; //debug(() => ['RICO', layerObj.shapes[i]]);
+
+        layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked); //debug(() => ['FRICO', layerObj.shapes[i]]);
 
         if (layerObj.shapes[i].ty == 'tr') {
           // Transformation
@@ -3725,10 +3717,6 @@
           currentColor = createGradientDef(layerObj.shapes[i].s, layerObj.shapes[i].e, layerObj.shapes[i].o, layerObj.shapes[i].g, layerObj.shapes[i].r, animationId, depth);
         }
       }
-    };
-
-    for (var i = 0; i < layerObj.shapes.length; i++) {
-      _loop8(i);
     }
 
     setShapeColors(layerObj.shapes, currentColor, animationId, layerObj._isGradient, isMasked); // Set the color for this group of shapes.
