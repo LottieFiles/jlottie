@@ -8,7 +8,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = false;
+let debugAnimation = true;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -1752,15 +1752,15 @@ function getSegment(p1, c1, c2, p2, t0, t1) {
   let u0 = 1.0 - t0;
   let u1 = 1.0 - t1;
 
-  let qxa = (p1[0] * u0 * u0) + (c1[0] * 2 * t0 * u0) + (c2[0] * t0 * t0);
-  let qxb = (p1[0] * u1 * u1) + (c1[0] * 2 * t1 * u1) + (c2[0] * t1 * t1);
-  let qxc = (c1[0] * u0 * u0) + (c2[0] * 2 * t0 * u0) + (p2[0] * t0 * t0);
-  let qxd = (c1[0] * u1 * u1) + (c2[0] * 2 * t1 * u1) + (p2[0] * t1 * t1);
+  let qxa = (p1[0] * u0 * u0) + ((c1[0] + p1[0]) * 2 * t0 * u0) + ((c2[0] + p2[0]) * t0 * t0);
+  let qxb = (p1[0] * u1 * u1) + ((c1[0] + p1[0]) * 2 * t1 * u1) + ((c2[0] + p2[0]) * t1 * t1);
+  let qxc = ((c1[0] + p1[0]) * u0 * u0) + ((c2[0] + p2[0]) * 2 * t0 * u0) + (p2[0] * t0 * t0);
+  let qxd = ((c1[0] + p1[0]) * u1 * u1) + ((c2[0] + p2[0]) * 2 * t1 * u1) + (p2[0] * t1 * t1);
 
-  let qya = (p1[1] * u0 * u0) + (c1[1] * 2 * t0 * u0) + (c2[1] * t0 * t0);
-  let qyb = (p1[1] * u1 * u1) + (c1[1] * 2 * t1 * u1) + (c2[1] * t1 * t1);
-  let qyc = (c1[1] * u0 * u0) + (c2[1] * 2 * t0 * u0) + (p2[1] * t0 * t0);
-  let qyd = (c1[1] * u1 * u1) + (c2[1] * 2 * t1 * u1) + (p2[1] * t1 * t1);
+  let qya = (p1[1] * u0 * u0) + ((c1[1] + p1[1]) * 2 * t0 * u0) + ((c2[1] + p2[1]) * t0 * t0);
+  let qyb = (p1[1] * u1 * u1) + ((c1[1] + p1[1]) * 2 * t1 * u1) + ((c2[1] + p2[1]) * t1 * t1);
+  let qyc = ((c1[1] + p1[1]) * u0 * u0) + ((c2[1] + p2[1]) * 2 * t0 * u0) + (p2[1] * t0 * t0);
+  let qyd = ((c1[1] + p1[1]) * u1 * u1) + ((c2[1] + p2[1]) * 2 * t1 * u1) + (p2[1] * t1 * t1);
 
   let segment = [];
   segment.push( [(qxa * u0) + (qxc * t0), (qya * u0) + (qyc * t0)] ); // p1
@@ -1781,6 +1781,10 @@ function getSegment(p1, c1, c2, p2, t0, t1) {
   if (p1[1] == p2[1]) {
     segment[3][1] = p1[1];
   }
+  segment[1][0] = segment[1][0] - segment[0][0];
+  segment[1][1] = segment[1][1] - segment[0][1];
+  segment[2][0] = segment[2][0] - segment[3][0];
+  segment[2][1] = segment[2][1] - segment[3][1];
 
   return segment;
 }
@@ -1914,8 +1918,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
             let sourceK = JSON.parse(JSON.stringify(tempK));
             if (endShapeIndex >= 0) {
+              sourceK.o[endShapeIndex] = endSegment[1];
               sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), endSegment[2]);
-              sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), endSegment[1]);
+              sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0,0]);
               sourceK.v.splice(endShapeIndex + 1, ((sourceK.v.length - 1) - endShapeIndex), endSegment[3]);
               debug(() => ['etempK', sourceK]);
             }
@@ -2040,9 +2045,9 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
       layerObj.it[i]._shape = animation[animationId].shapeCount;
       let tempK = JSON.parse(JSON.stringify(layerObj.it[i]));
 
-      debug(() => ['CO', tempK]);
+      //debug(() => ['CO', tempK]);
       layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
-      debug(() => ['FRICO', layerObj.it[i]]);
+      //debug(() => ['FRICO', layerObj.it[i]]);
       if (layerObj.it[i].ty == 'tr') { // Transformations
         layerObj.it[i]._trIndex = i;
         if (layerObj.it[i].p.hasOwnProperty('k')) {
@@ -2162,9 +2167,10 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
 
     } else {
       layerObj.shapes[i]._shape = animation[animationId].shapeCount;
-      debug(() => ['RICO', layerObj.shapes[i]]);
+
+      //debug(() => ['RICO', layerObj.shapes[i]]);
       layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
-      debug(() => ['FRICO', layerObj.shapes[i]]);
+      //debug(() => ['FRICO', layerObj.shapes[i]]);
       if (layerObj.shapes[i].ty == 'tr') { // Transformation
         layerObj.shapes[i]._trIndex = i;
         if (layerObj.shapes[i].p.hasOwnProperty('k')) {
