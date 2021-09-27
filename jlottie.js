@@ -1676,7 +1676,7 @@
   var frozen = false;
   var playStarted = false;
   var smallestFrameTime = 0;
-  var debugAnimation = true;
+  var debugAnimation = false;
   /**
    * Exposes a near-zero cost console logger.
    *
@@ -3424,21 +3424,21 @@
                   var sourceK = JSON.parse(JSON.stringify(tempK));
 
                   if (endShapeIndex >= 0) {
+                    sourceK.i.splice(endShapeIndex + 1, sourceK.i.length - 1 - endShapeIndex, endSegment[2]);
+                    sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, endSegment[1]);
+                    sourceK.v.splice(endShapeIndex + 1, sourceK.v.length - 1 - endShapeIndex, endSegment[3]);
                     debug(function () {
                       return ['etempK', sourceK];
                     });
-                    sourceK.i.splice(endShapeIndex + 1, sourceK.i.length - 1 - endShapeIndex, [0, 0]);
-                    sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, [0, 0]);
-                    sourceK.v.splice(endShapeIndex + 1, sourceK.v.length - 1 - endShapeIndex, endSegment[3]);
                   }
 
                   if (startShapeIndex >= 0) {
-                    debug(function () {
-                      return ['stempK', sourceK];
-                    });
                     sourceK.i.splice(0, startShapeIndex, sourceK.i.length - startShapeIndex, [0, 0]);
                     sourceK.o.splice(0, startShapeIndex, sourceK.o.length - startShapeIndex, [0, 0]);
                     sourceK.v.splice(0, startShapeIndex, sourceK.v.length - startShapeIndex, startSegment[0]);
+                    debug(function () {
+                      return ['stempK', sourceK];
+                    });
                   }
 
                   startShapeIndex = -1;

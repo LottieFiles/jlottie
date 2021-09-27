@@ -11,7 +11,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = true;
+let debugAnimation = false;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -1915,17 +1915,17 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
             let sourceK = JSON.parse(JSON.stringify(tempK));
             if (endShapeIndex >= 0) {
-              debug(() => ['etempK', sourceK]);
-              sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), [0, 0]);
-              sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0, 0]);
+              sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), endSegment[2]);
+              sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), endSegment[1]);
               sourceK.v.splice(endShapeIndex + 1, ((sourceK.v.length - 1) - endShapeIndex), endSegment[3]);
+              debug(() => ['etempK', sourceK]);
             }
 
             if (startShapeIndex >= 0) {
-              debug(() => ['stempK', sourceK]);
               sourceK.i.splice(0, startShapeIndex, (sourceK.i.length - startShapeIndex), [0, 0]);
               sourceK.o.splice(0, startShapeIndex, (sourceK.o.length - startShapeIndex), [0, 0]);
               sourceK.v.splice(0, startShapeIndex, (sourceK.v.length - startShapeIndex), startSegment[0]);
+              debug(() => ['stempK', sourceK]);
             }
 
             startShapeIndex = -1;
