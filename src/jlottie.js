@@ -8,7 +8,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = false;
+let debugAnimation = true;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -1764,10 +1764,10 @@ function getSegment(p1, c1, c2, p2, t0, t1) {
 
   let segment = [];
   segment.push( [(qxa * u0) + (qxc * t0), (qya * u0) + (qyc * t0)] ); // p1
-  if (p1[0] == p2[0]) {
+  if (p1[0] == p2[0] && c1[0] == c2[0]) {
     segment[0][0] = p1[0];
   }
-  if (p1[1] == p2[1]) {
+  if (p1[1] == p2[1] && c1[1] == c2[1]) {
     segment[0][1] = p1[1];
   }
   segment.push( [(qxa * u1) + (qxc * t1), (qya * u1) + (qyc * t1)] ); // c1
@@ -1775,16 +1775,16 @@ function getSegment(p1, c1, c2, p2, t0, t1) {
   segment.push( [(qxb * u0) + (qxd * t0), (qyb * u0) + (qyd * t0)] ); // c2
 
   segment.push( [(qxb * u1) + (qxd * t1), (qyb * u1) + (qyd * t1)] ); // p2
-  if (p1[0] == p2[0]) {
+  if (p1[0] == p2[0] && c1[0] == c2[0]) {
     segment[3][0] = p1[0];
   }
-  if (p1[1] == p2[1]) {
+  if (p1[1] == p2[1] && c1[1] == c2[1]) {
     segment[3][1] = p1[1];
   }
-  segment[1][0] = segment[1][0] - segment[0][0];
-  segment[1][1] = segment[1][1] - segment[0][1];
-  segment[2][0] = segment[2][0] - segment[3][0];
-  segment[2][1] = segment[2][1] - segment[3][1];
+  segment[1][0] -= segment[0][0];
+  segment[1][1] -= segment[0][1];
+  segment[2][0] -= segment[3][0];
+  segment[2][1] -= segment[3][1];
 
   return segment;
 }
@@ -1836,10 +1836,13 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
           if (trimToSet.s.k.length > 1) {
             minT = trimToSet.s.k[0].t;
           }
+          if (minT == -1 && trimToSet.s.k.length > 1 && trimToSet.e.k[0].t < minT) {
+            minT = trimToSet.s.k[0].t;
+          }
           if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
             maxT = trimToSet.s.k[trimToSet.s.k.length - 1].t;
           }
-          if (trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
+          if (minT == -1 && trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
             minT = trimToSet.e.k[0].t;
           }
           if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
@@ -1926,10 +1929,10 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (startShapeIndex >= 0) {
+              sourceK.i.splice(startShapeIndex - 1, startShapeIndex, [0, 0]);
+              sourceK.o.splice(startShapeIndex - 1, startShapeIndex, startSegment[1]);
+              sourceK.v.splice(startShapeIndex - 1, startShapeIndex, startSegment[0]);
               sourceK.i[startShapeIndex] = startSegment[2];
-              sourceK.i.splice(0, startShapeIndex, (sourceK.i.length - startShapeIndex), [0, 0]);
-              sourceK.o.splice(0, startShapeIndex, (sourceK.o.length - startShapeIndex), startSegment[1]);
-              sourceK.v.splice(0, startShapeIndex, (sourceK.v.length - startShapeIndex), startSegment[0]);
               debug(() => ['stempK', sourceK]);
             }
 

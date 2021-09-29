@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="/jlottie/jlottie.min.js" type="text/javascript"></script>
+        <script src="/dist/jlottie.min.js" type="text/javascript"></script>
         <link rel="stylesheet" href="./style.css" />
     </head>
 
@@ -317,18 +317,18 @@
             let pathTrim4 = "https://assets2.lottiefiles.com/packages/lf20_pc8wusi3.json";
             let pathTrim5 = "https://assets2.lottiefiles.com/packages/lf20_j8eovnox.json";
             let defLot = "https://assets3.lottiefiles.com/packages/lf20_rz0hyab1.json";
-            function loadLottie() {
+            function loadLottie(toLoad) {
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     //animationData: '',
                     loop: true,
                     autoplay: true,
-                    path: lightbulb,
+                    path: you,
                 });
             }
 
             // Load an initial animation
-            loadLottie();
+            loadLottie(pathTrimPencil);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {
