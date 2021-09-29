@@ -1860,8 +1860,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
           let sIndex = -1;
           let eIndex = -1;
+
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
-          
           debug(() => ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet]);
           for (let t = minT; t <= maxT; t++) {
             
@@ -1871,19 +1871,19 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let endShapeIndex = -1;
             let tDelta = 0;
   
-            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 2 && t >= trimToSet.s.k[0].t) {
+            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && t >= trimToSet.s.k[0].t) {
               sIndex++;
             }
-            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 2 && t >= trimToSet.e.k[0].t) {
+            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 1 && t >= trimToSet.e.k[0].t) {
               eIndex++;
               //debug(() => ['incr', trimToSet.e.k[eIndex].t, t, eIndex]);
             }
             let startSegment = [];
             let endSegment = [];
-            if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+            if (sIndex >= 1 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
               debug(() => ['start', t, trimToSet, tempK]);
               curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
-              tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
+              tDelta = trimToSet.s.k[sIndex].t - trimToSet.s.k[sIndex].t;
               let tSeg = 1 / tDelta;
               for (let j = 1; j < tempK.v.length; j++) {
                 if (curSL < tempK.v[j - 1]._l) {
