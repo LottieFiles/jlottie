@@ -1797,6 +1797,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
       setTrim(shapesGroup[i].it, trimToSet, animationId, depth);
     } else {
       if (shapesGroup[i]._isShape) {
+        let minShapeT = -1;
         let fullBezierLength = 0;
         let returnedKeyframeObj = {};
         if (shapesGroup[i].ty == 'sh' && shapesGroup[i].ks.k.hasOwnProperty('v') && shapesGroup[i].ks.k.v.length > 1) {
@@ -1809,7 +1810,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               shapesGroup[i].ks.k.i[j + 1],
               shapesGroup[i].ks.k.v[j + 1],
               1,
-              20,
+              50,
               false,
               animationId,
               's',
@@ -1863,6 +1864,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
           debug(() => ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet]);
+
+          minShapeT = minT;
           for (let t = minT; t <= maxT; t++) {
             
             let curSL = 0;
@@ -1871,19 +1874,19 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let endShapeIndex = -1;
             let tDelta = 0;
   
-            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 1 && t >= trimToSet.s.k[0].t) {
+            if (trimToSet.s.k.length > 1 && sIndex < trimToSet.s.k.length - 2 && t >= trimToSet.s.k[0].t) {
               sIndex++;
             }
-            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 1 && t >= trimToSet.e.k[0].t) {
+            if (trimToSet.e.k.length > 1 && eIndex < trimToSet.e.k.length - 2 && t >= trimToSet.e.k[0].t) {
               eIndex++;
               //debug(() => ['incr', trimToSet.e.k[eIndex].t, t, eIndex]);
             }
             let startSegment = [];
             let endSegment = [];
-            if (sIndex >= 1 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
+            if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
               debug(() => ['start', t, trimToSet, tempK]);
-              curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
-              tDelta = trimToSet.s.k[sIndex].t - trimToSet.s.k[sIndex].t;
+              curSL = (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
+              tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
               let tSeg = 1 / tDelta;
               for (let j = 1; j < tempK.v.length; j++) {
                 if (curSL < tempK.v[j - 1]._l) {
@@ -1929,9 +1932,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (startShapeIndex >= 0) {
-              sourceK.i.splice(startShapeIndex - 1, startShapeIndex, [0, 0]);
-              sourceK.o.splice(startShapeIndex - 1, startShapeIndex, startSegment[1]);
-              sourceK.v.splice(startShapeIndex - 1, startShapeIndex, startSegment[0]);
+              sourceK.i.splice(0, startShapeIndex, [0, 0]);
+              sourceK.o.splice(0, startShapeIndex, startSegment[1]);
+              sourceK.v.splice(0, startShapeIndex, startSegment[0]);
               sourceK.i[startShapeIndex] = startSegment[2];
               debug(() => ['stempK', sourceK]);
             }
@@ -1978,7 +1981,12 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               if (t > animation[animationId]._totalFrames || t < 0) {
                 break;
               }
-              debug(() => ['setString', sourceK]);
+              debug(() => ['setString', sourceK, t]);
+              if (t == minT && t > 0) {
+                for (let n = 0; n < t; n++) {
+                  animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
+                }
+              }
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             }
 
@@ -3000,6 +3008,7 @@ export function destroy(name) {
           animationCount -= 1;
           animation.splice(i, 1);
           document.getElementById(name).innerHTML = '';
+          alert('destroyed');
           break;
         }
       }
@@ -3166,6 +3175,7 @@ export function loadAnimation(obj) {
     window.requestAnimationFrame(lottiemate);
   }
 
+  animation[currentAnimation]._elementId = obj.container.id;
   animation[currentAnimation].destroy = function() {destroy(animation[currentAnimation]._elementId);}
   animation[currentAnimation].play = function() {play(animation[currentAnimation]._elementId);}
   animation[currentAnimation].pause = function() {pause(animation[currentAnimation]._elementId);}

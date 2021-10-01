@@ -290,7 +290,8 @@
                             pl-10
                             mx-auto
                         "
-                        value="https://assets6.lottiefiles.com/packages/lf20_lfre60iw.json"
+                        value=""
+                        onkeypress='handle(event)'
                     />
                     <label style="margin-top: 20px" class="font-lf-bold text-grey-darkest py-3"
                         >Lottie Animation:
@@ -317,18 +318,26 @@
             let pathTrim4 = "https://assets2.lottiefiles.com/packages/lf20_pc8wusi3.json";
             let pathTrim5 = "https://assets2.lottiefiles.com/packages/lf20_j8eovnox.json";
             let defLot = "https://assets3.lottiefiles.com/packages/lf20_rz0hyab1.json";
+            let pencil = "https://assets2.lottiefiles.com/packages/lf20_1et9y4wm.json";
             function loadLottie(toLoad) {
                 jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     //animationData: '',
                     loop: true,
                     autoplay: true,
-                    path: you,
+                    path: toLoad,
                 });
             }
 
+            function handle(e) {
+                if (e.keyCode === 13) {
+                    jlottie.destroy();
+                    loadLottie(document.getElementById('lottieSrc').value);
+                }
+            }
+
             // Load an initial animation
-            loadLottie(pathTrimPencil);
+            loadLottie(you);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {
