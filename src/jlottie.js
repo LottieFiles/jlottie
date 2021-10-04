@@ -1834,10 +1834,10 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
 
           let minT = -1;
           let maxT = -1;
-          if (trimToSet.s.k.length > 1) {
+          if (trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
             minT = trimToSet.s.k[0].t;
           }
-          if (minT == -1 && trimToSet.s.k.length > 1 && trimToSet.e.k[0].t < minT) {
+          if (minT == -1 && trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
             minT = trimToSet.s.k[0].t;
           }
           if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
@@ -1885,14 +1885,14 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let endSegment = [];
             if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
               debug(() => ['start', t, trimToSet, tempK]);
-              curSL = (fullBezierLength * (trimToSet.s.k[sIndex].s[0] / 100));
+              curSL = (fullBezierLength * (trimToSet.s.k[sIndex].s[0]) / 100);
               tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
               let tSeg = 1 / tDelta;
               for (let j = 1; j < tempK.v.length; j++) {
                 if (curSL < tempK.v[j - 1]._l) {
                   startShapeIndex = j;
                   startSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], ((tempK.v[j]._l - curSL) / tempK.v[j]._l), 0.999999);
-                  debug(() => ['hup', j, ((tempK.v[j]._l - curSL) / tempK.v[j]._l), startSegment, (tempK.i.length - startShapeIndex), tempK, startShapeIndex]);
+                  debug(() => ['hup', t, j, tempK.v[j]._l, startSegment, (tempK.i.length - startShapeIndex), tempK, startShapeIndex]);
                   break;
                 } else {
                   if (tempK.v[j - 1]._l === undefined) {
@@ -1914,7 +1914,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 if (curEL < tempK.v[j]._l) {
                   endShapeIndex = j;
                   endSegment = getSegment(tempK.v[j], tempK.o[j], tempK.i[j + 1], tempK.v[j + 1], 0.000001, ((tempK.v[j]._l - curEL) / tempK.v[j]._l));
-                  debug(() => ['hup', j, ((tempK.v[j]._l - curEL) / tempK.v[j]._l), endSegment, (tempK.i.length - endShapeIndex), tempK, endShapeIndex]);
+                  debug(() => ['hup', t, j, ((tempK.v[j]._l - curEL) / tempK.v[j]._l), endSegment, (tempK.i.length - endShapeIndex), tempK, endShapeIndex]);
                   break;
                 } else {
                   curEL = curEL - tempK.v[j]._l;
@@ -1923,7 +1923,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             let sourceK = JSON.parse(JSON.stringify(tempK));
+            let startToTrim = sourceK.v.length;
             if (endShapeIndex >= 0) {
+              startToTrim = startToTrim - (startToTrim - (endShapeIndex));
               sourceK.o[endShapeIndex] = endSegment[1];
               sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), endSegment[2]);
               sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0,0]);
@@ -1932,9 +1934,10 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
 
             if (startShapeIndex >= 0) {
-              sourceK.i.splice(0, startShapeIndex, [0, 0]);
-              sourceK.o.splice(0, startShapeIndex, startSegment[1]);
-              sourceK.v.splice(0, startShapeIndex, startSegment[0]);
+
+              sourceK.i.splice(startShapeIndex - 1, startToTrim - startShapeIndex, [0, 0]);
+              sourceK.o.splice(startShapeIndex - 1, startToTrim - startShapeIndex, startSegment[1]);
+              sourceK.v.splice(startShapeIndex - 1, startToTrim - startShapeIndex, startSegment[0]);
               sourceK.i[startShapeIndex] = startSegment[2];
               debug(() => ['stempK', sourceK]);
             }
@@ -1982,7 +1985,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 break;
               }
               debug(() => ['setString', sourceK, t]);
-              if (t == minT && t > 0) {
+              if (t == minT && t >= 0) {
+                debug(() => ['FIRST', sourceK]);
                 for (let n = 0; n < t; n++) {
                   animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
                 }
