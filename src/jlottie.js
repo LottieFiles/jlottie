@@ -8,7 +8,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = true;
+let debugAnimation = false;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -1311,7 +1311,7 @@ export function prepDataString(sourceObject, closed) {
 function setDataString(animationId, sourceObj, shapeId, pathClosed, frame, hideThis) {
   let transforms = getEmptyTransform();
   transforms.isLayer = false;
-  if (!hideThis) {
+  if (! hideThis) {
     transforms.isTween = true;
   }
   transforms.refObj = `${animationId}_shape${shapeId}`;
@@ -1921,7 +1921,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             if (eIndex >= 0 && trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
               debug(() => ['end', t, trimToSet.e.k[eIndex]]);
               curEL = fullBezierLength - (fullBezierLength * (trimToSet.e.k[eIndex].s[0] / 100));
-              if (trimToSet.e.k[sIndex].s[0] == 0) {
+              if (trimToSet.e.k[eIndex].s[0] == 0) {
                 hideThis = true;
               }
               tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
@@ -2014,8 +2014,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               }
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             } else {
+              debug(() => ['hideit', sourceK, t]);
               let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, true);
-              if (t == minT && t >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[0].t == t) {
+              if (t == minT && t >= 0) {
                 for (let n = 0; n < t; n++) {
                   animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
                 }                
@@ -2819,7 +2820,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   animation[animationId]._renderObj = elementObj;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2939,7 +2940,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
       loadFrame(animationId, 1);
     }
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
-  /*} catch (e) {
+  } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
@@ -2948,7 +2949,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 		animationCount = animationCount - 1;
 		elementObj.innerHTML = e;
 		animation.splice(animationId, 1);
-	}*/
+	}
 }
 
 /**
@@ -3041,7 +3042,6 @@ export function destroy(name) {
           animationCount -= 1;
           animation.splice(i, 1);
           document.getElementById(name).innerHTML = '';
-          alert('destroyed');
           break;
         }
       }

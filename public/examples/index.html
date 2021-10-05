@@ -319,8 +319,10 @@
             let pathTrim5 = "https://assets2.lottiefiles.com/packages/lf20_j8eovnox.json";
             let defLot = "https://assets3.lottiefiles.com/packages/lf20_rz0hyab1.json";
             let pencil = "https://assets2.lottiefiles.com/packages/lf20_1et9y4wm.json";
+
+            let lottieinstance;
             function loadLottie(toLoad) {
-                jlottie.loadAnimation({
+                lottieinstance = jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
                     //animationData: '',
                     loop: true,
@@ -331,7 +333,7 @@
 
             function handle(e) {
                 if (e.keyCode === 13) {
-                    jlottie.destroy();
+                    lottieinstance.destroy();
                     loadLottie(document.getElementById('lottieSrc').value);
                 }
             }
