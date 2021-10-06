@@ -2852,7 +2852,7 @@ function scaleLayers(elementId, animationId, elementObj, passedObj, passedKey, d
 function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   animation[animationId]._renderObj = elementObj;
-  //try {
+  try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2972,16 +2972,16 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
       loadFrame(animationId, 1);
     }
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
-  /*} catch (e) {
+  } catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("onLoadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("loadError", {bubbles: true, detail:{"error": e, "animation": animationId} }));
-		animationCount = animationCount - 1;
+		exports.animationCount = exports.animationCount - 1;
 		elementObj.innerHTML = e;
 		animation.splice(animationId, 1);
-	}*/
+	}
 }
 
 /**
