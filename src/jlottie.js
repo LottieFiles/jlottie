@@ -8,7 +8,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = false;
+let debugAnimation = true;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -451,20 +451,29 @@ export function getEmptyStageTransform() {
   return transforms;
 }
 
-export function findExistingTransform(transforms, animationId, frame, forFill) {
+export function findExistingTransform(transforms, animationId, frame, forFill, getIndex) {
   let found = 0;
   if (animation[animationId]._scene[parseInt(frame)] === undefined) {
     //console.log(frame);
+    if (getIndex) {
+      return -1;
+    }
     return transforms;
   }
   for (let i = 0; i < animation[animationId]._scene[parseInt(frame)]._transform.length; i++) {
     if (forFill) {
       if (animation[animationId]._scene[parseInt(frame)]._transform[i].fillObj == transforms.fillObj) {
+        if (getIndex) {
+          return i;
+        }
         found = 1;
         break;
       }
     } else {
       if (animation[animationId]._scene[parseInt(frame)]._transform[i].refObj == transforms.refObj) {
+        if (getIndex) {
+          return i;
+        }
         transforms = animation[animationId]._scene[parseInt(frame)]._transform[i];
         found = 1;
         break;
@@ -472,6 +481,16 @@ export function findExistingTransform(transforms, animationId, frame, forFill) {
     }
   }
   return transforms;
+}
+
+export function updateTransform(transforms, animationId, frame, forFill) {
+  let existing = findExistingTransform(transforms, animationId, frame, forFill, true);
+
+  if (existing == -1) {
+    animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
+  } else {
+    animation[animationId]._scene[parseInt(frame)]._transform[existing] = transforms;
+  }
 }
 
 export function stageSequence(animationId, stageObj, inPoint, outPoint) {
@@ -1844,7 +1863,8 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
           if (trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
             minT = trimToSet.s.k[0].t;
           }
-          if (minT == -1 && trimToSet.s.k.length > 1 && trimToSet.s.k[0].t < minT) {
+          if (minT == -1 && trimToSet.s.k.length > 1) {
+            debug(() => ['set minT', trimToSet.s.k[0].t]);
             minT = trimToSet.s.k[0].t;
           }
           if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
@@ -1895,6 +1915,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0]) / 100);
               debug(() => ['start', t, trimToSet, tempK, curSL]);
               if (trimToSet.s.k[sIndex].s[0] == 0) {
+                debug(() => ['HIDE']);
                 hideThis = true;
               }
               tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
@@ -1903,7 +1924,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 debug(() => ['circling', curSL, tempK.v[j - 1]._l]);
                 if (curSL < tempK.v[j - 1]._l) {
                   startShapeIndex = j;
-                  startSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], ((tempK.v[j]._l - curSL) / tempK.v[j]._l), 0.999999);
+                  startSegment = getSegment(tempK.v[j - 1], tempK.o[j - 1], tempK.i[j], tempK.v[j], ((tempK.v[j - 1]._l - curSL) / tempK.v[j - 1]._l), 0.999999);
                   debug(() => ['hup', t, j, tempK.v[j]._l, startSegment, (tempK.i.length - startShapeIndex), tempK, startShapeIndex]);
                   break;
                 } else {
@@ -1943,7 +1964,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let sourceK = JSON.parse(JSON.stringify(tempK));
             let startToTrim = sourceK.v.length;
             if (endShapeIndex >= 0) {
-              startToTrim = startToTrim - (startToTrim - (endShapeIndex));
+              startToTrim = startToTrim - (startToTrim - (endShapeIndex));`1`
               sourceK.o[endShapeIndex] = endSegment[1];
               sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), endSegment[2]);
               sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0,0]);
@@ -2009,18 +2030,24 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               if (t == minT && t >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[0].t == t) {
                 debug(() => ['FIRST', sourceK]);
                 for (let n = 0; n < t; n++) {
-                  animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
+                  //animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
+                  updateTransform(transforms, animationId, n);
                 }
               }
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
+              //updateTransform(transforms, animationId, t);
             } else {
-              debug(() => ['hideit', sourceK, t]);
+              debug(() => ['hideit1', sourceK, t]);
               let transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, true);
               if (t == minT && t >= 0) {
+                debug(() => ['hideit', sourceK, t]);
                 for (let n = 0; n < t; n++) {
-                  animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
+                  //animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
+                  updateTransform(transforms, animationId, n);
+                  debug(() => ['hiding']);
                 }                
               }
+              //updateTransform(transforms, animationId, t);
               animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
             }
 
@@ -2820,7 +2847,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   animation[animationId]._renderObj = elementObj;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -2940,7 +2967,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
       loadFrame(animationId, 1);
     }
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
-  } catch (e) {
+  /*} catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
@@ -2949,7 +2976,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 		animationCount = animationCount - 1;
 		elementObj.innerHTML = e;
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 /**
