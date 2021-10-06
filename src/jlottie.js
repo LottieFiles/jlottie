@@ -8,7 +8,7 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
-let debugAnimation = true;
+let debugAnimation = false;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -1977,9 +1977,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               /*sourceK.i.splice(startShapeIndex - 1, startToTrim - startShapeIndex, [0, 0]);
               sourceK.o.splice(startShapeIndex - 1, startToTrim - startShapeIndex, startSegment[1]);
               sourceK.v.splice(startShapeIndex - 1, startToTrim - startShapeIndex, startSegment[0]);*/
-              sourceK.i.splice(0, startShapeIndex + 1, [0, 0]);
-              sourceK.o.splice(0, startShapeIndex + 1, startSegment[1]);
-              sourceK.v.splice(0, startShapeIndex + 1, startSegment[0]);
+              sourceK.i.splice(0, startShapeIndex, [0, 0]);
+              sourceK.o.splice(0, startShapeIndex, startSegment[1]);
+              sourceK.v.splice(0, startShapeIndex, startSegment[0]);
               sourceK.i[startShapeIndex] = startSegment[2];
               debug(() => ['stempK', sourceK]);
             }
