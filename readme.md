@@ -191,7 +191,7 @@ _All figures other than memory is in milliseconds._
 - Import from CDN.
 
 ```html
-<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie.js" type="module"></script>
+<script src="https://unpkg.com/@lottiefiles/jlottie@latest/dist/jlottie.min.js" type="module"></script>
 ```
 
 #### In Javascript or TypeScript:
