@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.0.19
+ * @lottiefiles/jlottie v1.1.0
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -3285,6 +3285,27 @@
     return segment;
   }
 
+  function getLength(animationId, depth, shapesGroup, shapeIdx, startIdx, endIdx, returnedKeyframeObj, fullBezierLength) {
+    var bezierLength = 0;
+    returnedKeyframeObj = bezierCurve(shapesGroup[shapeIdx].ks.k.v[startIdx], shapesGroup[shapeIdx].ks.k.o[startIdx], shapesGroup[shapeIdx].ks.k.i[endIdx], shapesGroup[shapeIdx].ks.k.v[endIdx], 1, 50, false, animationId, 's', -1, shapesGroup[shapeIdx].ks.k, depth, 'length');
+
+    for (var k = 0; k < returnedKeyframeObj.length - 1; k++) {
+      bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s);
+      debug(function () {
+        return ["blut", bezierLength];
+      });
+    }
+
+    bezierLength = bezierLength + arcLength(shapesGroup[shapeIdx].ks.k.v[startIdx], returnedKeyframeObj[0].s);
+    debug(function () {
+      return ["blut", bezierLength];
+    });
+    bezierLength = bezierLength + arcLength(returnedKeyframeObj[returnedKeyframeObj.length - 1].s, shapesGroup[shapeIdx].ks.k.v[endIdx]);
+    fullBezierLength = fullBezierLength + bezierLength;
+    shapesGroup[shapeIdx].ks.k.v[startIdx]._l = bezierLength;
+    return [shapesGroup, returnedKeyframeObj, fullBezierLength];
+  }
+
   function setTrim(shapesGroup, trimToSet, animationId, depth) {
     var _loop2 = function _loop2(i) {
       if (shapesGroup[i].ty == 'gr') {
@@ -3303,34 +3324,55 @@
                   return ["GLLL", shapesGroup[i].ks];
                 });
 
-                var _loop3 = function _loop3(j) {
-                  var bezierLength = 0;
-                  returnedKeyframeObj = bezierCurve(shapesGroup[i].ks.k.v[j], shapesGroup[i].ks.k.o[j], shapesGroup[i].ks.k.i[j + 1], shapesGroup[i].ks.k.v[j + 1], 1, 50, false, animationId, 's', -1, shapesGroup[i].ks.k, depth, 'length');
-
-                  for (var k = 0; k < returnedKeyframeObj.length - 1; k++) {
+                for (var j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
+                  /*
+                  let bezierLength = 0;
+                  returnedKeyframeObj = bezierCurve(
+                    shapesGroup[i].ks.k.v[j],
+                    shapesGroup[i].ks.k.o[j],
+                    shapesGroup[i].ks.k.i[j + 1],
+                    shapesGroup[i].ks.k.v[j + 1],
+                    1,
+                    50,
+                    false,
+                    animationId,
+                    's',
+                    -1,
+                    shapesGroup[i].ks.k,
+                    depth,
+                    'length',
+                  );
+                  for (let k = 0; k < returnedKeyframeObj.length - 1; k++) {
                     bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s);
-                    debug(function () {
-                      return ["blut", bezierLength];
-                    });
+                    debug(() => ["blut", bezierLength]);
                   }
-
                   bezierLength = bezierLength + arcLength(shapesGroup[i].ks.k.v[j], returnedKeyframeObj[0].s);
-                  debug(function () {
-                    return ["blut", bezierLength];
-                  });
+                  debug(() => ["blut", bezierLength]);
                   bezierLength = bezierLength + arcLength(returnedKeyframeObj[returnedKeyframeObj.length - 1].s, shapesGroup[i].ks.k.v[j + 1]);
                   fullBezierLength = fullBezierLength + bezierLength;
                   shapesGroup[i].ks.k.v[j]._l = bezierLength;
-                  debug(function () {
-                    return ["blut", bezierLength];
-                  });
-                  debug(function () {
-                    return ["GOTL", returnedKeyframeObj, bezierLength];
-                  });
-                };
+                  debug(() => ["blut", bezierLength]);
+                  */
+                  var _getLength = getLength(animationId, depth, shapesGroup, i, j, j + 1, returnedKeyframeObj, fullBezierLength);
 
-                for (var j = 0; j < shapesGroup[i].ks.k.v.length - 1; j++) {
-                  _loop3(j);
+                  var _getLength2 = _slicedToArray(_getLength, 3);
+
+                  shapesGroup = _getLength2[0];
+                  returnedKeyframeObj = _getLength2[1];
+                  fullBezierLength = _getLength2[2];
+                  debug(function () {
+                    return ["GOTL", returnedKeyframeObj, fullBezierLength];
+                  });
+                }
+
+                if (shapesGroup[i].ks.k.c == true) {
+                  var _getLength3 = getLength(animationId, depth, shapesGroup, i, shapesGroup[i].ks.k.v.length - 1, 0, returnedKeyframeObj, fullBezierLength);
+
+                  var _getLength4 = _slicedToArray(_getLength3, 3);
+
+                  shapesGroup = _getLength4[0];
+                  returnedKeyframeObj = _getLength4[1];
+                  fullBezierLength = _getLength4[2];
                 }
 
                 var minT = -1;
@@ -3380,7 +3422,7 @@
                 });
                 minShapeT = minT;
 
-                var _loop4 = function _loop4(t) {
+                var _loop3 = function _loop3(t) {
                   var curSL = 0;
                   var curEL = 0;
                   var startShapeIndex = -1;
@@ -3400,49 +3442,63 @@
                   var endSegment = [];
 
                   if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
-                    curSL = fullBezierLength - fullBezierLength * trimToSet.s.k[sIndex].s[0] / 100;
-                    debug(function () {
-                      return ['start', t, trimToSet, tempK, curSL];
-                    });
-
-                    if (trimToSet.s.k[sIndex].s[0] == 0) {
+                    (function () {
+                      curSL = fullBezierLength - fullBezierLength * trimToSet.s.k[sIndex].s[0] / 100;
                       debug(function () {
-                        return ['HIDE'];
-                      });
-                      hideThis = true;
-                    }
-
-                    tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
-                    var tSeg = 1 / tDelta;
-
-                    var _loop5 = function _loop5(_j) {
-                      debug(function () {
-                        return ['circling', curSL, tempK.v[_j - 1]._l];
+                        return ['start', t, trimToSet, tempK, curSL];
                       });
 
-                      if (curSL < tempK.v[_j - 1]._l) {
-                        startShapeIndex = _j;
-                        startSegment = getSegment(tempK.v[_j - 1], tempK.o[_j - 1], tempK.i[_j], tempK.v[_j], (tempK.v[_j - 1]._l - curSL) / tempK.v[_j - 1]._l, 0.999999);
+                      if (trimToSet.s.k[sIndex].s[0] == 0) {
                         debug(function () {
-                          return ['hup', t, _j, tempK.v[_j]._l, startSegment, tempK.i.length - startShapeIndex, tempK, startShapeIndex];
+                          return ['HIDE'];
                         });
-                        return "break";
-                      } else {
-                        if (tempK.v[_j - 1]._l === undefined) {} else {
-                          curSL = curSL - tempK.v[_j - 1]._l;
+                        hideThis = true;
+                      }
 
-                          if (_j == tempK.v.length - 1) {
-                            startShapeIndex = _j;
+                      tDelta = trimToSet.s.k[sIndex + 1].t - trimToSet.s.k[sIndex].t;
+                      var tSeg = 1 / tDelta;
+                      var startIdx;
+                      var initIdx = 1;
+
+                      if (shapesGroup[i].ks.k.c == true) {
+                        initIdx = 0;
+                      }
+
+                      var _loop4 = function _loop4(_j) {
+                        debug(function () {
+                          return ['circling', curSL, tempK.v[startIdx]._l];
+                        });
+
+                        if (_j == 0) {
+                          startIdx = tempK.v.length - 1;
+                        } else {
+                          startIdx = _j - 1;
+                        }
+
+                        if (curSL < tempK.v[startIdx]._l) {
+                          startShapeIndex = _j;
+                          startSegment = getSegment(tempK.v[startIdx], tempK.o[startIdx], tempK.i[_j], tempK.v[_j], (tempK.v[startIdx]._l - curSL) / tempK.v[startIdx]._l, 0.999999);
+                          debug(function () {
+                            return ['hup', t, _j, tempK.v[_j]._l, startSegment, tempK.i.length - startShapeIndex, tempK, startShapeIndex];
+                          });
+                          return "break";
+                        } else {
+                          if (tempK.v[startIdx]._l === undefined) {} else {
+                            curSL = curSL - tempK.v[startIdx]._l;
+
+                            if (_j == tempK.v.length - 1) {
+                              startShapeIndex = _j;
+                            }
                           }
                         }
+                      };
+
+                      for (var _j = initIdx; _j < tempK.v.length; _j++) {
+                        var _ret5 = _loop4(_j);
+
+                        if (_ret5 === "break") break;
                       }
-                    };
-
-                    for (var _j = 1; _j < tempK.v.length; _j++) {
-                      var _ret5 = _loop5(_j);
-
-                      if (_ret5 === "break") break;
-                    }
+                    })();
                   }
 
                   if (eIndex >= 0 && trimToSet.e.k.length > 1 && trimToSet.e.k[eIndex].t == t && trimToSet.e.k[eIndex].hasOwnProperty('s')) {
@@ -3456,21 +3512,31 @@
                     }
 
                     tDelta = trimToSet.e.k[eIndex + 1].t - trimToSet.e.k[eIndex].t;
-
-                    var _tSeg = 1 / tDelta;
-
+                    var tSeg = 1 / tDelta;
                     debug(function () {
                       return ['delta', t, trimToSet.e.k[eIndex].t, trimToSet.e.k[eIndex + 1].t, fullBezierLength, curEL, tempK];
                     });
+                    var endIdx;
+                    var initIdx = tempK.v.length - 2;
 
-                    var _loop6 = function _loop6(_j2) {
+                    if (shapesGroup[i].ks.k.c == true) {
+                      initIdx = tempK.v.length - 1;
+                    }
+
+                    var _loop5 = function _loop5(_j2) {
                       debug(function () {
                         return ['circling'];
                       });
 
+                      if (_j2 == tempK.v.length - 1) {
+                        endIdx = 0;
+                      } else {
+                        endIdx = _j2 + 1;
+                      }
+
                       if (curEL < tempK.v[_j2]._l) {
                         endShapeIndex = _j2;
-                        endSegment = getSegment(tempK.v[_j2], tempK.o[_j2], tempK.i[_j2 + 1], tempK.v[_j2 + 1], 0.000001, (tempK.v[_j2]._l - curEL) / tempK.v[_j2]._l);
+                        endSegment = getSegment(tempK.v[_j2], tempK.o[_j2], tempK.i[endIdx], tempK.v[endIdx], 0.000001, (tempK.v[_j2]._l - curEL) / tempK.v[_j2]._l);
                         debug(function () {
                           return ['hup', t, _j2, (tempK.v[_j2]._l - curEL) / tempK.v[_j2]._l, endSegment, tempK.i.length - endShapeIndex, tempK, endShapeIndex];
                         });
@@ -3480,8 +3546,8 @@
                       }
                     };
 
-                    for (var _j2 = tempK.v.length - 2; _j2 >= 0; _j2--) {
-                      var _ret6 = _loop6(_j2);
+                    for (var _j2 = initIdx; _j2 >= 0; _j2--) {
+                      var _ret6 = _loop5(_j2);
 
                       if (_ret6 === "break") break;
                     }
@@ -3548,11 +3614,18 @@
                   }
                   */
 
+                  var transforms = void 0;
+
                   if (sourceK.v.length > 1 && !hideThis) {
                     debug(function () {
                       return ['setString', sourceK, t];
                     });
-                    var transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, false);
+
+                    if (shapesGroup[i].ks.k.c && t >= maxT) {
+                      transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, true, t, false);
+                    } else {
+                      transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, false);
+                    }
 
                     if (t > animation[animationId]._totalFrames || t < 0) {
                       return "break";
@@ -3576,7 +3649,11 @@
                       return ['hideit1', sourceK, t];
                     });
 
-                    var _transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, true);
+                    if (shapesGroup[i].ks.k.c && t >= maxT) {
+                      transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, true, t, true);
+                    } else {
+                      transforms = setDataString(animationId, sourceK, shapesGroup[i]._shape, false, t, true);
+                    }
 
                     if (t == minT && t >= 0) {
                       debug(function () {
@@ -3585,7 +3662,7 @@
 
                       for (var _n = 0; _n < t; _n++) {
                         //animation[animationId]._scene[parseInt(n)]._transform.push(transforms);
-                        updateTransform(_transforms, animationId, _n);
+                        updateTransform(transforms, animationId, _n);
                         debug(function () {
                           return ['hiding'];
                         });
@@ -3593,12 +3670,12 @@
                     } //updateTransform(transforms, animationId, t);
 
 
-                    animation[animationId]._scene[parseInt(t)]._transform.push(_transforms);
+                    animation[animationId]._scene[parseInt(t)]._transform.push(transforms);
                   }
                 };
 
                 for (var t = minT; t <= maxT; t++) {
-                  var _ret4 = _loop4(t);
+                  var _ret4 = _loop3(t);
 
                   if (_ret4 === "break") break;
                 }
