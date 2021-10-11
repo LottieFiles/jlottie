@@ -11,7 +11,9 @@ let animationLoading = 0;
 const frozen = false;
 let playStarted = false;
 var smallestFrameTime = 0;
+var smallestTimeBuffer = 0;
 let debugAnimation = false;
+let timeoutObj;
 
 /**
  * Exposes a near-zero cost console logger.
@@ -276,7 +278,7 @@ function loadFrame(i, _currentFrame) {
 function lottiemate() {
   const currentDate = Date.now();
   for (let i = 0; i <= animationCount; i++) {
-    if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime) {
+    if (animation[i]._loaded && currentDate - animation[i]._lastTime >= (animation[i]._frameTime - 20)) {
       if (animation[i]._removed || animation[i]._paused) {
         continue;
         //return;
@@ -285,7 +287,6 @@ function lottiemate() {
         // DEBUG
         animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
       }
-      animation[i]._lastTime = currentDate;
       //animation[i]._lastFrame = animation[i]._currentFrame;
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
@@ -360,27 +361,30 @@ function lottiemate() {
           }
         }
       //}, 0);
-    }
-    
-    var postRender = Date.now();
-    if (animation[i]._debugAnimation) {
-      // DEBUG
-      var debugDate = Date.now();
-      animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
-      //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
-      if (animation[i]._timeElapsed >= 2000) {
-        animation[i]._curFPS = (animation[i]._timeElapsed / 2) * animation[i].fr;
-        animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
-          animation[i]._curFPS / 1000
-        }`;
-        animation[i]._timeElapsed = 0;
+
+      var postRender = Date.now();
+      if (animation[i]._debugAnimation) {
+        // DEBUG
+        var debugDate = Date.now();
+        animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
+        //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
+        if (animation[i]._timeElapsed >= 2000) {
+          animation[i]._curFPS = 1000 / (currentDate - animation[i]._lastTime);
+          animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
+            animation[i]._curFPS
+          }`;
+          animation[i]._timeElapsed = 0;
+        }
       }
+  
+      animation[i]._lastTime = currentDate;
     }
-      
+          
   }
+  clearTimeout(timeoutObj);
   setTimeout(() => {
     requestAnimationFrame(lottiemate);
-  }, smallestFrameTime - 16 /* 1 animation frame */ - (postRender - currentDate));
+  }, (smallestFrameTime - 8) - (postRender - currentDate));
 }
 
 /// ////////// BUILD SCENE GRAPH
@@ -2923,6 +2927,7 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId].layerCount = 0;
     animation[animationId]._removed = false;
     animation[animationId]._totalFrames = parseInt(animation[animationId].op - animation[animationId].ip);
+    animation[animationId]._framesPerSec = animation[animationId]._totalFrames / animation[animationId].fr;
     animation[animationId]._frameTime = (1 / animation[animationId].fr) * 1000;
     animation[animationId]._currentFrame = -1;
     animation[animationId]._lastTime = Date.now();
@@ -3308,7 +3313,7 @@ function loadAnimation(obj) {
   }
   if (!playStarted) {
     playStarted = true;
-    window.requestAnimationFrame(lottiemate);
+    timeoutObj = setTimeout(window.requestAnimationFrame(lottiemate), 0);
   }
 
   animation[currentAnimation]._elementId = obj.container.id;
