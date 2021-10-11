@@ -304,7 +304,7 @@
                 </div>
             </div>
         </div>
-        <div id='stuff'></Div>
+        <div id='stuff' style='height:100px; width:300px; display:block;'></Div>
 
         <script>
             let windvanes = 'https://assets10.lottiefiles.com/private_files/lf30_3k4nnphs.json';
@@ -320,6 +320,7 @@
             let defLot = "https://assets3.lottiefiles.com/packages/lf20_rz0hyab1.json";
             let pencil = "https://assets2.lottiefiles.com/packages/lf20_1et9y4wm.json";
             let squid = "https://assets9.lottiefiles.com/packages/lf20_jz1m61i7.json";
+            let trimPo = "https://assets8.lottiefiles.com/packages/lf20_j8eovnox.json";
 
             let lottieinstance;
             function loadLottie(toLoad) {
@@ -328,6 +329,9 @@
                     //animationData: '',
                     loop: true,
                     autoplay: true,
+                    debug: true,
+                    debugAnimation: false,
+                    debugContainer: document.getElementById('stuff'),
                     path: toLoad,
                 });
             }
@@ -340,11 +344,11 @@
             }
 
             // Load an initial animation
-            loadLottie(squid);
+            loadLottie(trimPo);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {
-                document.getElementById('stuff').innerHTML = event.detail.count;
+                //document.getElementById('stuff').innerHTML = event.detail.count;
             }
         </script>
     </body>
