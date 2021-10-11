@@ -3290,16 +3290,11 @@
     returnedKeyframeObj = bezierCurve(shapesGroup[shapeIdx].ks.k.v[startIdx], shapesGroup[shapeIdx].ks.k.o[startIdx], shapesGroup[shapeIdx].ks.k.i[endIdx], shapesGroup[shapeIdx].ks.k.v[endIdx], 1, 50, false, animationId, 's', -1, shapesGroup[shapeIdx].ks.k, depth, 'length');
 
     for (var k = 0; k < returnedKeyframeObj.length - 1; k++) {
-      bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s);
-      debug(function () {
-        return ["blut", bezierLength];
-      });
+      bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s); //debug(() => ["blut", bezierLength]);
     }
 
-    bezierLength = bezierLength + arcLength(shapesGroup[shapeIdx].ks.k.v[startIdx], returnedKeyframeObj[0].s);
-    debug(function () {
-      return ["blut", bezierLength];
-    });
+    bezierLength = bezierLength + arcLength(shapesGroup[shapeIdx].ks.k.v[startIdx], returnedKeyframeObj[0].s); //debug(() => ["blut", bezierLength]);
+
     bezierLength = bezierLength + arcLength(returnedKeyframeObj[returnedKeyframeObj.length - 1].s, shapesGroup[shapeIdx].ks.k.v[endIdx]);
     fullBezierLength = fullBezierLength + bezierLength;
     shapesGroup[shapeIdx].ks.k.v[startIdx]._l = bezierLength;
@@ -3307,6 +3302,10 @@
   }
 
   function setTrim(shapesGroup, trimToSet, animationId, depth) {
+    debug(function () {
+      return ["entered------------------------------------------------------"];
+    });
+
     var _loop2 = function _loop2(i) {
       if (shapesGroup[i].ty == 'gr') {
         //panda.log("entering group");
@@ -3360,9 +3359,6 @@
                   shapesGroup = _getLength2[0];
                   returnedKeyframeObj = _getLength2[1];
                   fullBezierLength = _getLength2[2];
-                  debug(function () {
-                    return ["GOTL", returnedKeyframeObj, fullBezierLength];
-                  });
                 }
 
                 if (shapesGroup[i].ks.k.c == true) {
@@ -3383,18 +3379,19 @@
                 }
 
                 if (minT == -1 && trimToSet.s.k.length > 1) {
-                  debug(function () {
-                    return ['set minT', trimToSet.s.k[0].t];
-                  });
+                  //debug(() => ['set minT', trimToSet.s.k[0].t]);
                   minT = trimToSet.s.k[0].t;
+                }
+
+                if (minT == -1 && trimToSet.e.k.length > 1) {
+                  debug(function () {
+                    return ['set minT at end', trimToSet.e.k[0].t];
+                  });
+                  minT = trimToSet.e.k[0].t;
                 }
 
                 if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
                   maxT = trimToSet.s.k[trimToSet.s.k.length - 1].t;
-                }
-
-                if (minT == -1 && trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
-                  minT = trimToSet.e.k[0].t;
                 }
 
                 if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
@@ -3418,7 +3415,7 @@
                 var eIndex = -1;
                 var tempK = Object.assign({}, shapesGroup[i].ks.k);
                 debug(function () {
-                  return ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet];
+                  return ['stuff', i, minT, maxT, fullBezierLength, tempK, trimToSet];
                 });
                 minShapeT = minT;
 
@@ -3465,15 +3462,15 @@
                       }
 
                       var _loop4 = function _loop4(_j) {
-                        debug(function () {
-                          return ['circling', curSL, tempK.v[startIdx]._l];
-                        });
-
                         if (_j == 0) {
                           startIdx = tempK.v.length - 1;
                         } else {
                           startIdx = _j - 1;
                         }
+
+                        debug(function () {
+                          return ['circling', curSL, tempK.v[startIdx]._l];
+                        });
 
                         if (curSL < tempK.v[startIdx]._l) {
                           startShapeIndex = _j;
@@ -3485,10 +3482,9 @@
                         } else {
                           if (tempK.v[startIdx]._l === undefined) {} else {
                             curSL = curSL - tempK.v[startIdx]._l;
-
-                            if (_j == tempK.v.length - 1) {
-                              startShapeIndex = _j;
-                            }
+                            /*if (j == tempK.v.length - 1) {
+                              startShapeIndex = j;
+                            }*/
                           }
                         }
                       };
@@ -3558,13 +3554,12 @@
 
                   if (endShapeIndex >= 0) {
                     startToTrim = startToTrim - (startToTrim - endShapeIndex);
-                    "1";
                     sourceK.o[endShapeIndex] = endSegment[1];
                     sourceK.i.splice(endShapeIndex + 1, sourceK.i.length - 1 - endShapeIndex, endSegment[2]);
                     sourceK.o.splice(endShapeIndex + 1, sourceK.o.length - 1 - endShapeIndex, [0, 0]);
                     sourceK.v.splice(endShapeIndex + 1, sourceK.v.length - 1 - endShapeIndex, endSegment[3]);
                     debug(function () {
-                      return ['etempK', sourceK];
+                      return ['etempK', t, sourceK];
                     });
                   }
 
@@ -3577,7 +3572,7 @@
                     sourceK.v.splice(0, startShapeIndex, startSegment[0]);
                     sourceK.i[startShapeIndex] = startSegment[2];
                     debug(function () {
-                      return ['stempK', sourceK];
+                      return ['stempK', t, startShapeIndex, sourceK];
                     });
                   }
 
@@ -3690,7 +3685,6 @@
       }
     };
 
-    //panda.log("entered");
     for (var i = 0; i < shapesGroup.length; i++) {
       var _ret = _loop2(i);
 
@@ -4579,7 +4573,7 @@
         animation[currentAnimation] = JSON.parse(received);
         animation[currentAnimation]._elementId = elementId;
 
-        if (_debugAnimation && _typeof(_debugContainer) === 'object') {
+        if (_debugAnimation && _typeof(_debugContainer) == 'object') {
           animation[currentAnimation]._debugAnimation = _debugAnimation;
           animation[currentAnimation]._debugContainer = _debugContainer;
           animation[currentAnimation]._curFPS = 0;
@@ -4775,9 +4769,14 @@
     if (!(obj.debug === undefined)) {
       if (obj.debug === true) {
         if (typeof obj.debugContainer != 'undefined') {
-          debugAnimation = true;
           debugContainer = obj.debugContainer;
         }
+      }
+    }
+
+    if (!(obj.debugAnimation === undefined)) {
+      if (obj.debugAnimation === true) {
+        debugAnimation = true;
       }
     }
 
@@ -4790,9 +4789,11 @@
       //currentAnimation = animationCount;
       animation[currentAnimation] = JSON.parse(obj.animationData);
       animation[currentAnimation]._elementId = obj.container.id;
+      animation[currentAnimation]._debugContainer = obj.debugContainer;
+      animation[currentAnimation]._debugAnimation = obj.debug;
       buildGraph(obj.container.id, currentAnimation, obj.container, autoplay, loop);
     } else if (!(obj.path === undefined) && obj.path) {
-      getJson(obj.path, obj.container, obj.container.id, autoplay, loop, debugAnimation, debugContainer, currentAnimation);
+      getJson(obj.path, obj.container, obj.container.id, autoplay, loop, obj.debug, obj.debugContainer, currentAnimation);
     }
 
     if (!playStarted) {

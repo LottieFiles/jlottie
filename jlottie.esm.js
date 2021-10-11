@@ -1835,10 +1835,10 @@ function getLength(animationId, depth, shapesGroup, shapeIdx, startIdx, endIdx, 
   );
   for (let k = 0; k < returnedKeyframeObj.length - 1; k++) {
     bezierLength = bezierLength + arcLength(returnedKeyframeObj[k].s, returnedKeyframeObj[k + 1].s);
-    debug(() => ["blut", bezierLength]);
+    //debug(() => ["blut", bezierLength]);
   }
   bezierLength = bezierLength + arcLength(shapesGroup[shapeIdx].ks.k.v[startIdx], returnedKeyframeObj[0].s);
-  debug(() => ["blut", bezierLength]);
+  //debug(() => ["blut", bezierLength]);
   bezierLength = bezierLength + arcLength(returnedKeyframeObj[returnedKeyframeObj.length - 1].s, shapesGroup[shapeIdx].ks.k.v[endIdx]);
   fullBezierLength = fullBezierLength + bezierLength;
   shapesGroup[shapeIdx].ks.k.v[startIdx]._l = bezierLength;
@@ -1846,7 +1846,7 @@ function getLength(animationId, depth, shapesGroup, shapeIdx, startIdx, endIdx, 
 }
 
 function setTrim(shapesGroup, trimToSet, animationId, depth) {
-  //panda.log("entered");
+  debug(() => ["entered------------------------------------------------------"]);
   for (let i = 0; i < shapesGroup.length; i++) {
     if (shapesGroup[i].ty == 'gr') {
       //panda.log("entering group");
@@ -1889,7 +1889,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             */
             [shapesGroup, returnedKeyframeObj, fullBezierLength] = 
               getLength(animationId, depth, shapesGroup, i, j, j + 1, returnedKeyframeObj, fullBezierLength);
-            debug(() => ["GOTL", returnedKeyframeObj, fullBezierLength]);
+            //debug(() => ["GOTL", returnedKeyframeObj, fullBezierLength]);
           }
           if (shapesGroup[i].ks.k.c == true) {
             [shapesGroup, returnedKeyframeObj, fullBezierLength] = 
@@ -1902,14 +1902,15 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             minT = trimToSet.s.k[0].t;
           }
           if (minT == -1 && trimToSet.s.k.length > 1) {
-            debug(() => ['set minT', trimToSet.s.k[0].t]);
+            //debug(() => ['set minT', trimToSet.s.k[0].t]);
             minT = trimToSet.s.k[0].t;
+          }
+          if (minT == -1 && trimToSet.e.k.length > 1) {
+            debug(() => ['set minT at end', trimToSet.e.k[0].t]);
+            minT = trimToSet.e.k[0].t;
           }
           if (trimToSet.s.k.length > 1 && trimToSet.s.k[trimToSet.s.k.length - 1].t > maxT) {
             maxT = trimToSet.s.k[trimToSet.s.k.length - 1].t;
-          }
-          if (minT == -1 && trimToSet.e.k.length > 1 && trimToSet.e.k[0].t < minT) {
-            minT = trimToSet.e.k[0].t;
           }
           if (trimToSet.e.k.length > 1 && trimToSet.e.k[trimToSet.e.k.length - 1].t > maxT) {
             maxT = trimToSet.e.k[trimToSet.e.k.length - 1].t;
@@ -1928,7 +1929,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
           let eIndex = -1;
 
           let tempK = Object.assign({}, shapesGroup[i].ks.k);
-          debug(() => ['stuff', minT, maxT, fullBezierLength, tempK, trimToSet]);
+          debug(() => ['stuff', i, minT, maxT, fullBezierLength, tempK, trimToSet]);
 
           minShapeT = minT;
           for (let t = minT; t <= maxT; t++) {
@@ -1949,6 +1950,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             }
             let startSegment = [];
             let endSegment = [];
+
             if (sIndex >= 0 && trimToSet.s.k.length > 1 && trimToSet.s.k[sIndex].t == t && trimToSet.s.k[sIndex].hasOwnProperty('s')) {
               curSL = fullBezierLength - (fullBezierLength * (trimToSet.s.k[sIndex].s[0]) / 100);
               debug(() => ['start', t, trimToSet, tempK, curSL]);
@@ -1964,12 +1966,12 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                 initIdx = 0;
               }
               for (let j = initIdx; j < tempK.v.length; j++) {
-                debug(() => ['circling', curSL, tempK.v[startIdx]._l]);
                 if (j == 0) {
                   startIdx = tempK.v.length - 1;
                 } else {
                   startIdx = j - 1;
                 }
+                debug(() => ['circling', curSL, tempK.v[startIdx]._l]);
                 if (curSL < tempK.v[startIdx]._l) {
                   startShapeIndex = j;
                   startSegment = getSegment(tempK.v[startIdx], tempK.o[startIdx], tempK.i[j], tempK.v[j], ((tempK.v[startIdx]._l - curSL) / tempK.v[startIdx]._l), 0.999999);
@@ -1979,9 +1981,9 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
                   if (tempK.v[startIdx]._l === undefined) {
                   } else {
                     curSL = curSL - tempK.v[startIdx]._l;
-                    if (j == tempK.v.length - 1) {
+                    /*if (j == tempK.v.length - 1) {
                       startShapeIndex = j;
-                    }
+                    }*/
                   }
                 }
               }
@@ -2023,12 +2025,12 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
             let sourceK = JSON.parse(JSON.stringify(tempK));
             let startToTrim = sourceK.v.length;
             if (endShapeIndex >= 0) {
-              startToTrim = startToTrim - (startToTrim - (endShapeIndex));`1`;
+              startToTrim = startToTrim - (startToTrim - (endShapeIndex));
               sourceK.o[endShapeIndex] = endSegment[1];
               sourceK.i.splice(endShapeIndex + 1, ((sourceK.i.length - 1) - endShapeIndex), endSegment[2]);
               sourceK.o.splice(endShapeIndex + 1, ((sourceK.o.length - 1) - endShapeIndex), [0,0]);
               sourceK.v.splice(endShapeIndex + 1, ((sourceK.v.length - 1) - endShapeIndex), endSegment[3]);
-              debug(() => ['etempK', sourceK]);
+              debug(() => ['etempK', t, sourceK]);
             }
 
             if (startShapeIndex >= 0) {
@@ -2040,7 +2042,7 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
               sourceK.o.splice(0, startShapeIndex, startSegment[1]);
               sourceK.v.splice(0, startShapeIndex, startSegment[0]);
               sourceK.i[startShapeIndex] = startSegment[2];
-              debug(() => ['stempK', sourceK]);
+              debug(() => ['stempK', t, startShapeIndex, sourceK]);
             }
 
             startShapeIndex = -1;
@@ -3085,7 +3087,7 @@ function getJson(
       animation[currentAnimation] = JSON.parse(received);
       animation[currentAnimation]._elementId = elementId;
 
-      if (_debugAnimation && typeof _debugContainer === 'object') {
+      if (_debugAnimation && typeof _debugContainer == 'object') {
         animation[currentAnimation]._debugAnimation = _debugAnimation;
         animation[currentAnimation]._debugContainer = _debugContainer;
         animation[currentAnimation]._curFPS = 0;
@@ -3255,7 +3257,6 @@ function loadAnimation(obj) {
   let loop = true;
   let debugContainer;
 
-
   if (!(obj.autoplay === undefined)) {
     if (obj.autoplay === true || obj.autoplay === false) {
       autoplay = obj.autoplay;
@@ -3271,9 +3272,14 @@ function loadAnimation(obj) {
   if (!(obj.debug === undefined)) {
     if (obj.debug === true) {
       if (typeof obj.debugContainer != 'undefined') {
-        debugAnimation = true;
         debugContainer = obj.debugContainer;
       }
+    }
+  }
+
+  if (!(obj.debugAnimation === undefined)) {
+    if (obj.debugAnimation === true) {
+      debugAnimation = true;
     }
   }
 
@@ -3285,16 +3291,18 @@ function loadAnimation(obj) {
     //currentAnimation = animationCount;
     animation[currentAnimation] = JSON.parse(obj.animationData);
     animation[currentAnimation]._elementId = obj.container.id;
+    animation[currentAnimation]._debugContainer = obj.debugContainer;
+    animation[currentAnimation]._debugAnimation = obj.debug;
     buildGraph(obj.container.id, currentAnimation, obj.container, autoplay, loop);
   } else if (!(obj.path === undefined) && obj.path) {
     getJson(
-      obj.path,
+      obj.path, 
       obj.container,
       obj.container.id,
       autoplay,
       loop,
-      debugAnimation,
-      debugContainer,
+      obj.debug,
+      obj.debugContainer,
       currentAnimation
     );
   }
