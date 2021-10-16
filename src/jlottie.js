@@ -1766,16 +1766,36 @@ export function setShapeColors(shapesGroup, colorToSet, animationId, isGradient,
 
 function getTrim(shapeObj, animationId, depth, shapeGroup) {
   if (shapeObj.e.k.length > 1 && shapeObj.e.k[0].hasOwnProperty('s')) {
-    if (shapeObj.e.k[shapeObj.e.k.length - 1].hasOwnProperty('i')) {
-    } else {
-      shapeObj.e.k[shapeObj.e.k.length - 1].i = {'x':0, 'y':0};
+    for (let i = 0; i < shapeObj.e.k.length - 1; i++) {
+      if (shapeObj.e.k[i].i.x < 1) {
+        shapeObj.e.k[i].i.x = 0;
+      }
+      if (shapeObj.e.k[i].i.y < 1) {
+        shapeObj.e.k[i].i.y = 0;
+      }
+      if (shapeObj.e.k[i].o.x < 1) {
+        shapeObj.e.k[i].o.x = 0;
+      }
+      if (shapeObj.e.k[i].o.y < 1) {
+        shapeObj.e.k[i].o.y = 0;
+      }
     }
     shapeObj = extrapolateOffsetKeyframe(shapeObj, 'e', false, animationId, -1, shapeObj, depth);
   }
   if (shapeObj.s.k.length > 1 && shapeObj.s.k[0].hasOwnProperty('s')) {
-    if (shapeObj.s.k[shapeObj.s.k.length - 1].hasOwnProperty('i')) {
-    } else {
-      shapeObj.s.k[shapeObj.s.k.length - 1].i = {'x':0, 'y':0};
+    for (let i = 0; i < shapeObj.s.k.length - 1; i++) {
+      if (shapeObj.s.k[i].i.x < 1) {
+        shapeObj.s.k[i].i.x = 0;
+      }
+      if (shapeObj.s.k[i].i.y < 1) {
+        shapeObj.s.k[i].i.y = 0;
+      }
+      if (shapeObj.s.k[i].o.x < 1) {
+        shapeObj.s.k[i].o.x = 0;
+      }
+      if (shapeObj.s.k[i].o.y < 1) {
+        shapeObj.s.k[i].o.y = 0;
+      }
     }
     shapeObj = extrapolateOffsetKeyframe(shapeObj, 's', false, animationId, -1, shapeObj, depth);
   }
