@@ -12,7 +12,7 @@ const port = 8000;
 
 const files = fs.readdirSync(__dirname + '/public/test_files/');
 for (const file in files) {
-  test('compares with lottie-web', async ({ page, browserName }) => {
+  test('comparing ' + file.toString() + " " + 'with lottie-web', async ({ page, browserName }) => {
     // open page with a test lottie file
     await page.goto(`http://localhost:${port}?src=test_files/${files[file]}`, {
       waitUntil: 'networkidle',
