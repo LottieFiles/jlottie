@@ -290,7 +290,8 @@
                             pl-10
                             mx-auto
                         "
-                        value="https://assets3.lottiefiles.com/packages/lf20_fwykef3x.json"
+                        value=""
+                        onkeypress='handle(event)'
                     />
                     <label style="margin-top: 20px" class="font-lf-bold text-grey-darkest py-3"
                         >Lottie Animation:
@@ -303,19 +304,53 @@
                 </div>
             </div>
         </div>
+        <div id='stuff' style='height:100px; width:300px; display:block;'></Div>
 
         <script>
-            function loadLottie() {
-                jlottie.loadAnimation({
+            let windvanes = 'https://assets10.lottiefiles.com/private_files/lf30_3k4nnphs.json';
+            let you = 'https://assets5.lottiefiles.com/private_files/lf30_dfgj520b.json';
+            let heart = 'https://assets5.lottiefiles.com/private_files/lf30_o6luqzep.json';
+            let lightbulb = 'https://assets5.lottiefiles.com/packages/lf20_jJ7Djd.json';
+            let pathTrimPencil = "https://assets5.lottiefiles.com/temp/lf20_SEN0V3.json";
+            let pathTrim = "https://assets6.lottiefiles.com/packages/lf20_lfre60iw.json";
+            let pathTrim2 = "https://assets2.lottiefiles.com/packages/lf20_khdjemdo.json";
+            let pathTrim3 = "https://assets2.lottiefiles.com/packages/lf20_sjnfymjq.json";
+            let pathTrim4 = "https://assets2.lottiefiles.com/packages/lf20_pc8wusi3.json";
+            let pathTrim5 = "https://assets2.lottiefiles.com/packages/lf20_j8eovnox.json";
+            let pathTrim6 = "https://assets10.lottiefiles.com/packages/lf20_idyhyxiy.json";
+            let defLot = "https://assets3.lottiefiles.com/packages/lf20_rz0hyab1.json";
+            let pencil = "https://assets2.lottiefiles.com/packages/lf20_1et9y4wm.json";
+            let squid = "https://assets9.lottiefiles.com/packages/lf20_jz1m61i7.json";
+            let trimPo = "https://assets8.lottiefiles.com/packages/lf20_j8eovnox.json";
+
+            let lottieinstance;
+            function loadLottie(toLoad) {
+                lottieinstance = jlottie.loadAnimation({
                     container: document.getElementById('jlottie-container'),
+                    //animationData: '',
                     loop: true,
                     autoplay: true,
-                    path: document.getElementById('lottieSrc').value,
+                    debug: true,
+                    debugAnimation: true,
+                    debugContainer: document.getElementById('stuff'),
+                    path: toLoad,
                 });
             }
 
+            function handle(e) {
+                if (e.keyCode === 13) {
+                    lottieinstance.destroy();
+                    loadLottie(document.getElementById('lottieSrc').value);
+                }
+            }
+
             // Load an initial animation
-            loadLottie();
+            loadLottie(heart);
+
+            document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
+            function handleEvent(event) {
+                //document.getElementById('stuff').innerHTML = event.detail.count;
+            }
         </script>
     </body>
 </html>
