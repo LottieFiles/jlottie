@@ -26,7 +26,7 @@
     "prepack": "yarn build",
     "prepublish": "pinst --disable",
     "postpublish": "pinst --enable",
-    "serve": "node ./tests/server.js",
+    "serve": "cp -r dist tests/public/ && node ./tests/server.js",
     "test": "playwright test",
     "test:reset": "shx rm -rf tests/__snapshots__",
     "scrape": "node scrape.js"
