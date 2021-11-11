@@ -59,6 +59,9 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "@changesets/cli": "2.17.0"
+    "@changesets/cli": "2.17.0",
+    "execa": "^5.1.1",
+    "semver": "^7.3.5",
+    "which": "^2.0.2"
   }
 }
