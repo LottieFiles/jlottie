@@ -7,6 +7,81 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.jlottie = {}));
 }(this, (function (exports) { 'use strict';
 
+  function _asyncIterator(iterable) {
+    var method,
+        async,
+        sync,
+        retry = 2;
+
+    if (typeof Symbol !== "undefined") {
+      async = Symbol.asyncIterator;
+      sync = Symbol.iterator;
+    }
+
+    while (retry--) {
+      if (async && (method = iterable[async]) != null) {
+        return method.call(iterable);
+      }
+
+      if (sync && (method = iterable[sync]) != null) {
+        return new AsyncFromSyncIterator(method.call(iterable));
+      }
+
+      async = "@@asyncIterator";
+      sync = "@@iterator";
+    }
+
+    throw new TypeError("Object is not async iterable");
+  }
+
+  function AsyncFromSyncIterator(s) {
+    AsyncFromSyncIterator = function (s) {
+      this.s = s;
+      this.n = s.next;
+    };
+
+    AsyncFromSyncIterator.prototype = {
+      s: null,
+      n: null,
+      next: function () {
+        return AsyncFromSyncIteratorContinuation(this.n.apply(this.s, arguments));
+      },
+      return: function (value) {
+        var ret = this.s.return;
+
+        if (ret === undefined) {
+          return Promise.resolve({
+            value: value,
+            done: true
+          });
+        }
+
+        return AsyncFromSyncIteratorContinuation(ret.apply(this.s, arguments));
+      },
+      throw: function (value) {
+        var thr = this.s.return;
+        if (thr === undefined) return Promise.reject(value);
+        return AsyncFromSyncIteratorContinuation(thr.apply(this.s, arguments));
+      }
+    };
+
+    function AsyncFromSyncIteratorContinuation(r) {
+      if (Object(r) !== r) {
+        return Promise.reject(new TypeError(r + " is not an object."));
+      }
+
+      var done = r.done;
+      return Promise.resolve(r.value).then(function (value) {
+        return {
+          value: value,
+          done: done
+        };
+      });
+    }
+
+    return new AsyncFromSyncIterator(s);
+  }
+
   var REACT_ELEMENT_TYPE;
 
   function _jsx(type, props, key, children) {
@@ -170,20 +245,6 @@
     }
 
     return _wrapRegExp.apply(this, arguments);
-  }
-
-  function _asyncIterator(iterable) {
-    var method;
-
-    if (typeof Symbol !== "undefined") {
-      if (Symbol.asyncIterator) method = iterable[Symbol.asyncIterator];
-      if (method == null && Symbol.iterator) method = iterable[Symbol.iterator];
-    }
-
-    if (method == null) method = iterable["@@asyncIterator"];
-    if (method == null) method = iterable["@@iterator"];
-    if (method == null) throw new TypeError("Object is not async iterable");
-    return method.call(iterable);
   }
 
   function _AwaitValue(value) {
@@ -485,7 +546,7 @@
       var ownKeys = Object.keys(source);
 
       if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        ownKeys.push.apply(ownKeys, Object.getOwnPropertySymbols(source).filter(function (sym) {
           return Object.getOwnPropertyDescriptor(source, sym).enumerable;
         }));
       }
@@ -725,6 +786,8 @@
   function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
+    } else if (call !== void 0) {
+      throw new TypeError("Derived constructors may only return object or undefined");
     }
 
     return _assertThisInitialized(self);
@@ -758,7 +821,7 @@
     return object;
   }
 
-  function _get(target, property, receiver) {
+  function _get() {
     if (typeof Reflect !== "undefined" && Reflect.get) {
       _get = Reflect.get;
     } else {
@@ -769,14 +832,14 @@
         var desc = Object.getOwnPropertyDescriptor(base, property);
 
         if (desc.get) {
-          return desc.get.call(receiver);
+          return desc.get.call(arguments.length < 3 ? target : receiver);
         }
 
         return desc.value;
       };
     }
 
-    return _get(target, property, receiver || target);
+    return _get.apply(this, arguments);
   }
 
   function set(target, property, value, receiver) {
@@ -910,7 +973,7 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
-    var _i = arr && (typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]);
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
 
     if (_i == null) return;
     var _arr = [];
@@ -1661,6 +1724,24 @@
     }
 
     return fn;
+  }
+
+  function _checkPrivateRedeclaration(obj, privateCollection) {
+    if (privateCollection.has(obj)) {
+      throw new TypeError("Cannot initialize the same private elements twice on an object");
+    }
+  }
+
+  function _classPrivateFieldInitSpec(obj, privateMap, value) {
+    _checkPrivateRedeclaration(obj, privateMap);
+
+    privateMap.set(obj, value);
+  }
+
+  function _classPrivateMethodInitSpec(obj, privateSet) {
+    _checkPrivateRedeclaration(obj, privateSet);
+
+    privateSet.add(obj);
   }
 
   function _classPrivateMethodSet() {
