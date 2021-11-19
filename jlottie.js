@@ -2410,25 +2410,26 @@
       transforms.scaled = true;
     }
 
-    if (transforms.translateX - transforms.anchorX != transforms.translateX) {
-      if (transforms.translateX - transforms.anchorX <= transforms.translateX - transforms.paddingX / 2) {
-        transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
-      } else if (transforms.translateX - transforms.anchorX >= transforms.translateX + transforms.paddingX / 2) {
+    if (transforms.translateX != 0) {
+      if (transforms.translateX - transforms.anchorX <= transforms.translateX - transforms.paddingX) {
         transforms.paddingAnchorX = transforms.deltaX / 2;
+      } else if (transforms.translateX - transforms.anchorX >= transforms.translateX + transforms.paddingX) {
+        transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
       } else {
-        transforms.paddingAnchorX = transforms.deltaX / 2 * (1 - ((transforms.translateX - transforms.anchorX - (transforms.translateX - transforms.paddingX / 2)) / (transforms.translateX + transforms.paddingX / 2) - (transforms.translateX - transforms.paddingX / 2)));
+        transforms.paddingAnchorX = transforms.deltaX / 2 * ((transforms.translateX - transforms.anchorX - (transforms.translateX - transforms.paddingX)) / (transforms.translateX + transforms.paddingX) - (transforms.translateX - transforms.paddingX));
+        transforms.paddingAnchorX = transforms.deltaX / 2 * (1 - (transforms.translateX - transforms.anchorX - (transforms.translateX - transforms.paddingX)) / (transforms.translateX + transforms.paddingX - (transforms.translateX - transforms.paddingX)));
       }
     } else {
       transforms.paddingAnchorX = transforms.deltaX / 2;
     }
 
-    if (transforms.translateY - transforms.anchorY != transforms.translateY) {
-      if (transforms.translateY - transforms.anchorY <= transforms.translateY - transforms.paddingY / 2) {
-        transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
-      } else if (transforms.translateY - transforms.anchorY >= transforms.translateY + transforms.paddingY / 2) {
+    if (transforms.translateY != 0) {
+      if (transforms.translateY - transforms.anchorY <= transforms.translateY - transforms.paddingY) {
         transforms.paddingAnchorY = transforms.deltaY / 2;
+      } else if (transforms.translateY - transforms.anchorY >= transforms.translateY + transforms.paddingY) {
+        transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
       } else {
-        transforms.paddingAnchorY = transforms.deltaY / 2 * (1 - ((transforms.translateY - transforms.anchorY - (transforms.translateY - transforms.paddingY / 2)) / (transforms.translateY + transforms.paddingY / 2) - (transforms.translateY - transforms.paddingY / 2)));
+        transforms.paddingAnchorY = transforms.deltaY / 2 * ((transforms.translateY - transforms.anchorY - (transforms.translateY - transforms.paddingY)) / (transforms.translateY + transforms.paddingY - (transforms.translateY - transforms.paddingY)));
       }
     } else {
       transforms.paddingAnchorY = transforms.deltaY / 2;
@@ -2453,9 +2454,9 @@
       transforms.translateY = posY; //}
 
       if (objectId.hasOwnProperty('_anchorX')) {
-        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX - transforms.anchorX, ",").concat(transforms.translateY + transforms.paddingAnchorX - transforms.anchorY, ") ");
+        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX + transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY + transforms.paddingAnchorY, ") ");
       } else {
-        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX - transforms.paddingX, ",").concat(transforms.translateY + transforms.paddingAnchorY - transforms.paddingY, ") ");
+        transforms.translate = "translate(".concat(transforms.translateX + (transforms.paddingAnchorX + transforms.paddingX), ",").concat(transforms.translateY + (transforms.paddingAnchorY + transforms.paddingY), ") ");
       }
 
       if (!preTranslate) {
@@ -2464,7 +2465,15 @@
     }
 
     if (!transforms.isTranslate && transforms.scaled) {
-      transforms.translate = "translate(".concat(transforms.translateX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.paddingAnchorY, ") ");
+      if (objectId.hasOwnProperty('_anchorX')) {
+        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY - (transforms.paddingX + transforms.paddingAnchorY), ") ");
+      } else {
+        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX + transforms.paddingX, ",").concat(transforms.translateY + transforms.paddingAnchorY + transforms.paddingY, ") ");
+      }
+      /*(transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${
+        transforms.translateY - transforms.paddingAnchorY
+      }) `;*/
+
       /*if (objectId.hasOwnProperty('_anchorX')) {
         transforms.translate = `translate(${(transforms.translateX) - transforms.anchorX},${
           (transforms.translateY) - transforms.anchorY
@@ -2475,6 +2484,7 @@
         }) `;
       }*/
       //transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${transforms.translateY - transforms.paddingAnchorY}) `;
+
 
       transforms.isTranslate = true;
     }
