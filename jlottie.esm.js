@@ -791,12 +791,12 @@ function addGroupPositionTransform(
       transforms.translateY = posY;
     //}
     if (objectId.hasOwnProperty('_anchorX')) {
-      transforms.translate = `translate(${transforms.translateX - transforms.anchorX + transforms.paddingAnchorX},${
-        transforms.translateY - transforms.anchorY + transforms.paddingAnchorY
+      transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
+        (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
     } else {
-      transforms.translate = `translate(${transforms.translateX + (transforms.paddingAnchorX + transforms.paddingX)},${
-        transforms.translateY + (transforms.paddingAnchorY + transforms.paddingY)
+      transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
+        transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
     }
     if (!preTranslate) {
@@ -807,11 +807,11 @@ function addGroupPositionTransform(
   if (!transforms.isTranslate && transforms.scaled) {
     if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
-        (transforms.translateY - transforms.anchorY) - (transforms.paddingX + transforms.paddingAnchorY)
+        (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
     } else {
-      transforms.translate = `translate(${transforms.translateX + transforms.paddingAnchorX + transforms.paddingX},${
-        transforms.translateY + transforms.paddingAnchorY + transforms.paddingY
+      transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
+        transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
     }
     /*(transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${

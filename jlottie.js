@@ -2454,9 +2454,9 @@
       transforms.translateY = posY; //}
 
       if (objectId.hasOwnProperty('_anchorX')) {
-        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX + transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY + transforms.paddingAnchorY, ") ");
+        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY - transforms.paddingAnchorY, ") ");
       } else {
-        transforms.translate = "translate(".concat(transforms.translateX + (transforms.paddingAnchorX + transforms.paddingX), ",").concat(transforms.translateY + (transforms.paddingAnchorY + transforms.paddingY), ") ");
+        transforms.translate = "translate(".concat(transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX), ",").concat(transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY), ") ");
       }
 
       if (!preTranslate) {
@@ -2466,9 +2466,9 @@
 
     if (!transforms.isTranslate && transforms.scaled) {
       if (objectId.hasOwnProperty('_anchorX')) {
-        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY - (transforms.paddingX + transforms.paddingAnchorY), ") ");
+        transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.anchorY - transforms.paddingAnchorY, ") ");
       } else {
-        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX + transforms.paddingX, ",").concat(transforms.translateY + transforms.paddingAnchorY + transforms.paddingY, ") ");
+        transforms.translate = "translate(".concat(transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX), ",").concat(transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY), ") ");
       }
       /*(transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${
         transforms.translateY - transforms.paddingAnchorY
