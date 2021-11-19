@@ -1957,7 +1957,7 @@
     var currentDate = Date.now();
 
     for (var i = 0; i <= exports.animationCount; i++) {
-      if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime - 20) {
+      if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime - 5) {
         if (animation[i]._removed || animation[i]._paused) {
           continue; //return;
         }
@@ -2101,12 +2101,15 @@
     transforms.translate = '';
     transforms.rotate = '';
     transforms.scale = '';
+    transforms.scaled = false;
     transforms.opacity = 1;
     transforms.inPoint = -1;
     transforms.outPoint = -1;
     transforms.isLayer = true;
     transforms.stageObj = '';
-    transforms.isSet = false; // related to strokes
+    transforms.isSet = false;
+    transforms.deltaX = 0;
+    transforms.deltaY = 0; // related to strokes
 
     transforms.strokeWidth = -1;
     return transforms;
@@ -2277,7 +2280,7 @@
       }
     }
   }
-  function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId, depth) {
+  function addGroupPositionTransform(frame, position, isLayer, animationId, refKey, addTransformation, objectId, depth, preTranslate) {
     if (frame < 0 || addTransformation < 1) {
       return;
     }
@@ -2366,28 +2369,22 @@
     }
 
     var sizeObjFromTransform = animation[animationId]._objSize[transforms.refObj];
-
-    if (objectId._layer == 3) {
-      debug(function () {
-        return ['GroupPositionTransform: Layer 3', [sizeObjFromTransform[0], sizeObjFromTransform[1]], [transforms.anchorX, transforms.anchorY]];
-      });
-    }
+    /*if (objectId._layer == 3) {
+      debug(() => [
+        'GroupPositionTransform: Layer 3',
+        [sizeObjFromTransform[0], sizeObjFromTransform[1]],
+        [transforms.anchorX, transforms.anchorY],
+      ]);
+    }*/
 
     transforms.refObjSet = true;
     var posY = 0;
-
-    if (refKey == 'r') {
-      transforms.rotateAngle += posX;
-
-      if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
-        transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(objectId._anchorX, ",").concat(objectId._anchorY, ") ");
-      } else {
-        transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(document.getElementById(transforms.refObj).getBoundingClientRect().width / 2, ",").concat(document.getElementById(transforms.refObj).getBoundingClientRect().height / 2, ") ");
-      }
-    }
-
+    var halfWidth = sizeObjFromTransform[0] / 2;
+    var halfHeight = sizeObjFromTransform[1] / 2;
     var tempBoundingW;
     var tempBoundingH;
+    transforms.paddingX = halfWidth;
+    transforms.paddingY = halfHeight;
 
     if (refKey == 's') {
       transforms.scaleFactorX += posX;
@@ -2398,37 +2395,87 @@
 
       if (position.length > 1) {
         transforms.scaleFactorY += position[1];
-        currentScaleX = 1 - transforms.scaleFactorX / 100;
-        currentScaleY = 1 - transforms.scaleFactorY / 100;
+        currentScaleX = transforms.scaleFactorX / 100;
+        currentScaleY = transforms.scaleFactorY / 100;
       } else {
-        currentScaleX = 1 - transforms.scaleFactorX / 100;
-        currentScaleY = 1 - transforms.scaleFactorX / 100;
+        currentScaleX = transforms.scaleFactorX / 100;
+        currentScaleY = transforms.scaleFactorX / 100;
       }
 
-      transforms.scale = "scale(".concat(transforms.scaleFactorX / 100, ",").concat(transforms.scaleFactorY / 100, ") ");
-      transforms.paddingX = (transforms.anchorX - tempBoundingW) * currentScaleX + tempBoundingW * currentScaleX;
-      transforms.paddingY = (transforms.anchorY - tempBoundingH) * currentScaleY + tempBoundingH * currentScaleY;
-      transforms.paddingAnchorX = transforms.anchorX * currentScaleX;
-      transforms.paddingAnchorY = transforms.anchorY * currentScaleY;
+      transforms.scale = "scale(".concat(currentScaleX, ",").concat(currentScaleY, ") "); //transforms.paddingX = (transforms.anchorX - tempBoundingW) * currentScaleX + tempBoundingW * currentScaleX;
+      //transforms.paddingY = (transforms.anchorY - tempBoundingH) * currentScaleY + tempBoundingH * currentScaleY;
+
+      transforms.deltaX = sizeObjFromTransform[0] * currentScaleX - sizeObjFromTransform[0];
+      transforms.deltaY = sizeObjFromTransform[1] * currentScaleY - sizeObjFromTransform[1];
+      transforms.scaled = true;
+    }
+
+    if (transforms.translateX - transforms.anchorX != transforms.translateX) {
+      if (transforms.translateX - transforms.anchorX <= transforms.translateX - transforms.paddingX / 2) {
+        transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
+      } else if (transforms.translateX - transforms.anchorX >= transforms.translateX + transforms.paddingX / 2) {
+        transforms.paddingAnchorX = transforms.deltaX / 2;
+      } else {
+        transforms.paddingAnchorX = transforms.deltaX / 2 * (1 - ((transforms.translateX - transforms.anchorX - (transforms.translateX - transforms.paddingX / 2)) / (transforms.translateX + transforms.paddingX / 2) - (transforms.translateX - transforms.paddingX / 2)));
+      }
+    } else {
+      transforms.paddingAnchorX = transforms.deltaX / 2;
+    }
+
+    if (transforms.translateY - transforms.anchorY != transforms.translateY) {
+      if (transforms.translateY - transforms.anchorY <= transforms.translateY - transforms.paddingY / 2) {
+        transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
+      } else if (transforms.translateY - transforms.anchorY >= transforms.translateY + transforms.paddingY / 2) {
+        transforms.paddingAnchorY = transforms.deltaY / 2;
+      } else {
+        transforms.paddingAnchorY = transforms.deltaY / 2 * (1 - ((transforms.translateY - transforms.anchorY - (transforms.translateY - transforms.paddingY / 2)) / (transforms.translateY + transforms.paddingY / 2) - (transforms.translateY - transforms.paddingY / 2)));
+      }
+    } else {
+      transforms.paddingAnchorY = transforms.deltaY / 2;
+    }
+
+    if (refKey == 'r') {
+      transforms.rotateAngle += posX;
+
+      if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
+        transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(objectId._anchorX, ",").concat(objectId._anchorY, ") ");
+      } else {
+        transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(sizeObjFromTransform[0] / 2, ",").concat(sizeObjFromTransform[1] / 2, ") ");
+      }
     }
 
     if (refKey == 'p') {
-      posY = position[1];
+      posY = position[1]; //if (objectId.hasOwnProperty('_anchorX')) {
+
+      transforms.translateX = posX; //}
+      //if (objectId.hasOwnProperty('_anchorY')) {
+
+      transforms.translateY = posY; //}
 
       if (objectId.hasOwnProperty('_anchorX')) {
-        transforms.translateX += posX;
+        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX - transforms.anchorX, ",").concat(transforms.translateY + transforms.paddingAnchorX - transforms.anchorY, ") ");
+      } else {
+        transforms.translate = "translate(".concat(transforms.translateX + transforms.paddingAnchorX - transforms.paddingX, ",").concat(transforms.translateY + transforms.paddingAnchorY - transforms.paddingY, ") ");
       }
 
-      if (objectId.hasOwnProperty('_anchorY')) {
-        transforms.translateY += posY;
+      if (!preTranslate) {
+        transforms.isTranslate = true;
       }
-
-      transforms.translate = "translate(".concat(transforms.translateX - transforms.anchorX, ",").concat(transforms.translateY - transforms.anchorY, ") ");
-      transforms.isTranslate = true;
     }
 
-    if (!transforms.isTranslate) {
-      transforms.translate = "translate(".concat(transforms.paddingX, ",").concat(transforms.paddingY, ") ");
+    if (!transforms.isTranslate && transforms.scaled) {
+      transforms.translate = "translate(".concat(transforms.translateX - transforms.paddingAnchorX, ",").concat(transforms.translateY - transforms.paddingAnchorY, ") ");
+      /*if (objectId.hasOwnProperty('_anchorX')) {
+        transforms.translate = `translate(${(transforms.translateX) - transforms.anchorX},${
+          (transforms.translateY) - transforms.anchorY
+        }) `;
+      } else {
+        transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
+          transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
+        }) `;
+      }*/
+      //transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${transforms.translateY - transforms.paddingAnchorY}) `;
+
       transforms.isTranslate = true;
     }
 
@@ -4448,15 +4495,24 @@
                 } else {
                   posY = passedObj[passedKey][i].ks.p.k[1]; // passedObj._boundingY;
                 }
-
-                if (passedObj[passedKey][i].td > 0) {
-                  document.getElementById("".concat(animationId, "_").concat(depth, "_layerGroup").concat(passedObj[passedKey][i]._layer)).setAttribute('transform', "translate(".concat(posX, ",").concat(posY, ")")); //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                /*if (passedObj[passedKey][i].td > 0) {
+                  document
+                    .getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`)
+                    .setAttribute('transform', `translate(${posX},${posY})`);
+                    //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
                 } else {
-                  document.getElementById("".concat(animationId, "_").concat(depth, "_layer").concat(passedObj[passedKey][i]._layer)).setAttribute('transform', "translate(".concat(posX, ",").concat(posY, ")")); //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
+                  document
+                    .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
+                    .setAttribute('transform', `translate(${posX},${posY})`);
+                    //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
                 }
-
                 passedObj[passedKey][i]._posX = posX;
-                passedObj[passedKey][i]._posY = posY;
+                passedObj[passedKey][i]._posY = posY;*/
+
+
+                for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+                  addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
+                }
               }
             }
           }
@@ -4474,6 +4530,10 @@
           if (passedObj[passedKey][i].ks.s.k.length > 1) {
             if (passedObj[passedKey][i].ks.s.k[0].hasOwnProperty('s')) {
               passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 's', true, animationId, 1, passedObj[passedKey][i], depth);
+            } else {
+              /*for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth);
+              }*/
             }
           }
         }

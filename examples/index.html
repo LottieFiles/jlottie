@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="/jlottie/jlottie.min.js" type="text/javascript"></script>
+        <script src="/dist/jlottie.min.js" type="text/javascript"></script>
         <link rel="stylesheet" href="./style.css" />
     </head>
 
@@ -322,6 +322,9 @@
             let pencil = "https://assets2.lottiefiles.com/packages/lf20_1et9y4wm.json";
             let squid = "https://assets9.lottiefiles.com/packages/lf20_jz1m61i7.json";
             let trimPo = "https://assets8.lottiefiles.com/packages/lf20_j8eovnox.json";
+            let rewind = "https://assets2.lottiefiles.com/private_files/lf30_jhergm1m.json";
+            let original = "https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json";
+            let chinese = "https://assets5.lottiefiles.com/datafiles/FdtKCvUPkcgdZEvWnsUbSO4rP3pWUWgZ5rKnG0rF/chinese.json";
 
             let lottieinstance;
             function loadLottie(toLoad) {
@@ -345,7 +348,7 @@
             }
 
             // Load an initial animation
-            loadLottie(heart);
+            loadLottie(chinese);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {
