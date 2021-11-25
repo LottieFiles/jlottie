@@ -191,24 +191,6 @@ export function loadFrame(i, _currentFrame) {
     let nextObj = false;
     for (let m = _currentFrame - 1; m >= 0; m--) {
       for (let n = 0; n < animation[i]._scene[m]._transform.length; n++) {
-        /*
-        if (animation[i]._scene[m]._transform[n].refObj == refObj) {
-          currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
-          currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
-          if (
-            animation[i]._scene[m]._transform[n].isTween ||
-            animation[i]._scene[m]._transform[n].combined.length > 0
-          ) {
-            if (animation[i]._scene[m]._transform[n].isTween) {
-              currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
-            }
-            currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
-            currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
-            nextObj = true;
-            break;
-          }
-        }
-        */
         if (animation[i]._scene[m]._transform[n].refObj == refObj) {
           if (animation[i]._scene[m]._transform[n].fillSet) {
             if (animation[i]._scene[m]._transform[n].isGradient) {
@@ -271,7 +253,6 @@ export function loadFrame(i, _currentFrame) {
       }
       if (nextObj) break;
     }
-    //if (nextObj) continue;
   }
 }
 
@@ -281,13 +262,10 @@ export function lottiemate() {
     if (animation[i]._loaded && currentDate - animation[i]._lastTime >= (animation[i]._frameTime - 5)) {
       if (animation[i]._removed || animation[i]._paused) {
         continue;
-        //return;
       }
       if (animation[i]._debugAnimation) {
-        // DEBUG
         animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
       }
-      //animation[i]._lastFrame = animation[i]._currentFrame;
       animation[i]._currentFrame++;
       if (animation[i]._currentFrame >= animation[i]._totalFrames) {
         animation[i]._loopCount++;
@@ -298,13 +276,11 @@ export function lottiemate() {
           animation[i]._paused = true;
           goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
           continue;   
-          //return;
         } else {
           animation[i]._currentFrame = 0;
         }
       }
 
-      //setTimeout(function () {
         for (let j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
           if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
@@ -533,6 +509,15 @@ export function fireWorker (animationId) {
       clearTimeout(timeouts[i]);
       if (deltaTime <= 0) {
         animation[animationId]._currentFrame++;
+
+        if (animation[animationId]._currentFrame >= animation[animationId]._totalFrames) {
+          if (! animation[animationId]._loop) {
+            animation[animationId]._currentFrame--;
+          } else {
+            animation[animationId] = 0;
+          }
+        }
+
         timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame])}, (animation[i]._frameTime + deltaTime));
       } else {
         timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame])}, (animation[i]._frameTime - deltaTime));
