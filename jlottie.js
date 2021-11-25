@@ -2042,12 +2042,31 @@
 
         animation[i]._lastTime = currentDate;
       }
+
+      if (animation[i]._frameTime - (postRender - currentDate) < 0) {
+        animation[i]._currentFrame++;
+
+        if (animation[i]._currentFrame >= animation[i]._totalFrames) {
+          animation[i]._loopCount++; //animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
+          //animation[i]._renderObj.dispatchEvent(new CustomEvent("loopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
+
+          if (!animation[i]._loop) {
+            animation[i]._currentFrame--;
+            animation[i]._paused = true;
+            goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
+            continue;
+          } else {
+            animation[i]._currentFrame = 0;
+          }
+        }
+      }
     }
 
+    var renderDone = Date.now();
     clearTimeout(timeoutObj);
     setTimeout(function () {
       requestAnimationFrame(lottiemate);
-    }, smallestFrameTime - 8 - (postRender - currentDate));
+    }, smallestFrameTime - 8 - (renderDone - currentDate));
   }
   window.URL = window.URL || window.webkitURL;
   var lottiemateBlob = new Blob(["(\n\nonmessage = function(e) {\n  if (e.data !== undefined && e.data !== null) {\n    let todo = e.data[0];\n    if (todo == 1) {\n      self.animationId = e.data[1];\n      self.animation = JSON.parse(e.data[2]);\n      //console.log('brute');\n    } else if (e.data[0] == 2) {\n      //console.log('tr');\n      self.animation._currentFrame = e.data[1];\n    }\n\n    if (! self.animation._removed && ! self.animation._paused) {\n        const currentDate = Date.now();\n        let dontRender = false;\n      \n        //if (animation._loaded && currentDate - animation._lastTime >= (animation._frameTime - 5)) {\n          \n          if (! self.animation._removed && ! self.animation._paused) {\n            if (animation._debugAnimation) {\n              self.animation._timeElapsed = self.animation._timeElapsed + (currentDate - self.animation._lastTime);\n            }\n        \n            self.animation._currentFrame++;\n            if (self.animation._currentFrame >= self.animation._totalFrames) {\n              self.animation._loopCount++;\n              // NEEDS ALTERNATIVE // self.animation._renderObj.dispatchEvent(new CustomEvent(\"onLoopComplete\", {bubbles: true, detail: {\"count\": self.animation._loopCount, \"self.animation\": i, \"frame\": self.animation._currentFrame} }));\n              // NEEDS ALTERNATIVE // self.animation._renderObj.dispatchEvent(new CustomEvent(\"loopComplete\", {bubbles: true, detail: {\"count\": self.animation._loopCount, \"self.animation\": i, \"frame\": self.animation._currentFrame} }));\n              if (!self.animation._loop) {\n                self.animation._currentFrame--;\n                self.animation._paused = true;\n                // NEEDS ALTERNATIVE // goToAndStop(self.animation._currentFrame, '', self.animation._elementId);\n                dontRender = true;   \n              } else {\n                self.animation._currentFrame = 0;\n              }\n            }\n          \n            if (! dontRender) {\n              postMessage([1, self.animationId, self.animation._currentFrame, currentDate]);\n            }\n            //setTimeout(function () {\n            //}, 0);\n        \n            self.animation._lastTime = currentDate;        \n          }\n      \n        //}\n                \n        //clearTimeout(self.timeoutObj);\n        //console.log('brute', self.animation._frameTime);\n        //setTimeout(() => {self.postMessage([2])}, self.animation._frameTime);      \n    }\n  }\n}\n\n)(self)"], {

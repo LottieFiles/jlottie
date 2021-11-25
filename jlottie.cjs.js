@@ -360,12 +360,31 @@ function lottiemate() {
   
       animation[i]._lastTime = currentDate;
     }
-          
+
+    if (animation[i]._frameTime - (postRender - currentDate) < 0) {
+      animation[i]._currentFrame++;
+      if (animation[i]._currentFrame >= animation[i]._totalFrames) {
+        animation[i]._loopCount++;
+        //animation[i]._renderObj.dispatchEvent(new CustomEvent("onLoopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
+        //animation[i]._renderObj.dispatchEvent(new CustomEvent("loopComplete", {bubbles: true, detail: {"count": animation[i]._loopCount, "animation": i, "frame": animation[i]._currentFrame} }));
+        if (!animation[i]._loop) {
+          animation[i]._currentFrame--;
+          animation[i]._paused = true;
+          goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
+          continue;   
+        } else {
+          animation[i]._currentFrame = 0;
+        }
+      }
+    }
+  
   }
+
+  var renderDone = Date.now();
   clearTimeout(timeoutObj);
   setTimeout(() => {
     requestAnimationFrame(lottiemate);
-  }, (smallestFrameTime - 8) - (postRender - currentDate));
+  }, (smallestFrameTime - 8) - (renderDone - currentDate));
 }
 
 
