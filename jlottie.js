@@ -2146,7 +2146,7 @@
 
         timeouts[i] = setTimeout(function () {
           workers[animationId].postMessage([2, animation[animationId]._currentFrame]);
-        }, animation[i]._frameTime); //}
+        }, deltaTime); //}
       }
     };
   } /// ////////// BUILD SCENE GRAPH

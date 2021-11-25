@@ -544,7 +544,7 @@ function fireWorker (animationId) {
 
         timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame])}, (animation[i]._frameTime + (-1 * deltaTime)));
       } else {*/
-        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame]);}, animation[i]._frameTime);
+        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame]);}, deltaTime);
       //}
     }
   };
