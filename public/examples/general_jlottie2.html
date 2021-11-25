@@ -1,6 +1,6 @@
 <html>
   <head>
-    <script src="/jlottie/jlottie.min.js" type="application/javascript"></script>
+    <script src="/dist/jlottie.min.js" type="application/javascript"></script>
   </head>
 
   <body>
@@ -99,7 +99,8 @@
                 container: document.getElementById('soto' + (i + 1)), // the dom element that will contain the animation
                 loop: true,
                 autoplay: true,
-                path: sources[i], // the path to the animation json
+                path: sources[i],
+                useWebWorker: true, // the path to the animation json
                 //debug: true,
                 //debugContainer: document.getElementById('debug'),
             });
