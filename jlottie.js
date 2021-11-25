@@ -1760,6 +1760,7 @@
   var smallestTimeBuffer = 0;
   var debugAnimation = false;
   var timeoutObj;
+  var _useWebWorker = false;
   /**
    * Exposes a near-zero cost console logger.
    *
@@ -1881,24 +1882,6 @@
 
       for (var m = _currentFrame - 1; m >= 0; m--) {
         for (var n = 0; n < animation[i]._scene[m]._transform.length; n++) {
-          /*
-          if (animation[i]._scene[m]._transform[n].refObj == refObj) {
-            currentObj = document.getElementById(animation[i]._scene[m]._transform[n].refObj);
-            currentObjOther = document.getElementById(animation[i]._scene[m]._transform[n].refObjOther);
-            if (
-              animation[i]._scene[m]._transform[n].isTween ||
-              animation[i]._scene[m]._transform[n].combined.length > 0
-            ) {
-              if (animation[i]._scene[m]._transform[n].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
-              }
-              currentObj.setAttribute('transform', animation[i]._scene[m]._transform[n].combined);
-              currentObjOther.setAttribute('opacity', animation[i]._scene[m]._transform[n].opacity);
-              nextObj = true;
-              break;
-            }
-          }
-          */
           if (animation[i]._scene[m]._transform[n].refObj == refObj) {
             if (animation[i]._scene[m]._transform[n].fillSet) {
               if (animation[i]._scene[m]._transform[n].isGradient) {
@@ -1949,8 +1932,7 @@
         }
 
         if (nextObj) break;
-      } //if (nextObj) continue;
-
+      }
     }
   }
   function lottiemate() {
@@ -1959,14 +1941,12 @@
     for (var i = 0; i <= exports.animationCount; i++) {
       if (animation[i]._loaded && currentDate - animation[i]._lastTime >= animation[i]._frameTime - 5) {
         if (animation[i]._removed || animation[i]._paused) {
-          continue; //return;
+          continue;
         }
 
         if (animation[i]._debugAnimation) {
-          // DEBUG
           animation[i]._timeElapsed = animation[i]._timeElapsed + (currentDate - animation[i]._lastTime);
-        } //animation[i]._lastFrame = animation[i]._currentFrame;
-
+        }
 
         animation[i]._currentFrame++;
 
@@ -1995,12 +1975,11 @@
             animation[i]._currentFrame--;
             animation[i]._paused = true;
             goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
-            continue; //return;
+            continue;
           } else {
             animation[i]._currentFrame = 0;
           }
-        } //setTimeout(function () {
-
+        }
 
         for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
           if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
@@ -2069,6 +2048,93 @@
     setTimeout(function () {
       requestAnimationFrame(lottiemate);
     }, smallestFrameTime - 8 - (postRender - currentDate));
+  }
+  window.URL = window.URL || window.webkitURL;
+  var lottiemateBlob = new Blob(["(\n\nonmessage = function(e) {\n  if (e.data !== undefined && e.data !== null) {\n    let todo = e.data[0];\n    if (todo == 1) {\n      self.animationId = e.data[1];\n      self.animation = JSON.parse(e.data[2]);\n      //console.log('brute');\n    } else if (e.data[0] == 2) {\n      //console.log('tr');\n      self.animation._currentFrame = e.data[1];\n    }\n\n    if (! self.animation._removed && ! self.animation._paused) {\n        const currentDate = Date.now();\n        let dontRender = false;\n      \n        //if (animation._loaded && currentDate - animation._lastTime >= (animation._frameTime - 5)) {\n          \n          if (! self.animation._removed && ! self.animation._paused) {\n            if (animation._debugAnimation) {\n              self.animation._timeElapsed = self.animation._timeElapsed + (currentDate - self.animation._lastTime);\n            }\n        \n            self.animation._currentFrame++;\n            if (self.animation._currentFrame >= self.animation._totalFrames) {\n              self.animation._loopCount++;\n              // NEEDS ALTERNATIVE // self.animation._renderObj.dispatchEvent(new CustomEvent(\"onLoopComplete\", {bubbles: true, detail: {\"count\": self.animation._loopCount, \"self.animation\": i, \"frame\": self.animation._currentFrame} }));\n              // NEEDS ALTERNATIVE // self.animation._renderObj.dispatchEvent(new CustomEvent(\"loopComplete\", {bubbles: true, detail: {\"count\": self.animation._loopCount, \"self.animation\": i, \"frame\": self.animation._currentFrame} }));\n              if (!self.animation._loop) {\n                self.animation._currentFrame--;\n                self.animation._paused = true;\n                // NEEDS ALTERNATIVE // goToAndStop(self.animation._currentFrame, '', self.animation._elementId);\n                dontRender = true;   \n              } else {\n                self.animation._currentFrame = 0;\n              }\n            }\n          \n            if (! dontRender) {\n              postMessage([1, self.animationId, self.animation._currentFrame, currentDate]);\n            }\n            //setTimeout(function () {\n            //}, 0);\n        \n            self.animation._lastTime = currentDate;        \n          }\n      \n        //}\n                \n        //clearTimeout(self.timeoutObj);\n        //console.log('brute', self.animation._frameTime);\n        //setTimeout(() => {self.postMessage([2])}, self.animation._frameTime);      \n    }\n  }\n}\n\n)(self)"], {
+    type: 'application/javascript'
+  });
+  var workers = Array(100);
+  var timeouts = [];
+  function fireWorker(animationId) {
+    var animData = JSON.stringify(animation[animationId]);
+    workers[animationId] = new Worker(URL.createObjectURL(lottiemateBlob));
+    workers[animationId].postMessage([1, animationId, animData]);
+
+    workers[animationId].onmessage = function (e) {
+      if (e.data[0] == 1) {
+        var i = e.data[1];
+        animation[i]._currentFrame = e.data[2];
+        var previousDate = e.data[3];
+
+        for (var j = 0; j < animation[i]._scene[animation[i]._currentFrame]._transform.length; j++) {
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isGradient) {
+              var stops = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].fillObj).querySelectorAll("stop");
+
+              for (var m = 0; m < stops.length; m++) {
+                stops[m].setAttribute("offset", animation[i]._scene[animation[i]._currentFrame]._transform[j].offsets[m]);
+                stops[m].setAttribute("style", animation[i]._scene[animation[i]._currentFrame]._transform[j].styles[m]);
+              }
+            } else {}
+          } else {
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+              var currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+              var currentObjOther = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther);
+
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+              }
+
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+                currentObj.setAttribute('transform', animation[i]._scene[animation[i]._currentFrame]._transform[j].combined);
+              }
+
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+                currentObj.setAttribute('fill', animation[i]._scene[animation[i]._currentFrame]._transform[j].fill);
+              }
+
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
+                currentObj.setAttribute('stroke-width', animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth);
+              }
+
+              currentObjOther.setAttribute('opacity', animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity);
+            }
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+              document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'none';
+            }
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+              document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj).style.display = 'block';
+            }
+          }
+        }
+
+        var currentDate = Date.now();
+        var deltaTime = animation[i]._frameTime - (currentDate - previousDate);
+        clearTimeout(timeouts[i]);
+
+        if (deltaTime <= 0) {
+          animation[animationId]._currentFrame++;
+
+          if (animation[animationId]._currentFrame >= animation[animationId]._totalFrames) {
+            if (!animation[animationId]._loop) {
+              animation[animationId]._currentFrame--;
+            } else {
+              animation[animationId] = 0;
+            }
+          }
+
+          timeouts[i] = setTimeout(function () {
+            workers[animationId].postMessage([2, animation[animationId]._currentFrame]);
+          }, animation[i]._frameTime + deltaTime);
+        } else {
+          timeouts[i] = setTimeout(function () {
+            workers[animationId].postMessage([2, animation[animationId]._currentFrame]);
+          }, animation[i]._frameTime - deltaTime);
+        }
+      }
+    };
   } /// ////////// BUILD SCENE GRAPH
 
   var lastRefObj;
@@ -4699,9 +4765,8 @@
           animation[animationId]._currScale = scaleH;
         } //newSVG.setAttributeNS(null, 'viewBox', `0 0 ${animation[animationId]._maxWidth} ${animation[animationId]._maxHeight}`);
         //newLayer.setAttribute("transform", "scale(" + animation[animationId]._currScale + ")");
+        //scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
 
-
-        scaleLayers(elementId, animationId, newLayer, animation[animationId], 'layers', 1);
       }
 
       newLayer.setAttributeNS(null, 'clip-path', "url(#_clip".concat(animationId, ")"));
@@ -4709,18 +4774,22 @@
       animationLoading -= 1;
       animation[animationId]._loaded = true;
 
-      if (!animation[animationId]._autoplay) {
-        goToAndStop(1, '', animation[animationId]._elementId);
-      } else {
-        loadFrame(animationId, 1);
-      }
-
       animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {
         bubbles: true,
         detail: {
           "animation": animationId
         }
       }));
+
+      if (!_useWebWorker) {
+        if (!animation[animationId]._autoplay) {
+          goToAndStop(1, '', animation[animationId]._elementId);
+        } else {
+          loadFrame(animationId, 1);
+        }
+      } else {
+        fireWorker(animationId);
+      }
     } catch (e) {
       //console.error(`Failed to load animation.${e}`);
       //elementObj.style.height = 0;
@@ -4985,6 +5054,14 @@
       }
     }
 
+    if (!_useWebWorker) {
+      if (!(obj.useWebWorker === undefined)) {
+        if (obj.useWebWorker === true) {
+          _useWebWorker = true;
+        }
+      }
+    }
+
     exports.animationCount += 1;
     var currentAnimation = exports.animationCount;
     animation[currentAnimation] = {};
@@ -5003,7 +5080,10 @@
 
     if (!playStarted) {
       playStarted = true;
-      timeoutObj = setTimeout(window.requestAnimationFrame(lottiemate), 0);
+
+      if (!_useWebWorker) {
+        timeoutObj = setTimeout(window.requestAnimationFrame(lottiemate), 0);
+      }
     }
 
     animation[currentAnimation]._elementId = obj.container.id;
@@ -5044,6 +5124,7 @@
   exports.extrapolateValueKeyframe = extrapolateValueKeyframe;
   exports.findChildren = findChildren;
   exports.findExistingTransform = findExistingTransform;
+  exports.fireWorker = fireWorker;
   exports.getColorString = getColorString;
   exports.getEmptyFillTransform = getEmptyFillTransform;
   exports.getEmptyStageTransform = getEmptyStageTransform;
