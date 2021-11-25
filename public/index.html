@@ -424,7 +424,8 @@
                     container: document.getElementById('jlottie-container'),
                     loop: true,
                     autoplay: true,
-                    path: pathToLoad, //document.getElementById('lottieSrc').value,
+                    path: pathToLoad,
+                    useWebWorker: true //document.getElementById('lottieSrc').value,
                 });
                 document.getElementById('lottieSrc').value = pathToLoad;
             }
