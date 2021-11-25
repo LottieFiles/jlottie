@@ -527,7 +527,7 @@ function fireWorker (animationId) {
       let deltaTime = animation[i]._frameTime - (currentDate - previousDate);
       
       clearTimeout(timeouts[i]);
-      if (deltaTime <= 0) {
+      /*if (deltaTime <= 0) {
         animation[animationId]._currentFrame++;
 
         if (animation[animationId]._currentFrame >= animation[animationId]._totalFrames) {
@@ -538,10 +538,10 @@ function fireWorker (animationId) {
           }
         }
 
-        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame]);}, (animation[i]._frameTime + (-1 * deltaTime)));
-      } else {
-        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame]);}, (animation[i]._frameTime - deltaTime));
-      }
+        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame])}, (animation[i]._frameTime + (-1 * deltaTime)));
+      } else {*/
+        timeouts[i] = setTimeout(() => {workers[animationId].postMessage([2, animation[animationId]._currentFrame]);}, animation[i]._frameTime);
+      //}
     }
   };
 }
