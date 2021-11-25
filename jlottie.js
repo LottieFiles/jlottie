@@ -2121,13 +2121,13 @@
             if (!animation[animationId]._loop) {
               animation[animationId]._currentFrame--;
             } else {
-              animation[animationId] = 0;
+              animation[animationId]._currentFrame = 0;
             }
           }
 
           timeouts[i] = setTimeout(function () {
             workers[animationId].postMessage([2, animation[animationId]._currentFrame]);
-          }, animation[i]._frameTime + deltaTime);
+          }, animation[i]._frameTime + -1 * deltaTime);
         } else {
           timeouts[i] = setTimeout(function () {
             workers[animationId].postMessage([2, animation[animationId]._currentFrame]);
