@@ -223,7 +223,7 @@ const jlottie = require('@lottiefiles/jlottie');
 ```
 
 ```js
-jLottie.loadAnimation({
+jlottie.loadAnimation({
   container: document.getElementById('my-animation'),
   loop: true,
   autoplay: true,
