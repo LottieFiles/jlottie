@@ -2436,8 +2436,14 @@
       transforms.refObjOther = "".concat(animationId, "_group").concat(animation[animationId]._currentShapeGroup);
     }
 
-    transforms.anchorX = objectId._anchorX;
-    transforms.anchorY = objectId._anchorY;
+    if (objectId.hasOwnProperty('_anchorX')) {
+      transforms.anchorX = objectId._anchorX;
+    }
+
+    if (objectId.hasOwnProperty('_anchorY')) {
+      transforms.anchorY = objectId._anchorY;
+    }
+
     transforms = findExistingTransform(transforms, animationId, frame);
 
     if (animation[animationId]._instated.hasOwnProperty(transforms.refObj)) {} else {
@@ -4621,9 +4627,9 @@
             if (passedObj[passedKey][i].ks.s.k[0].hasOwnProperty('s')) {
               passedObj[passedKey][i].ks = getPosition(passedObj[passedKey][i].ks, null, 's', true, animationId, 1, passedObj[passedKey][i], depth);
             } else {
-              /*for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+              for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
                 addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth);
-              }*/
+              }
             }
           }
         }

@@ -831,8 +831,13 @@ function addGroupPositionTransform(
     transforms.refObjOther = `${animationId}_group${animation[animationId]._currentShapeGroup}`;
   }
 
-  transforms.anchorX = objectId._anchorX;
-  transforms.anchorY = objectId._anchorY;
+  if (objectId.hasOwnProperty('_anchorX')) {
+    transforms.anchorX = objectId._anchorX;
+  }
+  
+  if (objectId.hasOwnProperty('_anchorY')) {
+    transforms.anchorY = objectId._anchorY;
+  }
 
   transforms = findExistingTransform(transforms, animationId, frame);
 
@@ -3155,9 +3160,9 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
               depth,
             );
           } else {
-            /*for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+            for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
               addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth);
-            }*/
+            }
           }
         }
       }
