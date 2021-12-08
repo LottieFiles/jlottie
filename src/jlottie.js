@@ -756,7 +756,9 @@ export function addGroupPositionTransform(
   addTransformation,
   objectId,
   depth,
-  preTranslate
+  preTranslate,
+  isStart,
+  isEnd
 ) {
   if (frame < 0 || addTransformation < 1) {
     return;
@@ -889,48 +891,49 @@ export function addGroupPositionTransform(
   }
 
   if (transforms.translateX != 0) {
-    if ((transforms.translateX - transforms.anchorX) <= transforms.translateX - (transforms.paddingX)) {
+    if (((transforms.paddingX * 2) - transforms.anchorX) <= 0) {
       transforms.paddingAnchorX = transforms.deltaX / 2;
-    } else if ((transforms.translateX - transforms.anchorX) >= transforms.translateX + (transforms.paddingX)) {
-      transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
+    } else if ((transforms.anchorX * -1) >= (transforms.paddingX * 2)) {
+      transforms.paddingAnchorX = (transforms.deltaX / 2) * -1;
     } else {
-      transforms.paddingAnchorX = (transforms.deltaX / 2) * ((((transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))) / (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))));
-      transforms.paddingAnchorX = (transforms.deltaX / 2) * 
-                                  (1 -
-                                    (                                   
-                                      (
-                                        (transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))
-                                      )
-                                      / 
-                                      (
-                                        (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))
-                                      )
-                                    )
-                                  );
+      //transforms.paddingAnchorX = (transforms.deltaX / 2) * ((((transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))) / (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))));
+      transforms.paddingAnchorX = 
+        transforms.deltaX * 
+        ((
+          (                                   
+            (
+              transforms.translateX - (transforms.translateX - transforms.anchorX)
+            )
+            / 
+            (
+              transforms.paddingX * 2
+            )
+          )
+        )) / 2;
     }
   } else {
     transforms.paddingAnchorX = transforms.deltaX / 2;
   }
 
   if (transforms.translateY != 0) {
-    if ((transforms.translateY - transforms.anchorY) <= transforms.translateY - (transforms.paddingY)) {
+    if (((transforms.paddingY * 2) - transforms.anchorY) <= 0) {
       transforms.paddingAnchorY = transforms.deltaY / 2;
-    } else if ((transforms.translateY - transforms.anchorY) >= transforms.translateY + (transforms.paddingY)) {
-      transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
+    } else if ((transforms.anchorY * -1) >= (transforms.paddingY * 2)) {
+      transforms.paddingAnchorY = (transforms.deltaY / 2) * -1;
     } else {
       transforms.paddingAnchorY = 
-        (transforms.deltaY / 2) * 
+        (transforms.deltaY * 
         (
-          (
+          (                                   
             (
-              ((transforms.translateY - transforms.anchorY) - (transforms.translateY - (transforms.paddingY)))
-            ) 
+              transforms.translateY - (transforms.translateY - transforms.anchorY)
+            )
             / 
             (
-              ((transforms.translateY + (transforms.paddingY)) - (transforms.translateY - (transforms.paddingY)))
+              transforms.paddingY * 2
             )
           )
-        );
+        )) / 2;
     }
   } else {
     transforms.paddingAnchorY = transforms.deltaY / 2;
@@ -955,30 +958,30 @@ export function addGroupPositionTransform(
     //if (objectId.hasOwnProperty('_anchorY')) {
       transforms.translateY = posY;
     //}
-    if (objectId.hasOwnProperty('_anchorX')) {
+    //if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    } else {
+    /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
-    }
-    if (!preTranslate) {
+    }*/
+    //if (!preTranslate) {
       transforms.isTranslate = true;
-    }
+    //}
   }
 
   if (!transforms.isTranslate && transforms.scaled) {
-    if (objectId.hasOwnProperty('_anchorX')) {
+    //if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    } else {
+    /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
-    }
+    }*/
     /*(transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${
       transforms.translateY - transforms.paddingAnchorY
     }) `;*/
@@ -3156,7 +3159,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-              addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth);
+              addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
             }
           }
         }
