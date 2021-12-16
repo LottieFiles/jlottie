@@ -50,7 +50,7 @@ export function bezierCurve(
   addTransformation,
   objectId,
   depth,
-  customFlag,
+  customFlag
 ) {
   const newNodes = [];
 
@@ -795,8 +795,8 @@ export function addGroupPositionTransform(
   } else {
   }
 
-  if (transforms.inPoint < 0 && transforms.outPoint < 0) {
-    if (frame != transforms.inPoint && frame != transforms.outPoint) {
+  //if (transforms.inPoint < 0 && transforms.outPoint < 0) {
+  //  if (frame != transforms.inPoint && frame != transforms.outPoint) {
       if (Array.isArray(position)) {
         posX = position[0];
         if (Number.isNaN(posX)) {
@@ -811,8 +811,8 @@ export function addGroupPositionTransform(
           }
         }
       }
-    }
-  }
+  //  }
+  //}
 
   if (isLayer) {
     transforms.isLayer = true;
@@ -866,14 +866,14 @@ export function addGroupPositionTransform(
   let tempBoundingH;
   transforms.paddingX = halfWidth;
   transforms.paddingY = halfHeight;
-  if (refKey == 's') {  
-    transforms.scaleFactorX += posX;
+  if (refKey == 's' && posX != 100 && position[1] != 100) {  
+    transforms.scaleFactorX = posX;
     tempBoundingW = sizeObjFromTransform[0];
     tempBoundingH = sizeObjFromTransform[1];
     let currentScaleX;
     let currentScaleY;
     if (position.length > 1) {
-      transforms.scaleFactorY += position[1];
+      transforms.scaleFactorY = position[1];
       currentScaleX = transforms.scaleFactorX / 100;
       currentScaleY = transforms.scaleFactorY / 100;
     } else {
@@ -889,12 +889,12 @@ export function addGroupPositionTransform(
 
     transforms.scaled = true;
 
-    if (transforms.anchorX != 0) {
-      if ((transforms.translateX - transforms.anchorX) <= (transforms.translateX - (transforms.paddingX * 2))) {
+    //if (transforms.anchorX != 0) {
+      /*if ((transforms.translateX - transforms.anchorX) <= (transforms.translateX - (transforms.paddingX * 2))) {
         transforms.paddingAnchorX = transforms.deltaX / 2;
       } else if ((transforms.translateX - transforms.anchorX) >= (transforms.translateX + (transforms.paddingX * 2))) {
         transforms.paddingAnchorX = (transforms.deltaX / 2) * -1;
-      } else {
+      } else {*/
         //transforms.paddingAnchorX = (transforms.deltaX / 2) * ((((transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))) / (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))));
         transforms.paddingAnchorX = 
           (transforms.deltaX * 
@@ -908,20 +908,24 @@ export function addGroupPositionTransform(
                 transforms.paddingX * 2
               )
             )
-          )) / 2;
+          ));
           
+      //}
+    /*} else {
+      if (transforms.deltaX > 0 || transforms.deltaX < 0) {
+        transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
+      } else {
+        transforms.paddingAnchorX = transforms.paddingX;
       }
-    } else {
-      transforms.paddingAnchorX = transforms.deltaX / 2;
 
-    }
+    }*/
 
-    if (transforms.anchorY != 0) {
-      if ((transforms.translateY - transforms.anchorY) <= (transforms.translateY - (transforms.paddingY * 2))) {
+    //if (transforms.anchorY != 0) {
+      /*if ((transforms.translateY - transforms.anchorY) <= (transforms.translateY - (transforms.paddingY * 2))) {
         transforms.paddingAnchorY = transforms.deltaY / 2;
       } else if ((transforms.translateY - transforms.anchorY) >= (transforms.translateY + (transforms.paddingY * 2))) {
         transforms.paddingAnchorY = (transforms.deltaY / 2) * -1;
-      } else {
+      } else {*/
         transforms.paddingAnchorY = 
           (transforms.deltaY * 
           (
@@ -934,20 +938,23 @@ export function addGroupPositionTransform(
                 transforms.paddingY * 2
               )
             )
-          )) / 2;
+          ));
+      //}
+    /*} else {
+      if (transforms.deltaY > 0 || transforms.deltaY < 0) {
+        transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
+      } else {
+        transforms.paddingAnchorY = transforms.paddingY;
       }
-    } else {
-      transforms.paddingAnchorY = transforms.deltaY / 2;
-    }
+    }*/
 
-    debug(() => ["close", transforms.refObj, transforms.paddingX, transforms.paddingY, transforms.paddingAnchorX, transforms.paddingAnchorY]);
 
 
   }
 
 
   if (refKey == 'r') {
-    transforms.rotateAngle += posX;
+    transforms.rotateAngle = posX;
     if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
       transforms.rotate = `rotate(${transforms.rotateAngle},${objectId._anchorX},${objectId._anchorY}) `;
     } else {
@@ -965,26 +972,48 @@ export function addGroupPositionTransform(
     //if (objectId.hasOwnProperty('_anchorY')) {
       transforms.translateY = posY;
     //}
+    transforms.isTranslate = true;
+  }
+
+  if (transforms.isTranslate) {
     //if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    /*} else {
+      debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+      /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
     }*/
     //if (!preTranslate) {
-      transforms.isTranslate = true;
     //}
+  } else {
+    if (transforms.scaled) {
+      //if (objectId.hasOwnProperty('_anchorX')) {
+        transforms.translate = `translate(${(transforms.paddingAnchorX * -1)},${
+          (transforms.paddingAnchorY * -1)
+        }) `;
+        debug(() => ["tran2", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+        /*} else {
+        transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
+          transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
+        }) `;
+      }*/
+      //if (!preTranslate) {
+      //}
+    }
   }
 
-  if (!transforms.isTranslate && transforms.scaled) {
+  if (transforms.scaled) {
     //if (objectId.hasOwnProperty('_anchorX')) {
+      /*
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    /*} else {
+      debug(() => ["tran2", transforms.refObj, transforms.paddingX, transforms.paddingY, transforms.paddingAnchorX, transforms.paddingAnchorY]);
+      */
+      /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
@@ -1003,11 +1032,11 @@ export function addGroupPositionTransform(
       }) `;
     }*/
     //transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${transforms.translateY - transforms.paddingAnchorY}) `;
-    transforms.isTranslate = true;
+    //transforms.isTranslate = true;
   }
 
   if (refKey == 'o') {
-    transforms.opacityFactor += posX;
+    transforms.opacityFactor = posX;
     transforms.opacity = transforms.opacityFactor / 100;
   }
 
@@ -1016,7 +1045,7 @@ export function addGroupPositionTransform(
   animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 
   // Add this transformation head to the root frame if no previous transformations for this refObj exists
-  if (frame > 0) {
+  /*if (frame > 0) {
     let foundPrevious = false;
     for (let i = parseInt(frame) - 1; i >= 0; i--) {
       for (let j = 0; j < animation[animationId]._scene[i]._transform.length; j++) {
@@ -1026,15 +1055,17 @@ export function addGroupPositionTransform(
             //debug(() => ["prevframe"]);
             break;
           //}
+        } else {
+          
         }
       }
     }
     if (! foundPrevious) {
-      /*for (let i = parseInt(frame) - 1; i > 0; i--) {
+      for (let i = parseInt(frame) - 1; i >= 0; i--) {
         animation[animationId]._scene[i]._transform.push(transforms);
-      }*/
+      }
     }
-  }
+  }*/
 
   lastRefObj = transforms.refObj;
 
@@ -1499,19 +1530,20 @@ export function getPosition(currentObj, parentObj, refKey, isLayer, animationId,
         objectId,
         depth,
       );
-    }
-    if (currentObj[refKey].hasOwnProperty('k')) {
-      if (currentObj[refKey].k.length > 1) {
-        if (currentObj[refKey].k[0].hasOwnProperty('s')) {
-          currentObj = extrapolateOffsetKeyframe(
-            currentObj,
-            refKey,
-            isLayer,
-            animationId,
-            addTransformation,
-            objectId,
-            depth,
-          );
+    } else {
+      if (currentObj[refKey].hasOwnProperty('k')) {
+        if (currentObj[refKey].k.length > 1) {
+          if (currentObj[refKey].k[0].hasOwnProperty('s')) {
+            currentObj = extrapolateOffsetKeyframe(
+              currentObj,
+              refKey,
+              isLayer,
+              animationId,
+              addTransformation,
+              objectId,
+              depth,
+            );
+          }
         }
       }
     }
@@ -2695,10 +2727,6 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
   return layerObj;
 }
 
-export function findChildren(passedObj) {
-
-}
-
 /**
  * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
  * 
@@ -3107,7 +3135,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           if (passedObj[passedKey][i].ks.p.k.length > 1) {
             if (passedObj[passedKey][i].ks.p.k[0].hasOwnProperty('s')) {
             } else {
-              if (passedObj[passedKey][i]._anchorX != 0) {
+              /*if (passedObj[passedKey][i]._anchorX != 0) {
                 posX = passedObj[passedKey][i].ks.p.k[0] - passedObj[passedKey][i]._anchorX;
               } else {
                 posX = passedObj[passedKey][i].ks.p.k[0]; // passedObj._boundingX;
@@ -3131,7 +3159,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;*/
               for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-                addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
+              //for (var z = passedObj[passedKey][i]._inPoint; z <= passedObj[passedKey][i]._outPoint; z++) {
+                  addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
               }
             }
           }
@@ -3169,7 +3198,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-              addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
+            //for (var z = passedObj[passedKey][i]._inPoint; z <= passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
             }
           }
         }
