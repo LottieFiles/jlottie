@@ -292,48 +292,47 @@ export function lottiemate() {
             } else {
 
             }
-          } else {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
-              const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-              const currentObjOther = document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
-              );
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                currentObj.setAttribute(
-                  'transform',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
-                );
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                currentObj.setAttribute(
-                  'fill',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
-                );
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
-                currentObj.setAttribute(
-                  'stroke-width',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
-                );
-              }
-              currentObjOther.setAttribute(
-                'opacity',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+            const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+            const currentObjOther = document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+            );
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+              currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+            }
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+              currentObj.setAttribute(
+                'transform',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
               );
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'none';
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+              currentObj.setAttribute(
+                'fill',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
+              );
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'block';
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
+              currentObj.setAttribute(
+                'stroke-width',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
+              );
             }
+            currentObjOther.setAttribute(
+              'opacity',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+            );
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'none';
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'block';
           }
         }
       //}, 0);
@@ -980,7 +979,7 @@ export function addGroupPositionTransform(
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-      debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+      //debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
       /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
@@ -1555,8 +1554,8 @@ export function prepShapeEl(shapeObj, referrer, animationId, addTransformation, 
   const newShape = document.createElementNS(xmlns, 'ellipse');
   newShape.setAttribute('cx', shapeObj.p.k[0]);
   newShape.setAttribute('cy', shapeObj.p.k[1]);
-  newShape.setAttribute('rx', shapeObj.s.k[0]);
-  newShape.setAttribute('ry', shapeObj.s.k[1]);
+  newShape.setAttribute('rx', (shapeObj.s.k[0] / 2));
+  newShape.setAttribute('ry', (shapeObj.s.k[1] / 2));
   newShape.setAttribute('fill', 'transparent');
   newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
   newShape.classList.add('ellipse');
@@ -3159,7 +3158,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;*/
               for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-              //for (var z = passedObj[passedKey][i]._inPoint; z <= passedObj[passedKey][i]._outPoint; z++) {
+              //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
                   addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
               }
             }
@@ -3180,6 +3179,11 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i],
               depth,
             );
+          } else {
+            for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.r.k, true, animationId, 'r', 1, passedObj[passedKey][i], depth, true);
+            } 
           }
         }
       }
@@ -3198,7 +3202,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-            //for (var z = passedObj[passedKey][i]._inPoint; z <= passedObj[passedKey][i]._outPoint; z++) {
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
                 addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
             }
           }
@@ -3217,6 +3221,11 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i],
               depth,
             );
+          } else {
+            for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.o.k, true, animationId, 'o', 1, passedObj[passedKey][i], depth, true);
+            } 
           }
         }
       }
@@ -3384,6 +3393,10 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     animationLoading -= 1;
     animation[animationId]._loaded = true;
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
+    animation[animationId]._renderObj.onmouseenter = function() {
+      animation[animationId]._renderObj.dispatchEvent(new CustomEvent("hovered", {bubbles: true, detail:{"animation": animationId} }));
+    }
+    
     if (! _useWebWorker) {
       if (!animation[animationId]._autoplay) {
         goToAndStop(1, '', animation[animationId]._elementId);
