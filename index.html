@@ -365,7 +365,7 @@
             </div>
         </div> -->
         <script>
-            function getCookie(cname) {
+            /*function getCookie(cname) {
                 let curname = cname + "=";
                 let thecookie = decodeURIComponent(document.cookie);
                 let allcookies = thecookie.split(';');
@@ -379,7 +379,7 @@
                     }
                 }
                 return "";
-            }
+            }*/
 
             var sources = [];
             sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
@@ -471,12 +471,6 @@
                 loadLottie(1);
             });
 
-            document.getElementById('jlottie-container').addEventListener("onLoadError", function (e) {
-                    document.getElementById('jlottie-container').innerHTML = "Error:<br />" + e.detail.error;
-                },
-                false,
-            );
-
 
             // var list_items = document.getElementsByClassName('jlottie-list-item');
 
@@ -521,7 +515,7 @@
                 }
             }
 
-            let cidx = parseInt(getCookie("cidx"));
+            /*let cidx = parseInt(getCookie("cidx"));
             if (cidx === undefined) {
                 loadLottie();
                 document.cookie = "cidx=0; expires=Mon, 31 Dec 2060 12:00:00 UTC; path=/";
@@ -532,7 +526,8 @@
                     cidx = 0;
                 }
                 document.cookie = "cidx=" + cidx + "; expires=Mon, 31 Dec 2060 12:00:00 UTC; path=/";
-            }
+            }*/
+            loadLottie();
             
         </script>
     </body>
