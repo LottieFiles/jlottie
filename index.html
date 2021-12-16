@@ -365,15 +365,31 @@
             </div>
         </div> -->
         <script>
+            function getCookie(cname) {
+                let curname = cname + "=";
+                let thecookie = decodeURIComponent(document.cookie);
+                let allcookies = thecookie.split(';');
+                for(let i = 0; i < allcookies.length; i++) {
+                    let curcookie = allcookies[i];
+                    while (curcookie.charAt(0) == ' ') {
+                        curcookie = curcookie.substring(1);
+                    }
+                    if (curcookie.indexOf(curname) == 0) {
+                        return curcookie.substring(curname.length, curcookie.length);
+                    }
+                }
+                return "";
+            }
+
             var sources = [];
             sources.push('https://assets8.lottiefiles.com/private_files/lf30_ijlzmjq6.json');
             sources.push('https://assets7.lottiefiles.com/packages/lf20_pyawb2b1.json');
-            sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
+            //sources.push('https://assets5.lottiefiles.com/private_files/lf30_jrfgebuy.json');
             sources.push('https://assets10.lottiefiles.com/packages/lf20_fwykef3x.json');
             sources.push('https://assets2.lottiefiles.com/packages/lf20_ogsbbjhs.json');
-            sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
-            sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
-            sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
+            //sources.push('https://assets8.lottiefiles.com/packages/lf20_qaemdbel.json');
+            //sources.push('https://assets6.lottiefiles.com/packages/lf20_lptou8fo.json');
+            //sources.push('https://assets10.lottiefiles.com/packages/lf20_yoatyllj.json');
             sources.push('https://assets3.lottiefiles.com/packages/lf20_9sftqjek.json');
             sources.push('https://assets10.lottiefiles.com/packages/lf20_hewaysm0.json');
             sources.push('https://assets7.lottiefiles.com/packages/lf20_90ZmDV.json');
@@ -395,7 +411,7 @@
             sources.push('https://assets5.lottiefiles.com/private_files/lf30_AGoC3n.json');
             sources.push('https://assets4.lottiefiles.com/packages/lf20_sE2Em1.json');
             sources.push('https://assets10.lottiefiles.com/private_files/lf30_nruc9E.json');
-            sources.push('https://assets10.lottiefiles.com/packages/lf20_gc88Qf.json');
+            //sources.push('https://assets10.lottiefiles.com/packages/lf20_gc88Qf.json');
             sources.push('https://assets3.lottiefiles.com/packages/lf20_QegQCG.json');
             sources.push('https://assets6.lottiefiles.com/packages/lf20_ctKmtF.json');
             sources.push('https://assets6.lottiefiles.com/packages/lf20_hbqhhR.json');
@@ -408,7 +424,7 @@
 
             // better than lottie-web
             sources.push('https://assets5.lottiefiles.com/packages/lf20_yinL5S.json'); 
-            sources.push('https://assets6.lottiefiles.com/packages/lf20_evz3Cm.json');
+            //sources.push('https://assets6.lottiefiles.com/packages/lf20_evz3Cm.json');
             sources.push('https://assets3.lottiefiles.com/private_files/lf30_t0igqye8.json');
             
             let janim;
@@ -429,12 +445,25 @@
                 });
                 document.getElementById('lottieSrc').value = pathToLoad;
             }
+
+            function loadIdxLottie(doLoad) {
+                let pathToLoad = sources[doLoad];
+                document.getElementById('jlottie-container').innerHTML = "";
+                janim = jlottie.loadAnimation({
+                    container: document.getElementById('jlottie-container'),
+                    loop: true,
+                    autoplay: true,
+                    path: pathToLoad,
+                    useWebWorker: false //document.getElementById('lottieSrc').value,
+                });
+                document.getElementById('lottieSrc').value = pathToLoad;
+            }
+
             // setTimeout(function () {
             //     jlottie.goToAndStop(2, '', 'jlottie-container');
             //     // jlottie.play("lottiefiles_player");
             // }, 1000);
             // Load an initial animation
-            loadLottie();
 
             var btn = document.getElementById('loadanim');
             btn.addEventListener('click', (event) => {
@@ -491,6 +520,20 @@
                     default:
                 }
             }
+
+            let cidx = parseInt(getCookie("cidx"));
+            if (cidx === undefined) {
+                loadLottie();
+                document.cookie = "cidx=0; expires=Mon, 31 Dec 2060 12:00:00 UTC; path=/";
+            } else {
+                loadIdxLottie(cidx);
+                cidx = cidx + 1;
+                if (cidx >= sources.length) {
+                    cidx = 0;
+                }
+                document.cookie = "cidx=" + cidx + "; expires=Mon, 31 Dec 2060 12:00:00 UTC; path=/";
+            }
+            
         </script>
     </body>
 </html>

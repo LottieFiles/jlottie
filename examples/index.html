@@ -343,7 +343,7 @@
                     debugAnimation: true,
                     debugContainer: document.getElementById('stuff'),
                     path: toLoad,
-                    useWebWorker: true,
+                    useWebWorker: false,
                 });
             }
 
@@ -355,7 +355,7 @@
             }
 
             // Load an initial animation
-            loadLottie(donut);
+            loadLottie(rewind);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {
