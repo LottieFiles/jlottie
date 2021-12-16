@@ -319,6 +319,15 @@ detail = {
           }
 ```
 
+### `hovered`
+
+Fires when pointer enters the bounding box of the animation.
+```js
+detail = {  
+            animation: num1 // internal index number of this animation
+          }
+```
+
 ### `DOMLoaded`
 
 Fires right after all DOM content is loaded.

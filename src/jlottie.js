@@ -50,7 +50,7 @@ export function bezierCurve(
   addTransformation,
   objectId,
   depth,
-  customFlag,
+  customFlag
 ) {
   const newNodes = [];
 
@@ -292,48 +292,47 @@ export function lottiemate() {
             } else {
 
             }
-          } else {
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
-              const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
-              const currentObjOther = document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
-              );
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
-                currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
-                currentObj.setAttribute(
-                  'transform',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
-                );
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
-                currentObj.setAttribute(
-                  'fill',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
-                );
-              }
-              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
-                currentObj.setAttribute(
-                  'stroke-width',
-                  animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
-                );
-              }
-              currentObjOther.setAttribute(
-                'opacity',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
+            const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
+            const currentObjOther = document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+            );
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
+              currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
+            }
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+              currentObj.setAttribute(
+                'transform',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
               );
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'none';
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
+              currentObj.setAttribute(
+                'fill',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].fill,
+              );
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
-              document.getElementById(
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
-              ).style.display = 'block';
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth > -1) {
+              currentObj.setAttribute(
+                'stroke-width',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
+              );
             }
+            currentObjOther.setAttribute(
+              'opacity',
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+            );
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'none';
+          }
+          if (animation[i]._scene[animation[i]._currentFrame]._transform[j].show && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
+            document.getElementById(
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].stageObj,
+            ).style.display = 'block';
           }
         }
       //}, 0);
@@ -756,7 +755,9 @@ export function addGroupPositionTransform(
   addTransformation,
   objectId,
   depth,
-  preTranslate
+  preTranslate,
+  isStart,
+  isEnd
 ) {
   if (frame < 0 || addTransformation < 1) {
     return;
@@ -793,8 +794,8 @@ export function addGroupPositionTransform(
   } else {
   }
 
-  if (transforms.inPoint < 0 && transforms.outPoint < 0) {
-    if (frame != transforms.inPoint && frame != transforms.outPoint) {
+  //if (transforms.inPoint < 0 && transforms.outPoint < 0) {
+  //  if (frame != transforms.inPoint && frame != transforms.outPoint) {
       if (Array.isArray(position)) {
         posX = position[0];
         if (Number.isNaN(posX)) {
@@ -809,8 +810,8 @@ export function addGroupPositionTransform(
           }
         }
       }
-    }
-  }
+  //  }
+  //}
 
   if (isLayer) {
     transforms.isLayer = true;
@@ -864,14 +865,14 @@ export function addGroupPositionTransform(
   let tempBoundingH;
   transforms.paddingX = halfWidth;
   transforms.paddingY = halfHeight;
-  if (refKey == 's') {  
-    transforms.scaleFactorX += posX;
+  if (refKey == 's' && posX != 100 && position[1] != 100) {  
+    transforms.scaleFactorX = posX;
     tempBoundingW = sizeObjFromTransform[0];
     tempBoundingH = sizeObjFromTransform[1];
     let currentScaleX;
     let currentScaleY;
     if (position.length > 1) {
-      transforms.scaleFactorY += position[1];
+      transforms.scaleFactorY = position[1];
       currentScaleX = transforms.scaleFactorX / 100;
       currentScaleY = transforms.scaleFactorY / 100;
     } else {
@@ -886,58 +887,73 @@ export function addGroupPositionTransform(
     transforms.deltaY = (sizeObjFromTransform[1] * currentScaleY) - sizeObjFromTransform[1];
 
     transforms.scaled = true;
-  }
 
-  if (transforms.translateX != 0) {
-    if ((transforms.translateX - transforms.anchorX) <= transforms.translateX - (transforms.paddingX)) {
-      transforms.paddingAnchorX = transforms.deltaX / 2;
-    } else if ((transforms.translateX - transforms.anchorX) >= transforms.translateX + (transforms.paddingX)) {
-      transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
-    } else {
-      transforms.paddingAnchorX = (transforms.deltaX / 2) * ((((transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))) / (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))));
-      transforms.paddingAnchorX = (transforms.deltaX / 2) * 
-                                  (1 -
-                                    (                                   
-                                      (
-                                        (transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))
-                                      )
-                                      / 
-                                      (
-                                        (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))
-                                      )
-                                    )
-                                  );
-    }
-  } else {
-    transforms.paddingAnchorX = transforms.deltaX / 2;
-  }
-
-  if (transforms.translateY != 0) {
-    if ((transforms.translateY - transforms.anchorY) <= transforms.translateY - (transforms.paddingY)) {
-      transforms.paddingAnchorY = transforms.deltaY / 2;
-    } else if ((transforms.translateY - transforms.anchorY) >= transforms.translateY + (transforms.paddingY)) {
-      transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
-    } else {
-      transforms.paddingAnchorY = 
-        (transforms.deltaY / 2) * 
-        (
+    //if (transforms.anchorX != 0) {
+      /*if ((transforms.translateX - transforms.anchorX) <= (transforms.translateX - (transforms.paddingX * 2))) {
+        transforms.paddingAnchorX = transforms.deltaX / 2;
+      } else if ((transforms.translateX - transforms.anchorX) >= (transforms.translateX + (transforms.paddingX * 2))) {
+        transforms.paddingAnchorX = (transforms.deltaX / 2) * -1;
+      } else {*/
+        //transforms.paddingAnchorX = (transforms.deltaX / 2) * ((((transforms.translateX - transforms.anchorX) - (transforms.translateX - (transforms.paddingX))) / (transforms.translateX + (transforms.paddingX)) - (transforms.translateX - (transforms.paddingX))));
+        transforms.paddingAnchorX = 
+          (transforms.deltaX * 
           (
-            (
-              ((transforms.translateY - transforms.anchorY) - (transforms.translateY - (transforms.paddingY)))
-            ) 
-            / 
-            (
-              ((transforms.translateY + (transforms.paddingY)) - (transforms.translateY - (transforms.paddingY)))
+            (                                   
+              (
+                transforms.translateX - (transforms.translateX - transforms.anchorX)
+              )
+              / 
+              (
+                transforms.paddingX * 2
+              )
             )
-          )
-        );
-    }
-  } else {
-    transforms.paddingAnchorY = transforms.deltaY / 2;
+          ));
+          
+      //}
+    /*} else {
+      if (transforms.deltaX > 0 || transforms.deltaX < 0) {
+        transforms.paddingAnchorX = transforms.deltaX / 2 * -1;
+      } else {
+        transforms.paddingAnchorX = transforms.paddingX;
+      }
+
+    }*/
+
+    //if (transforms.anchorY != 0) {
+      /*if ((transforms.translateY - transforms.anchorY) <= (transforms.translateY - (transforms.paddingY * 2))) {
+        transforms.paddingAnchorY = transforms.deltaY / 2;
+      } else if ((transforms.translateY - transforms.anchorY) >= (transforms.translateY + (transforms.paddingY * 2))) {
+        transforms.paddingAnchorY = (transforms.deltaY / 2) * -1;
+      } else {*/
+        transforms.paddingAnchorY = 
+          (transforms.deltaY * 
+          (
+            (                                   
+              (
+                transforms.translateY - (transforms.translateY - transforms.anchorY)
+              )
+              / 
+              (
+                transforms.paddingY * 2
+              )
+            )
+          ));
+      //}
+    /*} else {
+      if (transforms.deltaY > 0 || transforms.deltaY < 0) {
+        transforms.paddingAnchorY = transforms.deltaY / 2 * -1;
+      } else {
+        transforms.paddingAnchorY = transforms.paddingY;
+      }
+    }*/
+
+
+
   }
+
 
   if (refKey == 'r') {
-    transforms.rotateAngle += posX;
+    transforms.rotateAngle = posX;
     if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
       transforms.rotate = `rotate(${transforms.rotateAngle},${objectId._anchorX},${objectId._anchorY}) `;
     } else {
@@ -955,30 +971,52 @@ export function addGroupPositionTransform(
     //if (objectId.hasOwnProperty('_anchorY')) {
       transforms.translateY = posY;
     //}
-    if (objectId.hasOwnProperty('_anchorX')) {
+    transforms.isTranslate = true;
+  }
+
+  if (transforms.isTranslate) {
+    //if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    } else {
+      //debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+      /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
-    }
-    if (!preTranslate) {
-      transforms.isTranslate = true;
+    }*/
+    //if (!preTranslate) {
+    //}
+  } else {
+    if (transforms.scaled) {
+      //if (objectId.hasOwnProperty('_anchorX')) {
+        transforms.translate = `translate(${(transforms.paddingAnchorX * -1)},${
+          (transforms.paddingAnchorY * -1)
+        }) `;
+        debug(() => ["tran2", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+        /*} else {
+        transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
+          transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
+        }) `;
+      }*/
+      //if (!preTranslate) {
+      //}
     }
   }
 
-  if (!transforms.isTranslate && transforms.scaled) {
-    if (objectId.hasOwnProperty('_anchorX')) {
+  if (transforms.scaled) {
+    //if (objectId.hasOwnProperty('_anchorX')) {
+      /*
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
-    } else {
+      debug(() => ["tran2", transforms.refObj, transforms.paddingX, transforms.paddingY, transforms.paddingAnchorX, transforms.paddingAnchorY]);
+      */
+      /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
         transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
       }) `;
-    }
+    }*/
     /*(transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${
       transforms.translateY - transforms.paddingAnchorY
     }) `;*/
@@ -993,11 +1031,11 @@ export function addGroupPositionTransform(
       }) `;
     }*/
     //transforms.translate = `translate(${transforms.translateX - transforms.paddingAnchorX},${transforms.translateY - transforms.paddingAnchorY}) `;
-    transforms.isTranslate = true;
+    //transforms.isTranslate = true;
   }
 
   if (refKey == 'o') {
-    transforms.opacityFactor += posX;
+    transforms.opacityFactor = posX;
     transforms.opacity = transforms.opacityFactor / 100;
   }
 
@@ -1006,22 +1044,27 @@ export function addGroupPositionTransform(
   animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 
   // Add this transformation head to the root frame if no previous transformations for this refObj exists
-  if (frame > 1) {
+  /*if (frame > 0) {
     let foundPrevious = false;
-    for (let i = parseInt(frame) - 1; i > 0; i--) {
-      if (animation[animationId]._scene[i]._transform.refObj == transforms.refObj) {
-        if (animation[animationId]._scene[i]._transform.isTranslate) {
-          foundPrevious = true;
-          break;
+    for (let i = parseInt(frame) - 1; i >= 0; i--) {
+      for (let j = 0; j < animation[animationId]._scene[i]._transform.length; j++) {
+        if (animation[animationId]._scene[i]._transform[j].refObj == transforms.refObj) {
+          //if (animation[animationId]._scene[i]._transform.isTranslate) {
+            foundPrevious = true;
+            //debug(() => ["prevframe"]);
+            break;
+          //}
+        } else {
+          
         }
       }
     }
     if (! foundPrevious) {
-      /*for (let i = parseInt(frame) - 1; i > 0; i--) {
+      for (let i = parseInt(frame) - 1; i >= 0; i--) {
         animation[animationId]._scene[i]._transform.push(transforms);
-      }*/
+      }
     }
-  }
+  }*/
 
   lastRefObj = transforms.refObj;
 
@@ -1486,19 +1529,20 @@ export function getPosition(currentObj, parentObj, refKey, isLayer, animationId,
         objectId,
         depth,
       );
-    }
-    if (currentObj[refKey].hasOwnProperty('k')) {
-      if (currentObj[refKey].k.length > 1) {
-        if (currentObj[refKey].k[0].hasOwnProperty('s')) {
-          currentObj = extrapolateOffsetKeyframe(
-            currentObj,
-            refKey,
-            isLayer,
-            animationId,
-            addTransformation,
-            objectId,
-            depth,
-          );
+    } else {
+      if (currentObj[refKey].hasOwnProperty('k')) {
+        if (currentObj[refKey].k.length > 1) {
+          if (currentObj[refKey].k[0].hasOwnProperty('s')) {
+            currentObj = extrapolateOffsetKeyframe(
+              currentObj,
+              refKey,
+              isLayer,
+              animationId,
+              addTransformation,
+              objectId,
+              depth,
+            );
+          }
         }
       }
     }
@@ -1510,8 +1554,8 @@ export function prepShapeEl(shapeObj, referrer, animationId, addTransformation, 
   const newShape = document.createElementNS(xmlns, 'ellipse');
   newShape.setAttribute('cx', shapeObj.p.k[0]);
   newShape.setAttribute('cy', shapeObj.p.k[1]);
-  newShape.setAttribute('rx', shapeObj.s.k[0]);
-  newShape.setAttribute('ry', shapeObj.s.k[1]);
+  newShape.setAttribute('rx', (shapeObj.s.k[0] / 2));
+  newShape.setAttribute('ry', (shapeObj.s.k[1] / 2));
   newShape.setAttribute('fill', 'transparent');
   newShape.setAttribute('id', `${animationId}_shape${shapeObj._shape}`);
   newShape.classList.add('ellipse');
@@ -2682,10 +2726,6 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
   return layerObj;
 }
 
-export function findChildren(passedObj) {
-
-}
-
 /**
  * Create forward-linking to children of the layer item passed to this function, and create the child containers within the parent's.
  * 
@@ -3094,7 +3134,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           if (passedObj[passedKey][i].ks.p.k.length > 1) {
             if (passedObj[passedKey][i].ks.p.k[0].hasOwnProperty('s')) {
             } else {
-              if (passedObj[passedKey][i]._anchorX != 0) {
+              /*if (passedObj[passedKey][i]._anchorX != 0) {
                 posX = passedObj[passedKey][i].ks.p.k[0] - passedObj[passedKey][i]._anchorX;
               } else {
                 posX = passedObj[passedKey][i].ks.p.k[0]; // passedObj._boundingX;
@@ -3118,7 +3158,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;*/
               for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-                addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
+              //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                  addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
               }
             }
           }
@@ -3138,6 +3179,11 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i],
               depth,
             );
+          } else {
+            for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.r.k, true, animationId, 'r', 1, passedObj[passedKey][i], depth, true);
+            } 
           }
         }
       }
@@ -3156,7 +3202,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-              addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth);
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
             }
           }
         }
@@ -3174,6 +3221,11 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
               passedObj[passedKey][i],
               depth,
             );
+          } else {
+            for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.o.k, true, animationId, 'o', 1, passedObj[passedKey][i], depth, true);
+            } 
           }
         }
       }
@@ -3341,6 +3393,10 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     animationLoading -= 1;
     animation[animationId]._loaded = true;
     animation[animationId]._renderObj.dispatchEvent(new CustomEvent("DOMLoaded", {bubbles: true, detail:{"animation": animationId} }));
+    animation[animationId]._renderObj.onmouseenter = function() {
+      animation[animationId]._renderObj.dispatchEvent(new CustomEvent("hovered", {bubbles: true, detail:{"animation": animationId} }));
+    }
+    
     if (! _useWebWorker) {
       if (!animation[animationId]._autoplay) {
         goToAndStop(1, '', animation[animationId]._elementId);
