@@ -43,7 +43,7 @@ tmp
 .tmp
 *.tsbuildinfo
 .eslintcache
-.changeset
+.changeset/
 
 # dotenv files
 .env
