@@ -242,7 +242,7 @@ jlottie.loadAnimation({
 });
 ```
 
-To enable debugging:
+To enable debugging (**debug** outputs console logs and **debugAnimation** outputs exception messages to the **debugContainer**):
 ```js
 jlottie.loadAnimation({
   container: document.getElementById('my-animation'),
