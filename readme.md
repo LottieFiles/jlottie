@@ -216,20 +216,46 @@ const jlottie = require('@lottiefiles/jlottie');
 
 ## Usage
 
-### Load an animation
-
 ```html
 <div id="my-animation"></div>
 ```
 
+To load an animation from a URL:
 ```js
 jlottie.loadAnimation({
   container: document.getElementById('my-animation'),
   loop: true,
   autoplay: true,
+  useWebWorker: false,
   path: '<LOTTIE_URL>',
 });
 ```
+
+To directly pass animation data:
+```js
+jlottie.loadAnimation({
+  container: document.getElementById('my-animation'),
+  loop: true,
+  autoplay: true,
+  useWebWorker: false,
+  animationData: animationDataVariable,
+});
+```
+
+To enable debugging:
+```js
+jlottie.loadAnimation({
+  container: document.getElementById('my-animation'),
+  loop: true,
+  autoplay: true,
+  debug: true,
+  debugAnimation: true,
+  debugContainer: document.getElementById('debug-div'),
+  useWebWorker: false,
+  path: '<LOTTIE_URL>',
+});
+```
+In all three cases above, simply set **useWebWorker** to *true* to enable rendering using web workers.
 
 ## API
 
