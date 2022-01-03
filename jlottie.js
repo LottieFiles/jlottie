@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.2.0
+ * @lottiefiles/jlottie v1.2.1
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -2531,13 +2531,21 @@
     }
 
     if (refKey == 'r') {
-      transforms.rotateAngle = posX;
+      if (posX < 0) {
+        transforms.rotateAngle = -1 * posX;
+      } else {
+        transforms.rotateAngle = posX;
+      }
 
       if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
         transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(objectId._anchorX, ",").concat(objectId._anchorY, ") ");
       } else {
         transforms.rotate = "rotate(".concat(transforms.rotateAngle, ",").concat(sizeObjFromTransform[0] / 2, ",").concat(sizeObjFromTransform[1] / 2, ") ");
       }
+
+      debug(function () {
+        return ["rot", transforms.rotateAngle, frame];
+      });
     }
 
     if (refKey == 'p') {

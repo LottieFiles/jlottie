@@ -328,9 +328,10 @@
             let donut = "https://assets8.lottiefiles.com/packages/lf20_81zm8s58.json";
 
 
-            let ballkick = "http://localhost:8080/public/examples/ballkick.json"
-            let oldman = "http://localhost:8080/public/examples/oldman.json"
-            let treegrow = "http://localhost:8080/public/examples/treegrow.json"
+            let ballkick = "http://localhost:8080/public/examples/ballkick.json";
+            let oldman = "http://localhost:8080/public/examples/oldman.json";
+            let treegrow = "http://localhost:8080/public/examples/treegrow.json";
+            let reverseRotate = "https://assets5.lottiefiles.com/private_files/lf30_ed3sns8x.json";
 
             let lottieinstance;
             function loadLottie(toLoad) {
@@ -355,7 +356,7 @@
             }
 
             // Load an initial animation
-            loadLottie(rewind);
+            loadLottie(reverseRotate);
 
             document.getElementById('jlottie-container').addEventListener('onLoopComplete', handleEvent);
             function handleEvent(event) {

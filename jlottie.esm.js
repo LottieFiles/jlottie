@@ -1,5 +1,5 @@
 /*!
- * @lottiefiles/jlottie v1.2.0
+ * @lottiefiles/jlottie v1.2.1
  */
 const xmlns = 'http://www.w3.org/2000/svg';
 
@@ -954,7 +954,11 @@ function addGroupPositionTransform(
 
 
   if (refKey == 'r') {
-    transforms.rotateAngle = posX;
+    if (posX < 0) {
+      transforms.rotateAngle = -1 * posX;
+    } else {
+      transforms.rotateAngle = posX;
+    }
     if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
       transforms.rotate = `rotate(${transforms.rotateAngle},${objectId._anchorX},${objectId._anchorY}) `;
     } else {
@@ -962,6 +966,7 @@ function addGroupPositionTransform(
         sizeObjFromTransform[0] / 2
       },${sizeObjFromTransform[1] / 2}) `;
     }
+    debug(() => ["rot", transforms.rotateAngle, frame]);
   }
 
   if (refKey == 'p') {
