@@ -953,7 +953,11 @@ export function addGroupPositionTransform(
 
 
   if (refKey == 'r') {
-    transforms.rotateAngle = posX;
+    if (posX < 0) {
+      transforms.rotateAngle = -1 * posX;
+    } else {
+      transforms.rotateAngle = posX;
+    }
     if (objectId.hasOwnProperty('_anchorX') && objectId.hasOwnProperty('_anchorY')) {
       transforms.rotate = `rotate(${transforms.rotateAngle},${objectId._anchorX},${objectId._anchorY}) `;
     } else {
@@ -961,6 +965,7 @@ export function addGroupPositionTransform(
         sizeObjFromTransform[0] / 2
       },${sizeObjFromTransform[1] / 2}) `;
     }
+    debug(() => ["rot", transforms.rotateAngle, frame]);
   }
 
   if (refKey == 'p') {
