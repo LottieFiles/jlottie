@@ -51,7 +51,8 @@ function bezierCurve(
   addTransformation,
   objectId,
   depth,
-  customFlag
+  customFlag,
+  isEnd
 ) {
   const newNodes = [];
 
@@ -275,8 +276,8 @@ function lottiemate() {
         if (!animation[i]._loop) {
           animation[i]._currentFrame--;
           animation[i]._paused = true;
-          goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
-          continue;   
+          //goToAndStop(animation[i]._currentFrame, '', animation[i]._elementId);
+          //continue;   
         } else {
           animation[i]._currentFrame = 0;
         }
@@ -297,7 +298,7 @@ function lottiemate() {
           if (animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjSet) {
             const currentObj = document.getElementById(animation[i]._scene[animation[i]._currentFrame]._transform[j].refObj);
             const currentObjOther = document.getElementById(
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther,
+              animation[i]._scene[animation[i]._currentFrame]._transform[j].refObjOther
             );
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
               currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
@@ -320,10 +321,12 @@ function lottiemate() {
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].strokeWidth,
               );
             }
-            currentObjOther.setAttribute(
-              'opacity',
-              animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
-            );
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].opacitySet) {
+              currentObjOther.setAttribute(
+                'opacity',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].opacity,
+              );
+            }
           }
           if (animation[i]._scene[animation[i]._currentFrame]._transform[j].hide && animation[i]._scene[animation[i]._currentFrame]._transform[j].stageEvent) {
             document.getElementById(
@@ -344,13 +347,15 @@ function lottiemate() {
         var debugDate = Date.now();
         animation[i]._timeElapsed = animation[i]._timeElapsed + (debugDate - currentDate);
         //animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${animation[i]._timeElapsed}`;
+        var dispString = `current frame: ${animation[i]._currentFrame}<br /> `;
         if (animation[i]._timeElapsed >= 2000) {
           animation[i]._curFPS = 1000 / (currentDate - animation[i]._lastTime);
-          animation[i]._debugObj.innerHTML = `required fps: ${animation[i].fr}, current fps: ${
+          dispString += `required fps: ${animation[i].fr}<br /> current fps: ${
             animation[i]._curFPS
           }`;
           animation[i]._timeElapsed = 0;
         }
+        animation[i]._debugObj.innerHTML = dispString;
       }
   
       animation[i]._lastTime = currentDate;
@@ -372,7 +377,13 @@ function lottiemate() {
         }
       }
     }
-  
+
+    if (animation[i]._toBePaused && animation[i]._currentFrame == animation[i]._pauseAt) {
+      animation[i]._toBePaused = false;
+      animation[i]._paused = true;
+      animation[i]._pauseAt = 0;
+      debug(() => ["pause requested"]);
+    }
   }
 
   var renderDone = Date.now();
@@ -585,6 +596,7 @@ function getEmptyTransform() {
   transforms.scale = '';
   transforms.scaled = false;
   transforms.opacity = 1;
+  transforms.opacitySet = false;
   transforms.inPoint = -1;
   transforms.outPoint = -1;
   transforms.isLayer = true;
@@ -1043,20 +1055,25 @@ function addGroupPositionTransform(
   if (refKey == 'o') {
     transforms.opacityFactor = posX;
     transforms.opacity = transforms.opacityFactor / 100;
+    transforms.opacitySet = true;
   }
 
-  transforms.combined = transforms.translate + transforms.scale + transforms.rotate;
+  if (transforms.scaled) {
+    transforms.combined = transforms.translate + transforms.scale + transforms.rotate;
+  } else {
+    transforms.combined = transforms.translate + transforms.rotate;
+  }
   transforms.isSet = true;
   animation[animationId]._scene[parseInt(frame)]._transform.push(transforms);
 
   // Add this transformation head to the root frame if no previous transformations for this refObj exists
   /*if (frame > 0) {
-    let foundPrevious = false;
+    let foundPrevious = -1;
     for (let i = parseInt(frame) - 1; i >= 0; i--) {
       for (let j = 0; j < animation[animationId]._scene[i]._transform.length; j++) {
         if (animation[animationId]._scene[i]._transform[j].refObj == transforms.refObj) {
           //if (animation[animationId]._scene[i]._transform.isTranslate) {
-            foundPrevious = true;
+            foundPrevious = i;
             //debug(() => ["prevframe"]);
             break;
           //}
@@ -1065,12 +1082,65 @@ function addGroupPositionTransform(
         }
       }
     }
-    if (! foundPrevious) {
-      for (let i = parseInt(frame) - 1; i >= 0; i--) {
-        animation[animationId]._scene[i]._transform.push(transforms);
-      }
+    if (foundPrevious < 0) {
+      //for (let i = parseInt(frame) - 1; i >= 0; i--) {
+        animation[animationId]._scene[0]._transform.push(transforms);
+        debug(() => ["initframe", transforms.refObj, animationId]);
+      //}
+    } else if (foundPrevious == 0) {
+      addGroupPositionTransform(
+        0,
+        position,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+        preTranslate,
+        isStart,
+        isEnd
+      );
+      debug(() => ["altfirstframe", transforms.refObj, animationId]);
     }
   }*/
+  if (isEnd) {
+    debug(() => ["isEnd", transforms.refObj, animationId]);
+    for (let i = parseInt(frame) + 1; i <= animation[animationId]._totalFrames; i++) {
+      addGroupPositionTransform(
+        i,
+        position,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+        preTranslate,
+        false,
+        false
+      );
+    }
+  }
+
+  if (isStart) {
+    debug(() => ["isEnd", transforms.refObj, animationId]);
+    for (let i = parseInt(frame) - 1; i >= 0; i--) {
+      addGroupPositionTransform(
+        i,
+        position,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+        preTranslate,
+        false,
+        false
+      );
+    }
+  }
 
   lastRefObj = transforms.refObj;
 
@@ -1104,10 +1174,19 @@ function extrapolateOffsetKeyframe(
   let gotI;
   let gotO;
 
+  let isEnd = false;
+  let isStart = false;
+
 
   while (i < objLength - 1) {
     gotI = true;
     gotO = true;
+
+    if (i == 0) {
+      isStart = true;
+    } else {
+      isStart = false;
+    }
 
     if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('_comp')) {
     } else {
@@ -1122,9 +1201,15 @@ function extrapolateOffsetKeyframe(
             addTransformation,
             objectId,
             depth,
+            '',
+            isStart,
+            isEnd
           );
         } else {
           if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
+            if (i == objLength - 2) {
+              isEnd = true;
+            }
             addGroupPositionTransform(
               offsetKeyframeObj[refKey].k[i].t,
               offsetKeyframeObj[refKey].k[i].e,
@@ -1134,6 +1219,9 @@ function extrapolateOffsetKeyframe(
               addTransformation,
               objectId,
               depth,
+              '',
+              isStart,
+              isEnd
             );
           }  
         }
@@ -1172,6 +1260,7 @@ function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
+          isEnd
         );
       } else if (
         offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') &&
@@ -1191,6 +1280,7 @@ function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
+          isEnd
         );
       } else if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
         returnedKeyframeObj = bezierCurve(
@@ -1206,6 +1296,7 @@ function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
+          isEnd
         );
       } else {
         returnedKeyframeObj = bezierCurve(
@@ -1221,6 +1312,7 @@ function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
+          isEnd
         );
       }
       for (let s = returnedKeyframeObj.length - 1; s >= 0; s--) {
@@ -1233,6 +1325,43 @@ function extrapolateOffsetKeyframe(
     }
     i += 1;
   }
+
+  i = offsetKeyframeObj[refKey].k.length - 1;
+
+  if (addTransformation > -1) {
+    if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('s')) {
+      addGroupPositionTransform(
+        offsetKeyframeObj[refKey].k[i].t,
+        offsetKeyframeObj[refKey].k[i].s,
+        isLayer,
+        animationId,
+        refKey,
+        addTransformation,
+        objectId,
+        depth,
+        '',
+        '',
+        true
+      );
+    } else {
+      if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
+        addGroupPositionTransform(
+          offsetKeyframeObj[refKey].k[i].t,
+          offsetKeyframeObj[refKey].k[i].e,
+          isLayer,
+          animationId,
+          refKey,
+          addTransformation,
+          objectId,
+          depth,
+          '',
+          '',
+          true
+        );
+      }
+    }
+  }
+
 
   return offsetKeyframeObj;
 }
@@ -1478,7 +1607,11 @@ function extrapolatePathPosition(
     return currentObj;*/
   }
 
+  let isEnd = false;
   for (var i = 0; i < currentObj[refKey].k.length; i++) {
+    if (i == currentObj[refKey].k.length - 1) {
+      isEnd = true;
+    }
     if (currentObj[refKey].k[i].hasOwnProperty('s')) {
       addGroupPositionTransform(
         currentObj[refKey].k[i].t,
@@ -1489,6 +1622,9 @@ function extrapolatePathPosition(
         addTransformation,
         objectId,
         depth,
+        '',
+        '',
+        isEnd
       );
     } else {
       if (currentObj[refKey].k[i].hasOwnProperty('e')) {
@@ -1501,6 +1637,9 @@ function extrapolatePathPosition(
           addTransformation,
           objectId,
           depth,
+          '',
+          '',
+          isEnd
         );
       } else {
         if (currentObj[refKey].k[i - 1].hasOwnProperty('e')) {
@@ -1513,6 +1652,9 @@ function extrapolatePathPosition(
             addTransformation,
             objectId,
             depth,
+            '',
+            '',
+            isEnd
           );
         }
       }
@@ -3164,8 +3306,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
               passedObj[passedKey][i]._posX = posX;
               passedObj[passedKey][i]._posY = posY;*/
               for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-              //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
-                  addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
+                addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
               }
             }
           }
@@ -3187,8 +3328,7 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
-                addGroupPositionTransform(z, passedObj[passedKey][i].ks.r.k, true, animationId, 'r', 1, passedObj[passedKey][i], depth, true);
+              addGroupPositionTransform(z, passedObj[passedKey][i].ks.r.k, true, animationId, 'r', 1, passedObj[passedKey][i], depth, true);
             } 
           }
         }
@@ -3208,7 +3348,6 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
                 addGroupPositionTransform(z, passedObj[passedKey][i].ks.s.k, true, animationId, 's', 1, passedObj[passedKey][i], depth, true);
             }
           }
@@ -3229,7 +3368,6 @@ function getLayers(elementId, animationId, elementObj, passedObj, passedKey, dep
             );
           } else {
             for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-            //for (var z = passedObj[passedKey][i]._inPoint; z < passedObj[passedKey][i]._outPoint; z++) {
                 addGroupPositionTransform(z, passedObj[passedKey][i].ks.o.k, true, animationId, 'o', 1, passedObj[passedKey][i], depth, true);
             } 
           }
@@ -3296,11 +3434,13 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     animation[animationId]._autoplay = autoplay;
     animation[animationId]._loop = loop;
     animation[animationId]._customName = customName;
-    if (autoplay) {
+    animation[animationId]._toBePaused = false;
+    animation[animationId]._pauseAt = 0;
+    /*if (autoplay) {
       animation[animationId]._paused = false;
     } else {
       animation[animationId]._paused = true;
-    }
+    }*/
     animation[animationId]._maxWidth = 0;
     animation[animationId]._maxHeight = 0;
     animation[animationId]._skewW = 0;
@@ -3405,9 +3545,11 @@ function buildGraph(elementId, animationId, elementObj, autoplay, loop, customNa
     
     if (! _useWebWorker) {
       if (!animation[animationId]._autoplay) {
-        goToAndStop(1, '', animation[animationId]._elementId);
+        //goToAndStop(1, '', animation[animationId]._elementId);
+        animation[animationId]._currentFrame = -1;
+        animation[animationId]._toBePaused = true;
       } else {
-        loadFrame(animationId, 1);
+        //loadFrame(animationId, 1);
       }
     } else {
       fireWorker(animationId);
@@ -3574,7 +3716,7 @@ function play(name) {
  * @param {string} name The 'id' value of the container of this Lottie animation.
  */
 function stop(name) {
-  goToAndStop(1, false, name);
+  goToAndStop(0, false, name);
 }
 
 /**
@@ -3594,19 +3736,22 @@ function goToAndStop(_frame, isFrame, name) {
   }
   if (name === undefined) {
     for (var i = 0; i <= animationCount; i++) {
-      animation[i]._paused = true;
-      animation[i]._currentFrame = _frame;
-      loadFrame(i, _frame);
+      animation[i]._toBePaused = true;
+      animation[i]._pauseAt = _frame;
+      animation[i]._currentFrame = _frame - 1;
+      //loadFrame(i, _frame);
     }
   } else {
     name.toString();
     name = name.replace(/#/g, '');
     for (var i = 0; i <= animationCount; i++) {
       if (animation[i]._elementId == name || animation[i]._customName == name) {
-        animation[i]._paused = true;
-        animation[i]._currentFrame = _frame;
+        animation[i]._toBePaused = true;
+        animation[i]._pauseAt = _frame;
+        animation[i]._currentFrame = _frame - 1;
+        debug(() => ["gts", animation[i]._currentFrame, isFrame, name]);
         //console.log(`${name} == ${_frame}`);
-        loadFrame(i, _frame);
+        //loadFrame(i, _frame);
         break;
       }
     }
