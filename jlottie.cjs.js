@@ -1086,7 +1086,7 @@ function addGroupPositionTransform(
 
   if (refKey == 'p') {
     posY = position[1];
-    posZ = 0;
+    let posZ = 0;
     if (position.length > 2) {
       posZ = position[2];
     }
