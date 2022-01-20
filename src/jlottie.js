@@ -566,6 +566,7 @@ export function getEmptyTransform() {
   transforms.translateY = 0;
   transforms.scaleFactorX = 0;
   transforms.scaleFactorY = 0;
+  transforms.scaleFactorZ = 0;
   transforms.rotateAngle = 0;
   transforms.opacityFactor = 0;
   transforms.anchorX = 0;
@@ -574,6 +575,7 @@ export function getEmptyTransform() {
   transforms.paddingY = 0;
   transforms.paddingAnchorX = 0;
   transforms.paddingAnchorY = 0;
+  transforms.paddingAnchorZ = 0;
   transforms.isTranslate = false;
 
   transforms.fillSet = false;
@@ -607,6 +609,8 @@ export function getEmptyTransform() {
 
   // related to strokes
   transforms.strokeWidth = -1;
+
+  transforms.matrix = {'p':[], 's':[], 'r':[], 'rx':[], 'ry':[], 'rz':[], 'sh':[], 'sk':[], 'sa':[]};
 
   return transforms;
 }
@@ -758,6 +762,56 @@ export function stageSequence(animationId, stageObj, inPoint, outPoint) {
   }
 }
 
+function addToMatrix(_p, _n) {
+  let _r = [];
+  let allZero = true;
+
+  for (let i = 1; i < 12; i++) {
+    if (i == 0 || i == 5 || 10) {
+      if (_n[i] !== 1) {
+        allZero = false;
+      }
+    } else {
+      if (_n[i] !== 0) {
+        allZero = false;
+      }
+    }
+  }
+
+  if (allZero) {
+    _p[12] = _p[12] * _n[0] + _p[15] * _n[12];
+    _p[13] = _p[13] * _n[5] + _p[15] * _n[13];
+    _p[14] = _p[14] * _n[10] + _p[15] * _n[14];
+    _p[15] *= _n[15];
+    return _p;
+  }
+
+  let _tn = [];
+  _tn.push(_p);
+
+  _p[0] = _tn[0] * _n[0]  +  _tn[1] * _n[4]  +  _tn[2] * _n[8]  +  _tn[3] * _n[12];
+  _p[1] = _tn[0] * _n[1]  +  _tn[1] * _n[5]  +  _tn[2] * _n[9]  +  _tn[3] * _n[13];
+  _p[2] = _tn[0] * _n[2]  +  _tn[1] * _n[6]  +  _tn[2] * _n[10]  +  _tn[3] * _n[14];
+  _p[3] = _tn[0] * _n[3]  +  _tn[1] * _n[7]  +  _tn[2] * _n[11]  +  _tn[3] * _n[15];
+
+  _p[4] = _tn[4] * _n[0]  +  _tn[5] * _n[4]  +  _tn[6] * _n[8]  +  _tn[7] * _n[12];
+  _p[5] = _tn[4] * _n[1]  +  _tn[5] * _n[5]  +  _tn[6] * _n[9]  +  _tn[7] * _n[13];
+  _p[6] = _tn[4] * _n[2]  +  _tn[5] * _n[6]  +  _tn[6] * _n[10]  +  _tn[7] * _n[14];
+  _p[7] = _tn[4] * _n[3]  +  _tn[5] * _n[7]  +  _tn[6] * _n[11]  +  _tn[7] * _n[15];
+
+  _p[8] = _tn[8] * _n[0]  +  _tn[9] * _n[4]  +  _tn[10] * _n[8]  +  _tn[11] * _n[12];
+  _p[9] = _tn[8] * _n[1]  +  _tn[9] * _n[5]  +  _tn[10] * _n[9]  +  _tn[11] * _n[13];
+  _p[10] = _tn[8] * _n[2]  +  _tn[9] * _n[6]  +  _tn[10] * _n[10]  +  _tn[11] * _n[14];
+  _p[11] = _tn[8] * _n[3]  +  _tn[9] * _n[7]  +  _tn[10] * _n[11]  +  _tn[11] * _n[15];
+
+  _p[12] = _tn[12] * _n[0]  +  _tn[13] * _n[4]  +  _tn[14] * _n[8]  +  _tn[15] * _n[12];
+  _p[13] = _tn[12] * _n[1]  +  _tn[13] * _n[5]  +  _tn[14] * _n[9]  +  _tn[15] * _n[13];
+  _p[14] = _tn[12] * _n[2]  +  _tn[13] * _n[6]  +  _tn[14] * _n[10]  +  _tn[15] * _n[14];
+  _p[15] = _tn[12] * _n[3]  +  _tn[13] * _n[7]  +  _tn[14] * _n[11]  +  _tn[15] * _n[15];
+
+  return _p;
+}
+
 export function addGroupPositionTransform(
   frame,
   position,
@@ -883,6 +937,7 @@ export function addGroupPositionTransform(
     tempBoundingH = sizeObjFromTransform[1];
     let currentScaleX;
     let currentScaleY;
+    let currentScaleZ = 0;
     if (position.length > 1) {
       transforms.scaleFactorY = position[1];
       currentScaleX = transforms.scaleFactorX / 100;
@@ -891,6 +946,13 @@ export function addGroupPositionTransform(
       currentScaleX = transforms.scaleFactorX / 100;
       currentScaleY = transforms.scaleFactorX / 100;
     }
+    if (position.length > 2) {
+      transforms.scaleFactorZ = position[2];
+      currentScaleZ = transforms.scaleFactorZ / 100;
+    } else {
+      currentScaleZ = transforms.scaleFactorX / 100;
+    }
+
     transforms.scale = `scale(${currentScaleX},${currentScaleY}) `;
     //transforms.paddingX = (transforms.anchorX - tempBoundingW) * currentScaleX + tempBoundingW * currentScaleX;
     //transforms.paddingY = (transforms.anchorY - tempBoundingH) * currentScaleY + tempBoundingH * currentScaleY;
@@ -960,13 +1022,14 @@ export function addGroupPositionTransform(
     }*/
 
 
+    transforms.matrix.s.push([transforms.scaleFactorX, 0, 0, 0, 0, transforms.scaleFactorY, 0, 0, 0, 0, transforms.scaleFactorZ, 0, 0, 0, 0, 1]);
 
   }
 
 
   if (refKey == 'r') {
     if (posX < 0) {
-      transforms.rotateAngle = -1 * posX;
+      transforms.rotateAngle = (posX);
     } else {
       transforms.rotateAngle = posX;
     }
@@ -978,10 +1041,50 @@ export function addGroupPositionTransform(
       },${sizeObjFromTransform[1] / 2}) `;
     }
     debug(() => ["rot", transforms.rotateAngle, frame]);
+    var cosVal = Math.cos(transforms.rotateAngle);
+    var sinVal = Math.sin(transforms.rotateAngle);
+    transforms.matrix.r.push([cosVal, -sinVal, 0, 0, sinVal, cosVal, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
+
+  if (refKey == 'rx') {
+    if (posX < 0) {
+      transforms.rotateAngle = (posX);
+    } else {
+      transforms.rotateAngle = posX;
+    }
+    var cosVal = Math.cos(transforms.rotateAngle);
+    var sinVal = Math.sin(transforms.rotateAngle);
+    transforms.matrix.r.push([1, 0, 0, 0, 0, cosVal, -sinVal, 0, 0, sinVal, cosVal, 0, 0, 0, 0, 1]);
+  }
+
+  if (refKey == 'ry') {
+    if (posX < 0) {
+      transforms.rotateAngle = (posX);
+    } else {
+      transforms.rotateAngle = posX;
+    }
+    var cosVal = Math.cos(transforms.rotateAngle);
+    var sinVal = Math.sin(transforms.rotateAngle);
+    transforms.matrix.r.push([cosVal, 0, sinVal, 0, 0, 1, 0, 0, -sinVal, 0, cosVal, 0, 0, 0, 0, 1]);
+  }
+
+  if (refKey == 'rz') {
+    if (posX < 0) {
+      transforms.rotateAngle = (posX);
+    } else {
+      transforms.rotateAngle = posX;
+    }
+    var cosVal = Math.cos(transforms.rotateAngle);
+    var sinVal = Math.sin(transforms.rotateAngle);
+    transforms.matrix.r.push([cosVal, -sinVal, 0, 0, sinVal, cosVal, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
 
   if (refKey == 'p') {
     posY = position[1];
+    posZ = 0;
+    if (position.length > 2) {
+      posZ = position[2];
+    }
     //if (objectId.hasOwnProperty('_anchorX')) {
       transforms.translateX = posX;
     //}
@@ -989,6 +1092,7 @@ export function addGroupPositionTransform(
       transforms.translateY = posY;
     //}
     transforms.isTranslate = true;
+    transforms.matrix.p.push([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, posX, posY, posZ, 1]);
   }
 
   if (transforms.isTranslate) {
