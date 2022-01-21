@@ -607,6 +607,8 @@ export function getEmptyTransform() {
   transforms.deltaX = 0;
   transforms.deltaY = 0;
 
+  transforms.cMatrix = [];
+
   // related to strokes
   transforms.strokeWidth = -1;
 
@@ -762,7 +764,7 @@ export function stageSequence(animationId, stageObj, inPoint, outPoint) {
   }
 }
 
-function addToMatrix(_p, _n) {
+export function addToMatrix(_p, _n) {
   let _r = [];
   let allZero = true;
 
@@ -810,6 +812,25 @@ function addToMatrix(_p, _n) {
   _p[15] = _tn[12] * _n[3]  +  _tn[13] * _n[7]  +  _tn[14] * _n[11]  +  _tn[15] * _n[15];
 
   return _p;
+}
+
+export function consolidateMatrices(animationId) {
+  for (let f = 0; f <= animation[animationId]._totalFrames; f++) {
+    for (let t = 0; t < animation[animationId]._scene[f]._transform.length; t++) {
+      let whichTransformation = 't';
+      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation].length; i++) {
+        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      }
+      whichTransformation = 's';
+      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrixs[whichTransformation].length; i++) {
+        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      }
+      whichTransformation = 'r';
+      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrixs[whichTransformation].length; i++) {
+        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      }
+    }
+  }
 }
 
 export function addGroupPositionTransform(
