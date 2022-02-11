@@ -212,12 +212,21 @@ export function loadFrame(i, _currentFrame) {
               if (animation[i]._scene[m]._transform[n].isTween) {
                 currentObj.setAttribute('d', animation[i]._scene[m]._transform[n].dataString);
               }
-              if (animation[i]._scene[m]._transform[n].combined.length > 0) {
+
+              if (animation[i]._scene[animation[i]._currentFrame]._transform[j].cMatrix.length > 0) {
+                currentObj.setAttribute(
+                  'transform',
+                  animation[i]._scene[animation[i]._currentFrame]._transform[j].cm2DString,
+                );
+              }
+  
+              /*if (animation[i]._scene[m]._transform[n].combined.length > 0) {
                 currentObj.setAttribute(
                   'transform',
                   animation[i]._scene[m]._transform[n].combined,
                 );
-              }
+              }*/
+
               if (animation[i]._scene[m]._transform[n].fillSet) {
                 currentObj.setAttribute(
                   'fill',
@@ -306,7 +315,7 @@ export function lottiemate() {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].cMatrix.length > 0) {
               currentObj.setAttribute(
                 'transform',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].cmString,
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].cm2DString,
               );
             }
 
@@ -508,7 +517,7 @@ export function fireWorker (animationId) {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].cMatrix.length > 0) {
               currentObj.setAttribute(
                 'transform',
-                animation[i]._scene[animation[i]._currentFrame]._transform[j].cmString,
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].cm2DString,
               );
             }
 
@@ -624,7 +633,8 @@ export function getEmptyTransform() {
   transforms.deltaY = 0;
 
   transforms.cMatrix = [];
-  transforms.cmString = '';
+  transforms.cm2DString = '';
+  transforms.cm3DString = '';
 
   // related to strokes
   transforms.strokeWidth = -1;
@@ -805,8 +815,9 @@ export function addToMatrix(_p, _n) {
     return _p;
   }
 
-  let _tn = [];
-  _tn.push(_p);
+  let _tn = _p;
+  //_tn.push(_p);
+  debug(()=> [_tn.length]);
 
   _p[0] = _tn[0] * _n[0]  +  _tn[1] * _n[4]  +  _tn[2] * _n[8]  +  _tn[3] * _n[12];
   _p[1] = _tn[0] * _n[1]  +  _tn[1] * _n[5]  +  _tn[2] * _n[9]  +  _tn[3] * _n[13];
@@ -831,6 +842,18 @@ export function addToMatrix(_p, _n) {
   return _p;
 }
 
+export function to2D(_p) {
+  let _t = [];
+  _t.push(_p[0]);
+  _t.push(_p[1]);
+  _t.push(_p[4]);
+  _t.push(_p[5]);
+  _t.push(_p[12]);
+  _t.push(_p[13]);
+
+  return _t;
+}
+
 export function consolidateMatrices(animationId) {
   //console.log("frames", animation[animationId]._totalFrames);
   for (let f = 0; f <= animation[animationId]._totalFrames; f++) {
@@ -845,23 +868,29 @@ export function consolidateMatrices(animationId) {
       if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('t')) {
         whichTransformation = 't';
         for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
-          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          if (animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i].length == 16) {
+            animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          }
         }
       }
       if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('s')) {
         whichTransformation = 's';
         for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
-          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          if (animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i].length == 16) {
+            animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          }
         }
       }
       if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('r')) {
         whichTransformation = 'r';
         for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
-          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          if (animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i].length == 16) {
+            animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+          }
         }
       }
-      animation[animationId]._scene[f]._transform[t].cmString = 'matrix(' + animation[animationId]._scene[f]._transform[t].cMatrix.join(" ") + ')';
-      debug(() => ["matrix", animation[animationId]._scene[f]._transform[t].cmString]);
+      animation[animationId]._scene[f]._transform[t].cm2DString = 'matrix(' + to2D(animation[animationId]._scene[f]._transform[t].cMatrix).join(",") + ')';
+      debug(() => ["matrix", animation[animationId]._scene[f]._transform[t].cm2DString]);
     }
   }
 }
@@ -1154,6 +1183,11 @@ export function addGroupPositionTransform(
       transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
+
+      transforms.translate = `translate(${(transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX},${
+        (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
+      }) `;
+
       //debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
       /*} else {
       transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
