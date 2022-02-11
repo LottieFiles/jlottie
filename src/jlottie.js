@@ -302,12 +302,20 @@ export function lottiemate() {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
               currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].cMatrix.length > 0) {
+              currentObj.setAttribute(
+                'transform',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].cmString,
+              );
+            }
+
+            /*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
               currentObj.setAttribute(
                 'transform',
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
               );
-            }
+            }*/
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
               currentObj.setAttribute(
                 'fill',
@@ -496,12 +504,20 @@ export function fireWorker (animationId) {
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].isTween) {
               currentObj.setAttribute('d', animation[i]._scene[animation[i]._currentFrame]._transform[j].dataString);
             }
-            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
+
+            if (animation[i]._scene[animation[i]._currentFrame]._transform[j].cMatrix.length > 0) {
+              currentObj.setAttribute(
+                'transform',
+                animation[i]._scene[animation[i]._currentFrame]._transform[j].cmString,
+              );
+            }
+
+            /*if (animation[i]._scene[animation[i]._currentFrame]._transform[j].combined.length > 0) {
               currentObj.setAttribute(
                 'transform',
                 animation[i]._scene[animation[i]._currentFrame]._transform[j].combined,
               );
-            }
+            }*/
             if (animation[i]._scene[animation[i]._currentFrame]._transform[j].fillSet) {
               currentObj.setAttribute(
                 'fill',
@@ -608,6 +624,7 @@ export function getEmptyTransform() {
   transforms.deltaY = 0;
 
   transforms.cMatrix = [];
+  transforms.cmString = '';
 
   // related to strokes
   transforms.strokeWidth = -1;
@@ -815,20 +832,36 @@ export function addToMatrix(_p, _n) {
 }
 
 export function consolidateMatrices(animationId) {
+  //console.log("frames", animation[animationId]._totalFrames);
   for (let f = 0; f <= animation[animationId]._totalFrames; f++) {
     for (let t = 0; t < animation[animationId]._scene[f]._transform.length; t++) {
-      let whichTransformation = 't';
-      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation].length; i++) {
-        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      animation[animationId]._scene[f]._transform[t].cMatrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+      debug(() => ["len", f, t]);
+      if (animation[animationId]._scene[f]._transform[t].hasOwnProperty('matrix')) {
+      } else {
+        continue;
       }
-      whichTransformation = 's';
-      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrixs[whichTransformation].length; i++) {
-        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      let whichTransformation;
+      if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('t')) {
+        whichTransformation = 't';
+        for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
+          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+        }
       }
-      whichTransformation = 'r';
-      for (let i = 0; i < animation[animationId]._scene[f]._transform[t].transforms.matrixs[whichTransformation].length; i++) {
-        animation[animationId]._scene[f]._transform[t].transforms.cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].transforms.cMatrix, animation[animationId]._scene[f]._transform[t].transforms.matrix[whichTransformation][i]);
+      if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('s')) {
+        whichTransformation = 's';
+        for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
+          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+        }
       }
+      if (animation[animationId]._scene[f]._transform[t].matrix.hasOwnProperty('r')) {
+        whichTransformation = 'r';
+        for (let i = 0; i < animation[animationId]._scene[f]._transform[t].matrix[whichTransformation].length; i++) {
+          animation[animationId]._scene[f]._transform[t].cMatrix = addToMatrix(animation[animationId]._scene[f]._transform[t].cMatrix, animation[animationId]._scene[f]._transform[t].matrix[whichTransformation][i]);
+        }
+      }
+      animation[animationId]._scene[f]._transform[t].cmString = 'matrix(' + animation[animationId]._scene[f]._transform[t].cMatrix.join(" ") + ')';
+      debug(() => ["matrix", animation[animationId]._scene[f]._transform[t].cmString]);
     }
   }
 }
@@ -3545,7 +3578,7 @@ export function scaleLayers(elementId, animationId, elementObj, passedObj, passe
 export function buildGraph(elementId, animationId, elementObj, autoplay, loop, customName) {
   animation[animationId]._loaded = false;
   animation[animationId]._renderObj = elementObj;
-  try {
+  //try {
     animation[animationId].depth = 0;
     animation[animationId].shapeCount = 0;
     animation[animationId].layerCount = 0;
@@ -3666,7 +3699,9 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     animation[animationId]._renderObj.onmouseenter = function() {
       animation[animationId]._renderObj.dispatchEvent(new CustomEvent("hovered", {bubbles: true, detail:{"animation": animationId} }));
     }
-    
+
+    consolidateMatrices(animationId);
+
     if (! _useWebWorker) {
       if (!animation[animationId]._autoplay) {
         //goToAndStop(1, '', animation[animationId]._elementId);
@@ -3678,7 +3713,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
     } else {
       fireWorker(animationId);
     }
-  } catch (e) {
+  /*} catch (e) {
 		//console.error(`Failed to load animation.${e}`);
 		//elementObj.style.height = 0;
 		//elementObj.style.width = 0;
@@ -3687,7 +3722,7 @@ export function buildGraph(elementId, animationId, elementObj, autoplay, loop, c
 		animationCount = animationCount - 1;
 		elementObj.innerHTML = e;
 		animation.splice(animationId, 1);
-	}
+	}*/
 }
 
 /**
