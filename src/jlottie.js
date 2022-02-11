@@ -1105,7 +1105,7 @@ export function addGroupPositionTransform(
     }*/
 
 
-    transforms.matrix.s.push([transforms.scaleFactorX, 0, 0, 0, 0, transforms.scaleFactorY, 0, 0, 0, 0, transforms.scaleFactorZ, 0, 0, 0, 0, 1]);
+    transforms.matrix.s.push([currentScaleX, 0, 0, 0, 0, currentScaleY, 0, 0, 0, 0, currentScaleZ, 0, 0, 0, 0, 1]);
 
   }
 
