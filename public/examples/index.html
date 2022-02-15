@@ -334,6 +334,9 @@
             let reverseRotate = "https://assets5.lottiefiles.com/private_files/lf30_ed3sns8x.json";
             let playPause = "https://assets9.lottiefiles.com/private_files/lf30_ohrllw9f.json";
 
+            let face = "https://assets10.lottiefiles.com/private_files/lf30_nruc9E.json";
+            let bird = "https://assets8.lottiefiles.com/private_files/lf30_T5tVEx.json";
+
             let lottieinstance;
             function loadLottie(toLoad) {
                 lottieinstance = jlottie.loadAnimation({
@@ -357,7 +360,11 @@
             }
 
             // Load an initial animation
-            loadLottie(playPause);
+
+            //loadLottie(playPause);
+            loadLottie(bird);
+
+
             //document.getElementById('jlottie-container').addEventListener('DOMLoaded', (event) => {lottieinstance.goToAndStop(0);});
 
 
