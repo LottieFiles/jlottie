@@ -583,6 +583,9 @@ export function fireWorker (animationId) {
 
 
 /// ////////// BUILD SCENE GRAPH
+
+let shapesTy = ['el', 'sh', 'sr', 'rc'];
+
 let lastRefObj;
 
 export function getEmptyTransform() {
@@ -1138,7 +1141,7 @@ export function addGroupPositionTransform(
     debug(() => ["rot", transforms.rotateAngle, frame]);
     var cosVal = Math.cos(transforms.rotateAngle);
     var sinVal = Math.sin(transforms.rotateAngle);
-    transforms.matrix.r[0] = [cosVal, -sinVal, 0, 0, sinVal, cosVal, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    transforms.matrix.r.push([cosVal, -sinVal, 0, 0, sinVal, cosVal, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
 
   if (refKey == 'rx') {
@@ -1188,8 +1191,27 @@ export function addGroupPositionTransform(
       transforms.translateY = posY;
     //}
     transforms.isTranslate = true;
-    transforms.matrix.p[0] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, posX, posY, posZ, 1];
+    transforms.matrix.p.push([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, posX, posY, posZ, 1]);
   }
+
+  if (refKey == 'a') {
+    posY = position[1];
+    let posZ = 0;
+    if (position.length > 2) {
+      posZ = position[2];
+      //transforms.translateZ = posZ;
+    }
+    //if (objectId.hasOwnProperty('_anchorX')) {
+      //transforms.ancX = posX;
+    //}
+    //if (objectId.hasOwnProperty('_anchorY')) {
+      //transforms.translateY = posY;
+    //}
+    //transforms.isTranslate = true;
+    transforms.matrix.p.push([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -posX, -posY, -posZ, 1]);
+    debug(() => ["anchored", transforms.matrix.p[1].length, transforms.matrix.p[1]]);
+  }
+
 
   if (justScaled) {
     if (transforms.isTranslate) {
@@ -1204,7 +1226,7 @@ export function addGroupPositionTransform(
         (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY
       }) `;
 
-      transforms.matrix.p[0] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, (transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX, (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY, transforms.translateZ, 1];
+      //transforms.matrix.p[0] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, (transforms.translateX - transforms.anchorX) - transforms.paddingAnchorX, (transforms.translateY - transforms.anchorY) - transforms.paddingAnchorY, transforms.translateZ, 1];
 
       //debug(() => ["tran1", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
       /*} else {
@@ -1221,9 +1243,9 @@ export function addGroupPositionTransform(
           (transforms.paddingAnchorY * -1)
         }) `;
 
-        transforms.matrix.p[0] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, transforms.paddingAnchorX * -1, transforms.paddingAnchorY * -1, 0, 1];
+        //transforms.matrix.p[0] = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, transforms.paddingAnchorX * -1, transforms.paddingAnchorY * -1, 0, 1];
 
-        debug(() => ["tran2", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
+        //debug(() => ["tran2", transforms.refObj, sizeObjFromTransform[0], sizeObjFromTransform[1], transforms.paddingAnchorX, transforms.paddingAnchorY]);
         /*} else {
         transforms.translate = `translate(${transforms.translateX - (transforms.paddingAnchorX + transforms.paddingX)},${
           transforms.translateY - (transforms.paddingAnchorY + transforms.paddingY)
@@ -2866,6 +2888,19 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
     layerObj.trimmed = true;
     layerObj.currentTrim = outer.currentTrim;
   }
+
+  let trList = [];
+  let trIndex = -1;
+  for (let i = 0; i < layerObj.it.length; i++) {
+    if (layerObj.it[i].ty == 'tr') { // Transformations
+      trList.push(i);
+      layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+    }
+  }
+  if (trList.length >= 1) {
+    trIndex = 0;
+  }
+
   for (let i = 0; i < layerObj.it.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -2894,13 +2929,36 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
       let tempK = JSON.parse(JSON.stringify(layerObj.it[i]));
 
       //debug(() => ['CO', tempK]);
-      layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+      if (layerObj.it[i].ty != 'tr') {
+        layerObj.it[i]._trIndex = trList[trIndex];
+        layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
+        if (shapesTy.includes(layerObj.it[i].ty)) {
+
+          if (layerObj.it[i].hasOwnProperty('p')) {
+            if (layerObj.it[i].p.k.length > 1) {
+              for (var z = 0; z <= layerObj.it[i].p.k.length; z++) {
+                addGroupPositionTransform(layerObj.it[i].p.k.t, passedObj[passedKey][i].ks.p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+              } 
+
+            } else {
+
+            }
+          } else {
+
+          }
+
+        }
+        //apply transformation
+      } else {
+        if (trIndex < trList.length - 1) {
+          trIndex++;
+        }
+      }
       //debug(() => ['FRICO', layerObj.it[i]]);
       if (layerObj.it[i].ty == 'tr') { // Transformations
-        layerObj.it[i]._trIndex = i;
         if (layerObj.it[i].p.hasOwnProperty('k')) {
           if (layerObj.it[i].p.k.length > 1) {
-            addGroupPositionTransform(0, layerObj.it[i].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+            //addGroupPositionTransform(0, layerObj.it[i].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
             /*if (layerObj.it[i].hasOwnProperty('a')) {
               document
                 .getElementById(refLabel)
@@ -2915,9 +2973,9 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
                 .getElementById(refLabel)
                 .setAttribute('transform', `translate(${layerObj.it[i].p.k[0]},${layerObj.it[i].p.k[1]})`);
             }*/
-            if (layerObj.it[i].hasOwnProperty('a')) {
-              addGroupPositionTransform(0, layerObj.it[i].a.k, false, animationId, 'a', 1, layerObj.it[i], depth, true);
-            }
+            //if (layerObj.it[i].hasOwnProperty('a')) {
+            //  addGroupPositionTransform(0, layerObj.it[i].a.k, false, animationId, 'a', 1, layerObj.it[i], depth, true);
+            //}
           }
         }
       }
@@ -2992,6 +3050,24 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
   layerObj.currentTrim = {};
   let stroked = false;
   layerObj.trimmed = false;
+
+  let trList = [];
+  let trIndex = -1;
+  for (let i = 0; i < layerObj.shapes.length; i++) {
+    if (layerObj.shapes[i].ty == 'tr') { // Transformations
+      trList.push(i);
+      layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+      /*if (layerObj.shapes[i].hasOwnProperty('a')) {
+        if (layerObj.shapes[i].p.hasOwnProperty('k')) {
+          addGroupPositionTransform(0, layerObj.shapes[i].p.k, false, animationId, 'a', 1, layerObj.shapes[i], depth, true);
+        }
+      }*/
+    }
+  }
+  if (trList.length >= 1) {
+    trIndex = 0;
+  }
+
   for (let i = 0; i < layerObj.shapes.length; i++) {
     layerObj._isGradient = false;
     animation[animationId].shapeCount++;
@@ -3021,22 +3097,26 @@ export function getShapes(elementId, animationId, layerObj, referrer, refLabel, 
       layerObj.shapes[i]._shape = animation[animationId].shapeCount;
 
       //debug(() => ['RICO', layerObj.shapes[i]]);
-      layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+      if (layerObj.shapes[i].ty != 'tr') { // Transformation
+        layerObj.shapes[i]._trIndex = trList[trIndex];
+        layerObj.shapes[i] = prepShape(layerObj.shapes[i], referrer, animationId, isMasked);
+        // adfd transformation
+      } else {
+        if (trIndex < trList.length - 1) {
+          trIndex++;
+        }
+      }
       //debug(() => ['FRICO', layerObj.shapes[i]]);
       if (layerObj.shapes[i].ty == 'tr') { // Transformation
-        layerObj.shapes[i]._trIndex = i;
         if (layerObj.shapes[i].p.hasOwnProperty('k')) {
-          if (layerObj.shapes[i].p.k > 1) {
-            addGroupPositionTransform(0, layerObj.shapes[i].p.k, false, animationId, 'p', 1, layerObj.shapes[i], depth, true);
+          //if (layerObj.shapes[i].p.k > 1) {
+          //  addGroupPositionTransform(0, layerObj.shapes[i].p.k, false, animationId, 'p', 1, layerObj.shapes[i], depth, true);
             /*
             document
               .getElementById(`${animationId}_${depth}_layerGroup${layerObj._layer}`)
               .setAttribute('transform', `translate(${layerObj.shapes[i].p.k[0]},${layerObj.shapes[i].p.k[1]})`);
             */
-            if (layerObj.shapes[i].hasOwnProperty('a')) {
-              addGroupPositionTransform(0, layerObj.shapes[i].p.k, false, animationId, 'a', 1, layerObj.shapes[i], depth, true);
-            }
-          }
+          //}
         }
       }
       if (layerObj.shapes[i].ty == 'fl') { // Fill shape
@@ -3215,8 +3295,8 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
       passedObj[passedKey][i]._layer = passedObj[passedKey][i].ind;
       passedObj[passedKey][i]._child = [];
       passedObj[passedKey][i]._childId = [];
-      if (passedObj[passedKey][i].parent > 0) {
-      } else {
+      //if (passedObj[passedKey][i].parent > 0) {
+      //} else {
         if (passedObj[passedKey][i].td > 0) {
           passedObj[passedKey][i]._isMask = true;
           newMask = document.createElementNS(xmlns, 'mask');
@@ -3259,12 +3339,12 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
         newTranslateGroup.prepend(newGroup);
 
         passedObj[passedKey][i].processed = true;
-      }
+      //}
     }
 
     let addArray = [];
     let currentLevel = 1;
-    for (var i = 0; i < passedObj[passedKey].length; i++) {
+    /*for (var i = 0; i < passedObj[passedKey].length; i++) {
       passedObj.layerCount = passedObj[passedKey][i]._layer;
       if (passedObj[passedKey][i].parent > 0) {
         for (let j = 0; j < passedObj.layers.length; j++) {
@@ -3329,11 +3409,12 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           }
         }
       }
-    }
+    }*/
+
 
     let itemsThisLevel = 1;
     let tempLevel = 1;
-    while (itemsThisLevel > 0) {
+    /*while (itemsThisLevel > 0) {
       itemsThisLevel = 0;
       let tempArray = [];
       for (let j = 0; j < addArray.length; j++) {
@@ -3344,23 +3425,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
       }
       tempLevel++;
       tempArray.sort(function(a, b){return a-b});
-      
-      /*
-      let tempHalf1 = [];
-      let tempHalf2 = [];
-      for (let i = 0; i < tempArray.length; i++) {
-        if (passedObj[passedKey][tempArray[i]].ind <= passedObj[passedKey][passedObj[passedKey][tempArray[i]]._parentIdx].ind) {
-          tempHalf1.push(tempArray[i]);
-        } else {
-          tempHalf2.push(tempArray[i]);
-        }
-      }
-      tempHalf2.sort(function(a, b){return b-a});
-      tempArray = [];
-      tempArray = tempArray.concat(tempHalf1, tempHalf2);
-      //tempArray.concat(tempHalf2);
-      */
-      
+            
       if (itemsThisLevel > 0) {
         tempArray.forEach(i => {
             if (passedObj[passedKey][passedObj[passedKey][i]._parentIdx].hasOwnProperty('domObj')) {
@@ -3383,7 +3448,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           }
         );
       }
-    }
+    }*/
 
     for (var i = 0; i < passedObj[passedKey].length; i++) {
       if (passedObj[passedKey][i].hasOwnProperty('domObj')) {
@@ -3479,7 +3544,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
       // newLayer.style.display = 'none';
     }
 
-    if (passedObj[passedKey][i].hasOwnProperty('ks')) {
+    /*if (passedObj[passedKey][i].hasOwnProperty('ks')) {
       if (passedObj[passedKey][i].ks.hasOwnProperty('a')) {
         if (passedObj[passedKey][i].ks.a.hasOwnProperty('k')) {
           if (passedObj[passedKey][i].ks.a.k.length > 1) {
@@ -3504,29 +3569,6 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           if (passedObj[passedKey][i].ks.p.k.length > 1) {
             if (passedObj[passedKey][i].ks.p.k[0].hasOwnProperty('s')) {
             } else {
-              /*if (passedObj[passedKey][i]._anchorX != 0) {
-                posX = passedObj[passedKey][i].ks.p.k[0] - passedObj[passedKey][i]._anchorX;
-              } else {
-                posX = passedObj[passedKey][i].ks.p.k[0]; // passedObj._boundingX;
-              }
-              if (passedObj[passedKey][i]._anchorY != 0) {
-                posY = passedObj[passedKey][i].ks.p.k[1] - passedObj[passedKey][i]._anchorY;
-              } else {
-                posY = passedObj[passedKey][i].ks.p.k[1]; // passedObj._boundingY;
-              }
-              /*if (passedObj[passedKey][i].td > 0) {
-                document
-                  .getElementById(`${animationId}_${depth}_layerGroup${passedObj[passedKey][i]._layer}`)
-                  .setAttribute('transform', `translate(${posX},${posY})`);
-                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
-              } else {
-                document
-                  .getElementById(`${animationId}_${depth}_layer${passedObj[passedKey][i]._layer}`)
-                  .setAttribute('transform', `translate(${posX},${posY})`);
-                  //.setAttribute('transform', `matrix(1,0,0,1,${posX},${posY})`);
-              }
-              passedObj[passedKey][i]._posX = posX;
-              passedObj[passedKey][i]._posY = posY;*/
               for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
                 addGroupPositionTransform(z, passedObj[passedKey][i].ks.p.k, true, animationId, 'p', 1, passedObj[passedKey][i], depth, true);
               }
@@ -3595,7 +3637,7 @@ export function getLayers(elementId, animationId, elementObj, passedObj, passedK
           }
         }
       }
-    }
+    }*/
   }
   return passedObj;
 }
