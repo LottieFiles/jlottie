@@ -2934,14 +2934,15 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
         layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
         if (shapesTy.includes(layerObj.it[i].ty)) {
 
-          if (layerObj.it[i].hasOwnProperty('p')) {
-            if (layerObj.it[i].p.k.length > 1) {
-              for (var z = 0; z <= layerObj.it[i].p.k.length; z++) {
-                addGroupPositionTransform(layerObj.it[i].p.k.t, passedObj[passedKey][i].ks.p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
-              } 
-
+          if (layerObj.it[trList[trIndex]].hasOwnProperty('p')) {
+            if (layerObj.it[trList[trIndex]].p.k.length > 1) {
+              for (var z = 0; z <= layerObj.it[trList[trIndex]].p.k.length; z++) {
+                addGroupPositionTransform(layerObj.it[trList[trIndex]].p.k.t, layerObj.it[trList[trIndex]].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+              }
             } else {
-
+              for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+                addGroupPositionTransform(layerObj.it[trList[trIndex]].p.k.t, layerObj.it[trList[trIndex]].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+              }
             }
           } else {
 
