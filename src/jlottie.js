@@ -918,7 +918,8 @@ export function addGroupPositionTransform(
   depth,
   preTranslate,
   isStart,
-  isEnd
+  isEnd,
+  trDepth
 ) {
   if (frame < 0 || addTransformation < 1) {
     return;
@@ -1352,7 +1353,8 @@ export function addGroupPositionTransform(
         depth,
         preTranslate,
         false,
-        false
+        false,
+        trDepth
       );
     }
   }
@@ -1371,7 +1373,8 @@ export function addGroupPositionTransform(
         depth,
         preTranslate,
         false,
-        false
+        false,
+        trDepth
       );
     }
   }
@@ -1399,6 +1402,7 @@ export function extrapolateOffsetKeyframe(
   addTransformation,
   objectId,
   depth,
+  trDepth
 ) {
   let i = 0;
   let objLength = offsetKeyframeObj[refKey].k.length;
@@ -1437,7 +1441,8 @@ export function extrapolateOffsetKeyframe(
             depth,
             '',
             isStart,
-            isEnd
+            isEnd,
+            trDepth
           );
         } else {
           if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
@@ -1455,7 +1460,8 @@ export function extrapolateOffsetKeyframe(
               depth,
               '',
               isStart,
-              isEnd
+              isEnd,
+              trDepth
             );
           }  
         }
@@ -1494,7 +1500,8 @@ export function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
-          isEnd
+          isEnd,
+          trDepth
         );
       } else if (
         offsetKeyframeObj[refKey].k[i + 1].hasOwnProperty('i') &&
@@ -1514,7 +1521,8 @@ export function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
-          isEnd
+          isEnd,
+          trDepth
         );
       } else if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('o') && gotO) {
         returnedKeyframeObj = bezierCurve(
@@ -1530,7 +1538,8 @@ export function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
-          isEnd
+          isEnd,
+          trDepth
         );
       } else {
         returnedKeyframeObj = bezierCurve(
@@ -1546,7 +1555,8 @@ export function extrapolateOffsetKeyframe(
           addTransformation,
           objectId,
           depth,
-          isEnd
+          isEnd,
+          trDepth
         );
       }
       for (let s = returnedKeyframeObj.length - 1; s >= 0; s--) {
@@ -1575,7 +1585,8 @@ export function extrapolateOffsetKeyframe(
         depth,
         '',
         '',
-        true
+        true,
+        trDepth
       );
     } else {
       if (offsetKeyframeObj[refKey].k[i].hasOwnProperty('e')) {
@@ -1590,7 +1601,8 @@ export function extrapolateOffsetKeyframe(
           depth,
           '',
           '',
-          true
+          true,
+          trDepth
         );
       }
     }
@@ -1609,6 +1621,7 @@ export function extrapolatePathPosition(
   addTransformation,
   objectId,
   depth,
+  trDepth
 ) {
   currentObj[refKey].k = [];
   if (currentObj[refKey].x.k.length > 1) {
@@ -1620,6 +1633,7 @@ export function extrapolatePathPosition(
       false,
       objectId,
       depth,
+      trDepth
     );
   } else {
   }
@@ -1632,7 +1646,8 @@ export function extrapolatePathPosition(
       false,
       objectId,
       depth,
-    );
+      trDepth
+      );
   } else {
   }
 
@@ -1858,7 +1873,8 @@ export function extrapolatePathPosition(
         depth,
         '',
         '',
-        isEnd
+        isEnd,
+        trDepth
       );
     } else {
       if (currentObj[refKey].k[i].hasOwnProperty('e')) {
@@ -1873,7 +1889,8 @@ export function extrapolatePathPosition(
           depth,
           '',
           '',
-          isEnd
+          isEnd,
+          trDepth
         );
       } else {
         if (currentObj[refKey].k[i - 1].hasOwnProperty('e')) {
@@ -1888,7 +1905,8 @@ export function extrapolatePathPosition(
             depth,
             '',
             '',
-            isEnd
+            isEnd,
+            trDepth
           );
         }
       }
@@ -1898,7 +1916,7 @@ export function extrapolatePathPosition(
   return currentObj;
 }
 
-export function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth) {
+export function getPosition(currentObj, parentObj, refKey, isLayer, animationId, addTransformation, objectId, depth, trDepth) {
   if (currentObj.hasOwnProperty(refKey)) {
     if (currentObj[refKey].hasOwnProperty('x') && currentObj[refKey].hasOwnProperty('y')) {
       currentObj = extrapolatePathPosition(
@@ -1910,6 +1928,7 @@ export function getPosition(currentObj, parentObj, refKey, isLayer, animationId,
         addTransformation,
         objectId,
         depth,
+        trDepth
       );
     } else {
       if (currentObj[refKey].hasOwnProperty('k')) {
@@ -1923,6 +1942,7 @@ export function getPosition(currentObj, parentObj, refKey, isLayer, animationId,
               addTransformation,
               objectId,
               depth,
+              trDepth
             );
           }
         }
@@ -2138,7 +2158,7 @@ export function prepShape(shapeObj, referrer, animationId, isMasked, depth) {
       shapeObj = getPosition(shapeObj, null, 'c', false, animationId, 3, shapeObj, depth);
     }
   }
-  if (shapeObj.ty == 'tr') {
+  /*if (shapeObj.ty == 'tr') {
     if (shapeObj.hasOwnProperty('a')) {
       if (shapeObj.a.k.hasOwnProperty('s')) {
         shapeObj = getPosition(shapeObj, null, 'a', false, animationId, 2, shapeObj, depth);
@@ -2159,7 +2179,7 @@ export function prepShape(shapeObj, referrer, animationId, isMasked, depth) {
         }
       }
     }
-  }
+  }*/
 
   if (shapeObj.ty == 'sh') {
     if (shapeObj.hasOwnProperty('ks') && shapeObj.ks.k.length > 1) {
@@ -2866,6 +2886,38 @@ function setTrim(shapesGroup, trimToSet, animationId, depth) {
   */
 }
 
+
+export function shapeTr(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer, refShape, transform, key, trDepth) {
+    if (transform[key].k.length > 1) {
+      if (transform[key].k[0].hasOwnProperty('s')) {
+        transform = getPosition(
+          transform,
+          null,
+          key,
+          false, // isLayer
+          animationId,
+          1,
+          refShape,
+          depth,
+          trDepth
+        );
+      } else {
+        for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+          addGroupPositionTransform(z, transform[key].k, false, animationId, key, 1, refShape, depth, true, trDepth);
+        }
+      }
+    }
+
+}
+
+export function shapeTrGroup(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer, refShape, transform, trDepth) {
+  if (transform.hasOwnProperty('p')) {
+    shapeTr(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer, refShape, transform, 'p', trDepth);
+  }
+
+}
+
+
 /**
  * Iterate through the shapes in a shape group ('gr') object, prepare the required DOM elements, and trigger the creation of shapes, attributes and transformations.
  * 
@@ -2934,19 +2986,30 @@ export function getShapesGr(elementId, animationId, layerObj, referrer, refLabel
         layerObj.it[i] = prepShape(layerObj.it[i], referrer, animationId, isMasked);
         if (shapesTy.includes(layerObj.it[i].ty)) {
 
+          shapeTrGroup(elementId, animationId, layerObj, referrer, refLabel, refGroup, isMasked, depth, outer, layerObj.it[i], layerObj.it[trList[trIndex]], 0);
+
           if (layerObj.it[trList[trIndex]].hasOwnProperty('p')) {
             if (layerObj.it[trList[trIndex]].p.k.length > 1) {
-              for (var z = 0; z <= layerObj.it[trList[trIndex]].p.k.length; z++) {
-                addGroupPositionTransform(layerObj.it[trList[trIndex]].p.k.t, layerObj.it[trList[trIndex]].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
-              }
-            } else {
-              for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
-                addGroupPositionTransform(layerObj.it[trList[trIndex]].p.k.t, layerObj.it[trList[trIndex]].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+              if (layerObj.it[trList[trIndex]].p.k[0].hasOwnProperty('s')) {
+                layerObj.it[trList[trIndex]] = getPosition(
+                  layerObj.it[trList[trIndex]],
+                  null,
+                  'p',
+                  false, // isLayer
+                  animationId,
+                  1,
+                  layerObj.it[i],
+                  depth,
+                );
+              } else {
+                for (var z = 0; z <= animation[animationId]._totalFrames; z++) {
+                  addGroupPositionTransform(z, layerObj.it[trList[trIndex]].p.k, false, animationId, 'p', 1, layerObj.it[i], depth, true);
+                }
               }
             }
-          } else {
-
           }
+
+
 
         }
         //apply transformation
